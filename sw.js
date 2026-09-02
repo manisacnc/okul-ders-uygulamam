@@ -1,11 +1,12 @@
 /* Okul Ders Uygulamam – stale-while-revalidate önbellek stratejisi */
-var SURUM = 'okul-v9';
+var SURUM = 'okul-v10';
 var DOSYALAR = [
   './index.html',
   './style.css',
   './app.js',
   './fsrs.js',
   './sync.js',
+  './lisans.js',
   './veri5.js',
   './konular5.js',
   './veri6.js',

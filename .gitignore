@@ -1,0 +1,12 @@
+# Güvenlik: lisans özel anahtarı ve üretici ASLA yayınlanmamalı
+ozel.pem
+genel.pem
+lisans_uret.js
+
+# Geliştirici çalışma dosyaları
+sunucu.err
+sunucu.log
+t.txt
+1
+*.bak.*
+OkulDersUygulamam.apk

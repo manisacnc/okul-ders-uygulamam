@@ -303,6 +303,7 @@ function render() {
     else if (durum.tur === 'hakimiyet') cizHakimiyet();
     else if (durum.tur === 'rolSec') cizRolSec();
     else if (durum.tur === 'ogr') cizOgretmen();
+    else if (durum.tur === 'lisans') cizLisans();
    window.scrollTo(0, 0);
 }
 
@@ -349,7 +350,8 @@ function cizMenu() {
   h += '<div class="durum-huc"><b>⭐ XP</b><span>' + xp.p + '</span></div>';
   h += '<div class="durum-huc"><b>🎖 Seviye</b><span>' + sev + '</span></div>';
   h += '<div class="durum-huc"><b>🔥 Seri</b><span>' + xp.seri + ' gün</span></div>';
-    h += '<div class="durum-huc"><b>🏅 Rozet</b><span>' + ((oku('odul') || []).length) + '/' + ROZETLER.length + '</span></div>';
+  h += '<div class="durum-huc"><b>🏅 Rozet</b><span>' + ((oku('odul') || []).length) + '/' + ROZETLER.length + '</span></div>';
+  h += '<div class="durum-huc"><b>' + (typeof lisans_ !== 'undefined' ? '🔑 Lisans' : '') + '</b><span>' + (typeof lisans_ !== 'undefined' ? lisansBilgi() : '') + '</span></div>';
     h += '</div>';
     h += cizHedefBar();
     h += '<div class="seviye-cubuk"><div class="cubuk"><div class="cubuk-dolgu" style="width:' + seviyeYuzde(xp.p) + '%"></div></div>' +
@@ -4161,6 +4163,56 @@ function seciliSinif() {
   return null;
 }
 
+/* ====== LİSANS SİSTEMİ ====== */
+function lisansBilgi() {
+  var d = lisans_.durum();
+  if (d.tip === 'lisansli') return '✅ Lisanslı · ' + esc(d.ad) + ' · ' + esc(d.bitis) + ' kadar (' + lisans_.kalanGun() + ' gün)';
+  if (d.tip === 'deneme') return '🧪 Deneme · ' + d.kalanGun + ' gün kaldı';
+  return '🔒 Lisans gerekli';
+}
+function cizLisans() {
+  var d = lisans_.durum();
+  var h = '<div class="baslik"><h1>🔑 Lisans</h1><p>Uygulamayı kullanmak için lisans gerekir.</p></div>';
+  if (d.tip === 'lisansli') {
+    h += '<div class="ozet-karti"><div class="durum-huc"><b>Durum</b><span>✅ Aktif</span></div>'
+      + '<div class="durum-huc"><b>Lisans sahibi</b><span>' + esc(d.ad) + '</span></div>'
+      + '<div class="durum-huc"><b>Bitiş</b><span>' + esc(d.bitis) + ' (' + lisans_.kalanGun() + ' gün)</span></div>'
+      + '<div class="durum-huc"><b>Cihaz hakkı</b><span>' + d.cihaz + '</span></div></div>';
+    h += '<div style="text-align:center;margin-top:14px"><button class="btn btn-mor" onclick="git(\'menu\')">🚪 Devam Et</button></div>';
+    ekran.innerHTML = h;
+    return;
+  }
+  if (d.tip === 'deneme') {
+    h += '<div class="ozet-karti"><b>🧪 Deneme sürümü</b><p>Kalan gün: ' + d.kalanGun + ' gün</p></div>';
+  } else {
+    h += '<div class="ozet-karti" style="border-color:#e05656"><b>🔒 Deneme süreniz doldu</b><p>Devam etmek için geçerli bir lisans kodu girin.</p></div>';
+  }
+  h += '<div style="margin-top:14px"><label>Lisans Kodunuz:</label>'
+    + '<textarea id="lisansKod" rows="4" placeholder="Lisans kodunu buraya yapıştırın" style="width:100%;padding:10px;border:2px solid #dfe5f0;border-radius:10px;font-size:14px;font-family:monospace;resize:vertical"></textarea></div>';
+  h += '<div class="unit-butonlar" style="margin-top:10px">'
+    + '<button class="btn btn-mor" style="width:auto" onclick="lisansGir()">💾 Lisansı Doğrula ve Etkinleştir</button></div>';
+  h += '<div id="lisansSonuc" style="margin-top:8px"></div>';
+  ekran.innerHTML = h;
+}
+function lisansGir() {
+  var kod = ($('lisansKod') ? $('lisansKod').value : '').trim();
+  var sonuc = $('lisansSonuc');
+  if (!kod) { if (sonuc) sonuc.innerHTML = '<small style="color:#e05656">Lisans kodunu girin.</small>'; return; }
+  if (sonuc) sonuc.innerHTML = '<small>Doğrulanıyor...</small>';
+  lisans_.kaydet(kod).then(function (s) {
+    if (s.ok) {
+      if (sonuc) sonuc.innerHTML = '<small style="color:#2ecc71">✅ Lisans etkinleştirildi' + (s.ad ? (' · ' + esc(s.ad)) : '') + ' (' + esc(s.bitis) + ')</small>';
+      setTimeout(function () { git('menu'); }, 900);
+    } else {
+      var mesaj = s.neden === 'imza' ? 'Geçersiz lisans kodu (imza doğrulanamadı).'
+        : s.neden === 'suresi dolmus' ? 'Bu lisansın süresi dolmuş.'
+        : s.neden === 'cihaz-doldu' ? 'Bu lisans zaten izin verilen cihaz sayısında kullanılıyor.'
+        : 'Geçersiz lisans kodu.';
+      if (sonuc) sonuc.innerHTML = '<small style="color:#e05656">' + mesaj + '</small>';
+    }
+  });
+}
+
 function cizSinifSec() {
   var h = '<div class="baslik"><h1>👋 Hoş Geldin!</h1><p>Önce sınıfını seçelim, sana sadece o sınıfın derslerini önereyim.</p></div>';
   h += '<div class="grader">';
@@ -5465,7 +5517,10 @@ veriEkUygula();
 profilUygula();
 bildirimKur();
 mebKontrolEt();
-if (profilOku().sinif) { git('menu'); } else { durum.tur = 'sinifSec'; tabGuncelle(); render(); }
+var lDurum = (typeof lisans_ !== 'undefined') ? lisans_.durum() : { tip: 'lisansli' };
+if (typeof lisans_ !== 'undefined' && lDurum.tip === 'bitti') {
+  durum.tur = 'lisans'; tabGuncelle(); render();
+} else if (profilOku().sinif) { git('menu'); } else { durum.tur = 'sinifSec'; tabGuncelle(); render(); }
 
 if (window.matchMedia) {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { if (profilOku().gece === 'system') profilUygula(); });
