@@ -303,6 +303,8 @@ function render() {
     else if (durum.tur === 'hakimiyet') cizHakimiyet();
     else if (durum.tur === 'rolSec') cizRolSec();
     else if (durum.tur === 'ogr') cizOgretmen();
+    else if (durum.tur === 'sinifYonet') cizSinifYonet();
+    else if (durum.tur === 'sbaglan') cizSbaglan();
     else if (durum.tur === 'lisans') cizLisans();
    window.scrollTo(0, 0);
 }
@@ -4855,6 +4857,16 @@ function cizOgretmen() {
   h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="veliRaporYazdir()">🖨️ Yazdırılabilir Rapor</button>';
   h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="git(\'karne\')">📄 Karne</button>';
   h += '</div>';
+  h += '<div class="baslik" style="margin-top:18px"><h2>🟢 Canlı Sınıf Yönetimi</h2><p>Sınıf kodu ile öğrencilerini ekle, derslerini ve notlarını yaz, çalışma verilerini gör.</p></div>';
+  var _supaVar = (typeof kutuSUPA !== 'undefined' && kutuSUPA.hazirMi());
+  if (_supaVar) {
+    h += '<div class="unit-butonlar">';
+    h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="git(\'sinifYonet\')">🟢 Sınıfımı Yönet</button>';
+    h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="sinifGiris()">➕ Sınıf Aç / Kullan</button>';
+    h += '</div>';
+  } else {
+    h += '<div class="kucuk-not" style="color:#e05656;margin:8px 0">⚠️ Canlı sınıf yönetimi için Supabase yapılandırması gerekli (supa-config.js doldurulmalı).</div>';
+  }
   h += '<div style="text-align:center;margin-top:16px"><button class="kucuk-buton" style="background:#e05656" onclick="ogretmenCikis()">🚪 Öğrenci Moduna Geç</button></div>';
   ekran.innerHTML = h;
 }
@@ -5528,4 +5540,264 @@ if (typeof lisans_ !== 'undefined' && lDurum.tip === 'bitti') {
 
 if (window.matchMedia) {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { if (profilOku().gece === 'system') profilUygula(); });
+}
+
+/* ============================================================
+   SUPABASE — CANLI SINIF YÖNETİMİ (Öğretmen) + ÖĞRENCİ BAĞLANTISI
+   Bağımlılık: supa.js (kutuSUPA)
+   ============================================================ */
+function supaDeger(anahtarKey) {
+  try { return localStorage.getItem('dersApp_' + anahtarKey) || ''; } catch (e) { return ''; }
+}
+function supaKaydet(anahtarKey, deger) {
+  try { localStorage.setItem('dersApp_' + anahtarKey, deger); } catch (e) {}
+}
+function supaJsonOku(anahtarKey) {
+  try { var v = localStorage.getItem('dersApp_' + anahtarKey); return v ? JSON.parse(v) : null; } catch (e) { return null; }
+}
+function supaJsonYaz(anahtarKey, obje) {
+  try { localStorage.setItem('dersApp_' + anahtarKey, JSON.stringify(obje)); } catch (e) {}
+}
+
+function supaHazir() { return typeof kutuSUPA !== 'undefined' && kutuSUPA.hazirMi(); }
+function supaMesaj(metin, renk) {
+  var el = document.getElementById('supaMesaj');
+  if (!el) { alert(metin); return; }
+  el.innerHTML = metin;
+  el.style.display = 'block';
+  el.style.background = renk === 'kirmizi' ? '#ffe3e3' : (renk === 'yesil' ? '#e3ffe9' : '#e3eaff');
+  el.style.color = '#1c2541';
+}
+
+/* ---- ÖĞRETMEN: Sınıf Yönetimi ekranı ---- */
+function sinifGiris() { git('sinifYonet'); }
+function cizSinifYonet() {
+  var h = '<button class="geri" onclick="git(\'ogr\')">⬅ Öğretmen Paneli</button>';
+  h += '<div class="baslik"><h1>🟢 Canlı Sınıf Yönetimi</h1><p>Sınıf kodunu gir; öğrencilerini listele, notlarını yaz, öğrenci verilerini gör.</p></div>';
+  if (!supaHazir()) {
+    h += '<div class="ozet-karti" style="color:#e05656">⚠️ Supabase yapılandırılmamış.<br><small>supa-config.js içindeki SUPA_URL ve SUPA_KEY alanlarını doldurun.</small></div>';
+    ekran.innerHTML = h; return;
+  }
+  var kod = supaDeger('supaSinifKod');
+  h += '<div class="ozet-karti" style="margin-bottom:12px">'
+    + '<label><b>📋 Sınıf Kodu</b></label><br>'
+    + '<input id="supaKod" type="text" value="' + esc(kod) + '" placeholder="örn: 6A-KTGP" style="width:100%;padding:8px;margin:6px 0;border:1px solid #ccc;border-radius:8px">'
+    + '<button class="kucuk-buton" style="background:#6a5cff;margin-top:4px" onclick="supaYukleSinif()">📥 Sınıfı Yükle</button> '
+    + '<button class="kucuk-buton" style="background:#e67e22;margin-top:4px" onclick="supaYeniSinif()">➕ Yeni Sınıf Aç</button>'
+    + '</div>';
+  h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
+  h += '<div id="supaOgrenciler"><div class="kucuk-not">Sınıf kodunu girip "Sınıfı Yükle"ye basın.</div></div>';
+  ekran.innerHTML = h;
+}
+
+function supaKodAl() {
+  var el = document.getElementById('supaKod');
+  var kod = el ? el.value.trim() : '';
+  return kod.toUpperCase();
+}
+function supaYeniSinif() {
+  var kod = supaKodAl();
+  if (!kod) { supaMesaj('Önce bir sınıf kodu girin (örn. 6A-KTGP).', 'kirmizi'); return; }
+  var ad = prompt('Sınıf adı (örn. 6-A):', '');
+  var okul = prompt('Okul adı:', '');
+  var sinif = prompt('Sınıf düzeyi (5/6/7/8):', '');
+  var ogr = prompt('Öğretmen adı:', (profilOku().ad || ''));
+  kutuSUPA.sinifOlustur(kod, ad || kod, okul, sinif, ogr)
+    .then(function () { supaKaydet('supaSinifKod', kod); supaMesaj('✅ Sınıf açıldı: ' + kod, 'yesil'); supaYukleSinif(); })
+    .catch(function (e) { supaMesaj('Hata: ' + e.message, 'kirmizi'); });
+}
+function supaYukleSinif() {
+  var kod = supaKodAl();
+  if (!kod) { supaMesaj('Sınıf kodu gir.', 'kirmizi'); return; }
+  supaKaydet('supaSinifKod', kod);
+  kutuSUPA.sinifGetir(kod).then(function (snf) {
+    if (!snf) { supaMesaj('Bu kodla kayıtlı sınıf yok. Bilgilerinizle yeni sınıf açın.', 'kirmizi');
+      document.getElementById('supaOgrenciler').innerHTML = '<div class="kucuk-not">Sınıf bulunamadı.</div>'; return; }
+    kutuSUPA.ogrenciListele(kod).then(function (ogrler) {
+      var h = '<div class="baslik" style="margin-top:4px"><h2>👥 ' + esc(snf.ad || kod) + ' — ' + (ogrler ? ogrler.length : 0) + ' öğrenci</h2></div>';
+      h += '<div class="unit-butonlar" style="margin-bottom:10px">'
+        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaOgrenciEkle()">➕ Öğrenci Ekle</button>'
+        + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaOgrenciKoduYazdir()">🖨️ Etkinleştirme Kodlarını Göster</button>'
+        + '</div>';
+      if (!ogrler || !ogrler.length) { h += '<div class="kucuk-not">Henüz öğrenci yok. "Öğrenci Ekle" ile ekleyin.</div>'; }
+      else {
+        ogrler.forEach(function(o) {
+          h += '<div style="background:#fff;border:1px solid #dfe4f5;border-radius:10px;padding:10px;margin-bottom:8px">'
+            + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+            + '<b style="flex:1">' + esc(o.adsoyad) + '</b>'
+            + '<small style="color:#888">No: ' + esc(o.no || '—') + '</small>'
+            + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaNotGoster(' + o.id + ',\'' + encodeURIComponent(esc(o.adsoyad)) + '\')">📝 Notlar</button>'
+            + '<button class="kucuk-buton" style="background:#2ecc71" onclick="supaVeriGoster(' + o.id + ')">📊 Veri</button>'
+            + '<button class="kucuk-buton" style="background:#e05656" onclick="supaOgrenciSil(' + o.id + ')">🗑️</button>'
+            + '</div>'
+            + '<div style="margin-top:6px;font-size:11px;color:#888">Etkinleştirme kodu: <code>' + esc(o.etkinlesme) + '</code></div>'
+            + '</div>';
+        });
+      }
+      var el = document.getElementById('supaOgrenciler');
+      if (el) el.innerHTML = h;
+    });
+  }).catch(function (e) { supaMesaj('Hata: ' + e.message, 'kirmizi'); });
+}
+function supaOgrenciEkle() {
+  var kod = supaDeger('supaSinifKod');
+  if (!kod) { supaMesaj('Önce sınıf kodu gir.', 'kirmizi'); return; }
+  var ad = prompt('Öğrenci adı soyadı:', '');
+  if (!ad) return;
+  var no = prompt('Öğrenci numarası:', '');
+  var etkin = prompt('Etkinleştirme kodu (öğrenciye vereceksiniz, tekil):', sifreUret(8));
+  kutuSUPA.ogrenciEkle(kod, no, ad, etkin)
+    .then(function () { supaMesaj('✅ Öğrenci eklendi. Etkinleştirme kodu: ' + etkin, 'yesil'); supaYukleSinif(); })
+    .catch(function (e) { supaMesaj('Hata: ' + e.message, 'kirmizi'); });
+}
+function supaOgrenciSil(id) {
+  if (!confirm('Bu öğrenciyi ve tüm verilerini silsin mi?')) return;
+  kutuSUPA.ogrenciSil(id).then(function () { supaYukleSinif(); });
+}
+function sifreUret(uzunluk) {
+  var set = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  var s = '';
+  for (var i = 0; i < (uzunluk || 8); i++) s += set.charAt(Math.floor(Math.random() * set.length));
+  return s;
+}
+function supaOgrenciKoduYazdir() {
+  var kod = supaDeger('supaSinifKod');
+  if (!kod) { supaMesaj('Önce sınıf yükle.', 'kirmizi'); return; }
+  kutuSUPA.ogrenciListele(kod).then(function (ogrler) {
+    var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Geri</button>';
+    h += '<div class="baslik"><h1>🖨️ Etkinleştirme Kodları</h1><p>Her öğrenciye kendi kodunu iletin. Öğrenci, uygulamadan "Sınıfa Bağlan" ile bu kodu girince sınıfına bağlanır.</p></div>';
+    h += '<div class="ozet-karti" style="white-space:pre-wrap;font-size:14px">';
+    if (ogrler && ogrler.length) ogrler.forEach(function(o, i) { h += (i + 1) + '. ' + esc(o.adsoyad) + ' → <b>' + esc(o.etkinlesme) + '</b>' + (o.no ? ' (No: ' + esc(o.no) + ')' : '') + '\n'; });
+    else h += 'Öğrenci yok.';
+    h += '</div>';
+    var el = document.getElementById('supaOgrenciler');
+    if (el) el.innerHTML = h; else { var ana = document.getElementById('supaMesaj'); if (ana) { ana.style.display = 'none'; } ekran.innerHTML = h; }
+  });
+}
+
+/* ---- ÖĞRETMEN: Not yaz/gör ---- */
+function supaNotGoster(id, adEnc) {
+  var ad = decodeURIComponent(adEnc);
+  kutuSUPA.notListele(id).then(function (notlar) {
+    var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Sınıf</button>';
+    h += '<div class="baslik"><h1>📝 Notlar — ' + esc(ad) + '</h1></div>';
+    h += '<div id="supaNotYeni" class="ozet-karti">'
+      + '<b>Not ekle:</b><br>'
+      + '<select id="supaDers"><option value="">Ders seçin</option>';
+    var sk = seciliSinif();
+    if (sk && MUFREDAT[sk]) MUFREDAT[sk].dersler.forEach(function(d) { h += '<option value="' + esc(d.ad) + '">' + esc(d.ad) + '</option>'; });
+    h += '</select> '
+        + '<input id="supaNotMetni" type="text" placeholder="Not / değerlendirme" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
+        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaNotEkle(' + id + ')">💾 Kaydet</button>'
+        + '</div>';
+    h += '<div class="baslik"><h2>Karne Notları</h2></div>';
+    if (!notlar || !notlar.length) h += '<div class="kucuk-not">Henüz not yok.</div>';
+    else notlar.forEach(function(n) {
+      h += '<div class="ozet-karti" style="margin-bottom:6px">'
+        + '<b>' + esc(n.ders || 'Ders') + '</b>: ' + esc(n.not_) + '<br>'
+        + '<small style="color:#888">' + (n.tarih ? new Date(n.tarih).toLocaleString('tr-TR') : '') + '</small> '
+        + '<button class="kucuk-buton" style="background:#e05656" onclick="supaNotSil(' + n.id + ',' + id + ')">Sil</button>'
+        + '</div>';
+    });
+    ekran.innerHTML = h;
+  }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaNotEkle(ogrenciId) {
+  var ders = document.getElementById('supaDers');
+  var metin = document.getElementById('supaNotMetni');
+  if (!ders || !metin || !ders.value || !metin.value.trim()) { alert('Ders ve not girin.'); return; }
+  kutuSUPA.notEkle(ogrenciId, ders.value, metin.value.trim())
+    .then(function () { supaNotGoster(ogrenciId, ''); cizSinifYonet(); })
+    .catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaNotSil(notId, ogrenciId) {
+  kutuSUPA.notSil(notId).then(function () { supaNotGoster(ogrenciId, ''); });
+}
+
+/* ---- ÖĞRETMEN: Öğrenci çalışma verisi ---- */
+function supaVeriGoster(ogrenciId) {
+  var alanlar = ['profil', 'puan', 'istatistik', 'aktivite', 'xp', 'odul', 'yanlis', 'tekrar', 'pomo', 'notlar', 'gorevler'];
+  Promise.all(alanlar.map(function (a) { return kutuSUPA.veriGetir(ogrenciId, a).then(function (v) { return { alan: a, veri: v }; }); }))
+    .then(function (sonuc) {
+      var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Sınıf</button>';
+      h += '<div class="baslik"><h1>📊 Öğrenci Çalışma Verisi</h1><p>Öğrencinin cihazından senkron edilen veriler.</p></div>';
+      h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
+      sonuc.forEach(function (s) {
+        h += '<div class="baslik" style="margin-top:8px"><h2>' + esc(s.alan) + '</h2></div>';
+        h += '<div class="ozet-karti" style="word-break:break-word"><small>' + (s.veri ? esc(JSON.stringify(s.veri)).slice(0, 400) : '(veri yok)') + '</small></div>';
+      });
+      ekran.innerHTML = h;
+    }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+
+/* ---- ÖĞRENCİ: Sınıfa bağlanma ekranı ---- */
+function cizSbaglan() {
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🔗 Sınıfa Bağlan</h1><p>Öğretmeninin verdiği <b>etkinleştirme kodunu</b> gir; sınıfına bağlan, çalışma verini öğretmeninle paylaş ve notlarını gör.</p></div>';
+  if (!supaHazir()) {
+    h += '<div class="ozet-karti" style="color:#e05656">⚠️ Canlı senkron için Supabase yapılandırması gerekli.</div>';
+    ekran.innerHTML = h; return;
+  }
+  var bagli = supaJsonOku('supaBagli');
+  if (bagli && bagli.id) {
+    h += '<div class="ozet-karti" style="background:#e3ffe9;border-color:#1f8a70">✅ Bu cihaz <b>' + esc(bagli.adsoyad) + '</b> olarak sınıfa bağlı.<br>'
+      + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaSenkronGonder()">⬆️ Verilerimi Öğretmene Gönder</button> '
+      + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaNotlarimGoster()">📝 Notlarımı Gör</button> '
+      + '<button class="kucuk-buton" style="background:#e05656" onclick="supaBaglantiKopar()">Çık</button>'
+      + '</div>';
+  }
+  h += '<div class="ozet-karti">'
+    + '<input id="supaKod2" type="text" placeholder="Etkinleştirme kodu" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0">'
+    + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaBaglan()">🔗 Etkinleştir ve Bağlan</button>'
+    + '</div>';
+  h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
+  ekran.innerHTML = h;
+}
+function supaBaglan() {
+  var el = document.getElementById('supaKod2');
+  var kod = el ? el.value.trim().toUpperCase() : '';
+  if (!kod) { supaMesaj('Etkinleştirme kodu gir.', 'kirmizi'); return; }
+  kutuSUPA.ogrencietkinlesme(kod).then(function (ogr) {
+    if (!ogr) { supaMesaj('Bu kodla öğrenci bulunamadı. Kodun doğru olduğundan emin ol.', 'kirmizi'); return; }
+    kutuSUPA.sinifGetir(ogr.kod).then(function (snf) {
+      supaJsonYaz('supaBagli', { id: ogr.id, no: ogr.no, adsoyad: ogr.adsoyad, kod: ogr.kod, sinifAd: (snf && snf.ad) || ogr.kod });
+      supaMesaj('✅ Sınıfa bağlandın: ' + (snf && snf.ad ? snf.ad : ogr.kod), 'yesil');
+      cizSbaglan();
+    });
+  }).catch(function (e) { supaMesaj('Hata: ' + e.message, 'kirmizi'); });
+}
+function supaBaglantiKopar() {
+  try { localStorage.removeItem('dersApp_supaBagli'); } catch (e) {}
+  cizSbaglan();
+}
+
+/* ---- ÖĞRENCİ: Veriyi öğretmene gönder ---- */
+function supaSenkronGonder() {
+  var bagli = supaJsonOku('supaBagli');
+  if (!bagli || !bagli.id) { alert('Önce sınıfa bağlan.'); return; }
+  var alanlar = ['profil', 'puan', 'istatistik', 'aktivite', 'xp', 'odul', 'yanlis', 'tekrar', 'pomo', 'notlar', 'gorevler'];
+  var oncekiSeri = Promise.resolve();
+  var islenen = 0;
+  alanlar.forEach(function (a) {
+    var veri;
+    try { veri = JSON.parse(localStorage.getItem('dersApp_' + a)); } catch (e) { veri = null; }
+    if (veri === null || veri === undefined) return;
+    oncekiSeri = oncekiSeri.then(function () { return kutuSUPA.veriGonder(bagli.id, a, veri); });
+    islenen++;
+  });
+  oncekiSeri.then(function () { alert('✅ ' + islenen + ' alan gönderildi.'); })
+    .catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaNotlarimGoster() {
+  var bagli = supaJsonOku('supaBagli');
+  if (!bagli || !bagli.id) { alert('Önce sınıfa bağlan.'); return; }
+  kutuSUPA.notListele(bagli.id).then(function (notlar) {
+    var h = '<button class="geri" onclick="git(\'sbaglan\')">⬅ Geri</button>';
+    h += '<div class="baslik"><h1>📝 Notlarım</h1><p>Öğretmeninin yazdığı karne notları.</p></div>';
+    if (!notlar || !notlar.length) h += '<div class="kucuk-not">Henüz not yok.</div>';
+    else notlar.forEach(function (n) {
+      h += '<div class="ozet-karti" style="margin-bottom:6px"><b>' + esc(n.ders || 'Ders') + '</b>: ' + esc(n.not_) + '<br><small style="color:#888">' + (n.tarih ? new Date(n.tarih).toLocaleString('tr-TR') : '') + '</small></div>';
+    });
+    ekran.innerHTML = h;
+  }).catch(function (e) { alert('Hata: ' + e.message); });
 }
