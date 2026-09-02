@@ -1,0 +1,914 @@
+{
+  "bilinenProgramlar": {
+    "1903": {
+      "ad": "İNGİLİZCE DERSİ (2-8) (2025)",
+      "pid": "1903",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1903"
+    },
+    "1904": {
+      "ad": "ÇOKLU YABANCI DİL EĞİTİM MODELİ İNGİLİZCE DERSİ (5-8) (2025)",
+      "pid": "1904",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1904"
+    },
+    "1905": {
+      "ad": "ORTAÖĞRETİM İNGİLİZCE DERSİ (Hazırlık, 9-12) (2025)",
+      "pid": "1905",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1905"
+    },
+    "1906": {
+      "ad": "ORTAÖĞRETİM İNGİLİZCE DERSİ (9-12) (2025)",
+      "pid": "1906",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1906"
+    },
+    "1924": {
+      "ad": "MÜZİK DERSİ (1-8) (2025)",
+      "pid": "1924",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1924"
+    },
+    "1944": {
+      "ad": "BEDEN EĞİTİMİ VE OYUN DERSİ (1-4) (2025)",
+      "pid": "1944",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1944"
+    },
+    "1946": {
+      "ad": "BEDEN EĞİTİMİ VE SPOR (5-8) (2025)",
+      "pid": "1946",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1946"
+    },
+    "1947": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ SİYER DERSİ (10. Sınıf) (2025)",
+      "pid": "1947",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1947"
+    },
+    "1948": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ HADİS DERSİ (10. Sınıf) (2025)",
+      "pid": "1948",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1948"
+    },
+    "1949": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ FIKIH DERSİ (10. Sınıf) (2025)",
+      "pid": "1949",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1949"
+    },
+    "1950": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ EBRU DERSİ (I, II, III) (2025)",
+      "pid": "1950",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1950"
+    },
+    "1951": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ TEZHİP DERSİ (I, II, III) (2025)",
+      "pid": "1951",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1951"
+    },
+    "1953": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ DİNÎ MUSİKİ DERSİ (I, II, III) (2025)",
+      "pid": "1953",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1953"
+    },
+    "1954": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ HÜSNÜHAT DERSİ (I, II, III) (2025)",
+      "pid": "1954",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1954"
+    },
+    "1955": {
+      "ad": "ORTAÖĞRETİM BEDEN EĞİTİMİ VE SPOR DERSİ (Hazırlık, 9-12) (2025)",
+      "pid": "1955",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1955"
+    },
+    "1956": {
+      "ad": "GSL TÜRK DÜNYASI VE TÜRK İSLAM MUSİKİSİ DERSİ (2025)",
+      "pid": "1956",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1956"
+    },
+    "1960": {
+      "ad": "GSL TÜRK MÜZİĞİ KORO VE REPERTUVARI DERSİ (10-12) (2025)",
+      "pid": "1960",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1960"
+    },
+    "1963": {
+      "ad": "GSL ENDÜSTRİYEL TASARIM DERSİ (2025)",
+      "pid": "1963",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1963"
+    },
+    "1964": {
+      "ad": "GSL KORO VE REPERTUVAR DERSİ (10-12) (2025)",
+      "pid": "1964",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1964"
+    },
+    "1966": {
+      "ad": "GSL GELENEKSEL TÜRK SANATLARI DERSİ (2025)",
+      "pid": "1966",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1966"
+    },
+    "1967": {
+      "ad": "TÜRK İŞARET DİLİ DERSİ (1-3) (2025)",
+      "pid": "1967",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1967"
+    },
+    "1968": {
+      "ad": "TOPLUMSAL UYUM BECERİLERİ DERSİ (2025)",
+      "pid": "1968",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1968"
+    },
+    "1974": {
+      "ad": "T.C. İNKILAP TARİHİ VE ATATÜRKÇÜLÜK DERSİ (8. Sınıf) (2024)",
+      "pid": "1974",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1974"
+    },
+    "1975": {
+      "ad": "İNSAN HAKLARI, VATANDAŞLIK VE DEMOKRASİ DERSİ (4. Sınıf) (2024)",
+      "pid": "1975",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1975"
+    },
+    "1977": {
+      "ad": "OKUL ÖNCESİ (2024)",
+      "pid": "1977",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1977"
+    },
+    "1979": {
+      "ad": "ORTAOKUL TÜRKÇE DERSİ (5-8) (2024)",
+      "pid": "1979",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1979"
+    },
+    "1982": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ TEMEL DİNÎ BİLGİLER (9. Sınıf) (2024)",
+      "pid": "1982",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1982"
+    },
+    "1983": {
+      "ad": "BİYOLOJİ DERSİ (9-12) (2024)",
+      "pid": "1983",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1983"
+    },
+    "1984": {
+      "ad": "COĞRAFYA DERSİ (9-12) (2024)",
+      "pid": "1984",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1984"
+    },
+    "1985": {
+      "ad": "DİN KÜLTÜRÜ VE AHLAK BİLGİSİ DERSİ (9-12) (2024)",
+      "pid": "1985",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1985"
+    },
+    "1986": {
+      "ad": "FELSEFE DERSİ (10-11) (2024)",
+      "pid": "1986",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1986"
+    },
+    "1987": {
+      "ad": "FİZİK DERSİ (9-12) (2024)",
+      "pid": "1987",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1987"
+    },
+    "1988": {
+      "ad": "T.C. İNKILAP TARİHİ VE ATATÜRKÇÜLÜK DERSİ (12. Sınıf) (2024)",
+      "pid": "1988",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1988"
+    },
+    "1989": {
+      "ad": "KİMYA DERSİ (9-12) (2024)",
+      "pid": "1989",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1989"
+    },
+    "1990": {
+      "ad": "KUR'AN-I KERİM DERSİ (9-12) (2024)",
+      "pid": "1990",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1990"
+    },
+    "1991": {
+      "ad": "MATEMATİK DERSİ (Hazırlık, 9-12) (2024)",
+      "pid": "1991",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1991"
+    },
+    "1992": {
+      "ad": "PEYGAMBERİMİZİN HAYATI (9-12) (2024)",
+      "pid": "1992",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1992"
+    },
+    "1993": {
+      "ad": "TARİH DERSİ (9-11) (2024)",
+      "pid": "1993",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1993"
+    },
+    "1994": {
+      "ad": "TÜRK DİLİ VE EDEBİYATI DERSİ (Hazırlık, 9-12) (2024)",
+      "pid": "1994",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1994"
+    },
+    "2003": {
+      "ad": "ORTAÖĞRETİM GÖRSEL SANATLAR DERSİ (Hazırlık, 9-12) (2025)",
+      "pid": "2003",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2003"
+    },
+    "2005": {
+      "ad": "TRAFİK GÜVENLİĞİ DERSİ (4. SINIF) (2025)",
+      "pid": "2005",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2005"
+    },
+    "2023": {
+      "ad": "ÇOKLU YABANCI DİL EĞİTİM MODELİ ALMANCA DERSİ (5-8) (2025)",
+      "pid": "2023",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2023"
+    },
+    "2024": {
+      "ad": "BİLİŞİM TEKNOLOJİLERİ VE YAZILIM DERSİ (5-6) (2025)",
+      "pid": "2024",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2024"
+    },
+    "2025": {
+      "ad": "ORTAÖĞRETİM MÜZİK DERSİ (Hazırlık, 9-12) (2025)",
+      "pid": "2025",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2025"
+    },
+    "2026": {
+      "ad": "İLKOKUL ARAPÇA DERSİ (2-4) (2025)",
+      "pid": "2026",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2026"
+    },
+    "2027": {
+      "ad": "ORTAOKUL VE İMAM HATİP ORTAOKULU ARAPÇA DERSİ (5-8) (2025)",
+      "pid": "2027",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2027"
+    },
+    "2028": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ ARAPÇA DERSİ (9-10) (2025)",
+      "pid": "2028",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2028"
+    },
+    "2043": {
+      "ad": "GÖRSEL SANATLAR DERSİ ÖĞRETİM PROGRAMI (1-8) (2025)",
+      "pid": "2043",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2043"
+    },
+    "2064": {
+      "ad": "BEDEN EĞİTİMİ VE SPORUN TEMELLERİ DERSİ (5-8) (2025)",
+      "pid": "2064",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2064"
+    },
+    "2066": {
+      "ad": "ÇOCUKLARDA ATLETİK PERFORMANS UYGULAMALARI DERSİ (5-8) (2025)",
+      "pid": "2066",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2066"
+    },
+    "2067": {
+      "ad": "KAPSAMLI SPOR EĞİTİMİ DERSİ (5-8) (2025)",
+      "pid": "2067",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2067"
+    },
+    "2068": {
+      "ad": "OYUN VE TAKTİKSEL FARKINDALIK DERSİ (5-8) (2025)",
+      "pid": "2068",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2068"
+    },
+    "2070": {
+      "ad": "RİTİM EĞİTİMİ VE HALK OYUNLARI DERSİ (5-8) (2025)",
+      "pid": "2070",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2070"
+    },
+    "2083": {
+      "ad": "BEDEN EĞİTİMİ, OYUN VE MÜZİK DERSİ (1-8) (2025)",
+      "pid": "2083",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2083"
+    },
+    "2084": {
+      "ad": "BİREYSEL SES EĞİTİMİ DERSİ (1-8) (2025)",
+      "pid": "2084",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2084"
+    },
+    "2085": {
+      "ad": "ÇALGI TOPLULUKLARI DERSİ (3-8) (2025)",
+      "pid": "2085",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2085"
+    },
+    "2086": {
+      "ad": "KORO VE REPERTUVAR DERSİ (1-8) (2025)",
+      "pid": "2086",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2086"
+    },
+    "2087": {
+      "ad": "MÜZİK KÜLTÜRÜ DERSİ (3-4) (2025)",
+      "pid": "2087",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2087"
+    },
+    "2088": {
+      "ad": "MÜZİK TARİHİ DERSİ (5-8) (2025)",
+      "pid": "2088",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2088"
+    },
+    "2089": {
+      "ad": "MÜZİKSEL İŞİTME, OKUMA VE YAZMA DERSİ (1-8) (2025)",
+      "pid": "2089",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2089"
+    },
+    "2090": {
+      "ad": "TÜRK MÜZİĞİ TEORİ VE UYGULAMALARI DERSİ (1-8) (2025)",
+      "pid": "2090",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2090"
+    },
+    "2104": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ BAĞLAMA MODÜLÜ (1-8) (2025)",
+      "pid": "2104",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2104"
+    },
+    "2105": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ FLÜT MODÜLÜ (1-8) (2025)",
+      "pid": "2105",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2105"
+    },
+    "2106": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ GİTAR MODÜLÜ (1-8) (2025)",
+      "pid": "2106",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2106"
+    },
+    "2107": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ KANUN MODÜLÜ (1-8) (2025)",
+      "pid": "2107",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2107"
+    },
+    "2108": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ KAVAL MODÜLÜ (1-8) (2025)",
+      "pid": "2108",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2108"
+    },
+    "2109": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ KEMAN MODÜLÜ (1-8) (2025)",
+      "pid": "2109",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2109"
+    },
+    "2110": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ NEY MODÜLÜ (1-8) (2025)",
+      "pid": "2110",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2110"
+    },
+    "2111": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ PİYANO MODÜLÜ (1-8) (2025)",
+      "pid": "2111",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2111"
+    },
+    "2112": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ UD MODÜLÜ (1-8) (2025)",
+      "pid": "2112",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2112"
+    },
+    "2113": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ VİYOLA MODÜLÜ (1-8) (2025)",
+      "pid": "2113",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2113"
+    },
+    "2114": {
+      "ad": "BİREYSEL ÇALGI EĞİTİMİ DERSİ VİYOLONSEL MODÜLÜ (1-8) (2025)",
+      "pid": "2114",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2114"
+    },
+    "2124": {
+      "ad": "MATEMATİK DERSİ (I, II ve III. Kademeler) (2025)",
+      "pid": "2124",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2124"
+    },
+    "2125": {
+      "ad": "TÜRKÇE DERSİ (I, II VE III. Kademeler) (2025)",
+      "pid": "2125",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2125"
+    },
+    "2126": {
+      "ad": "HAYAT BİLGİSİ VE GÜNLÜK YAŞAM BECERİLERİ DERSİ (I ve II. Kademeler) (2025)",
+      "pid": "2126",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2126"
+    },
+    "2127": {
+      "ad": "İLETİŞİM BECERİLERİ DERSİ (I ve II. Kademeler) (2025)",
+      "pid": "2127",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2127"
+    },
+    "2128": {
+      "ad": "SOSYAL BECERİLER DERSİ (I, II ve III. Kademeler) (2025)",
+      "pid": "2128",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2128"
+    },
+    "2129": {
+      "ad": "DİN KÜLTÜRÜ VE AHLAK BİLGİSİ DERSİ (I, II ve III. Kademeler) (2025)",
+      "pid": "2129",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2129"
+    },
+    "2130": {
+      "ad": "SAĞLIKLI YAŞAM VE GÜVENLİK BECERİLERİ DERSİ (I, II ve III. Kademeler) (2025)",
+      "pid": "2130",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2130"
+    },
+    "2131": {
+      "ad": "GÖRSEL SANATLAR DERSİ (I, II ve III. Kademeler) (2025)",
+      "pid": "2131",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2131"
+    },
+    "2132": {
+      "ad": "MÜZİK DERSİ (I, II ve III. Kademeler) (2025)",
+      "pid": "2132",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2132"
+    },
+    "2134": {
+      "ad": "BEDEN EĞİTİMİ, OYUN VE SPOR DERSİ (I, II ve III. Kademeler) (2025)",
+      "pid": "2134",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2134"
+    },
+    "2135": {
+      "ad": "BAĞIMSIZ YAŞAM BECERİLERİ DERSİ (III. Kademe) (2025)",
+      "pid": "2135",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2135"
+    },
+    "2143": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ AKAİD DERSİ (11. Sınıf) (2025)",
+      "pid": "2143",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2143"
+    },
+    "2144": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ DİN EĞİTİMİ DERSİ (2025)",
+      "pid": "2144",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2144"
+    },
+    "2145": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ İSLAM'DA ÇOCUK EĞİTİMİ DERSİ (2025)",
+      "pid": "2145",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2145"
+    },
+    "2146": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ İSLAM FELSEFESİ DERSİ (2025)",
+      "pid": "2146",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2146"
+    },
+    "2147": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ KUR'AN'IN ANA KONULARI (I-II) (2025)",
+      "pid": "2147",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2147"
+    },
+    "2148": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ MESLEKİ ARAPÇA DERSİ (11 ve 12. Sınıflar) (2025)",
+      "pid": "2148",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2148"
+    },
+    "2149": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ TASAVVUF KÜLTÜRÜ DERSİ (2025)",
+      "pid": "2149",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2149"
+    },
+    "2150": {
+      "ad": "DİN KÜLTÜRÜ VE AHLAK BİLGİSİ DERSİ (4-8) (2026)",
+      "pid": "2150",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2150"
+    },
+    "2151": {
+      "ad": "PEYGAMBERİMİZİN HAYATI DERSİ (5-8) (2026)",
+      "pid": "2151",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2151"
+    },
+    "2152": {
+      "ad": "KUR'AN-I KERİM DERSİ (5-8) (2026)",
+      "pid": "2152",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2152"
+    },
+    "2153": {
+      "ad": "DİN KÜLTÜRÜ VE AHLAK BİLGİSİ DERSİ (9-12) (2026)",
+      "pid": "2153",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2153"
+    },
+    "2154": {
+      "ad": "PEYGAMBERİMİZİN HAYATI (9-12) (2026)",
+      "pid": "2154",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2154"
+    },
+    "2155": {
+      "ad": "KUR'AN-I KERİM DERSİ (9-12) (2026)",
+      "pid": "2155",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2155"
+    },
+    "2156": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ TEMEL DİNÎ BİLGİLER (9. Sınıf) (2026)",
+      "pid": "2156",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2156"
+    },
+    "2170": {
+      "ad": "ORTAÖĞRETİM PSİKOLOJİ DERSİ (2026)",
+      "pid": "2170",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2170"
+    },
+    "2171": {
+      "ad": "İSLAM BİLİM TARİHİ DERSİ (2026)",
+      "pid": "2171",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2171"
+    },
+    "2172": {
+      "ad": "ORTAÖĞRETİM MANTIK DERSİ (2026)",
+      "pid": "2172",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2172"
+    },
+    "2173": {
+      "ad": "ORTAÖĞRETİM ÇAĞDAŞ TÜRK VE DÜNYA TARİHİ DERSİ (2026)",
+      "pid": "2173",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2173"
+    },
+    "2174": {
+      "ad": "ORTAÖĞRETİM SOSYOLOJİ DERSİ (2026)",
+      "pid": "2174",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2174"
+    },
+    "2175": {
+      "ad": "ORTAÖĞRETİM TÜRK KÜLTÜR VE MEDENİYET TARİHİ DERSİ (2026)",
+      "pid": "2175",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2175"
+    },
+    "2176": {
+      "ad": "ORTAÖĞRETİM DEMOKRASİ VE İNSAN HAKLARI DERSİ (2026)",
+      "pid": "2176",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2176"
+    },
+    "2178": {
+      "ad": "ORTAÖĞRETİM İKLİM, ÇEVRE VE YENİLİKÇİ ÇÖZÜMLER DERSİ (2026)",
+      "pid": "2178",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2178"
+    },
+    "2179": {
+      "ad": "ORTAÖĞRETİM TAKIM SPORLARI DERSİ (9-12) (2026)",
+      "pid": "2179",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2179"
+    },
+    "2180": {
+      "ad": "ORTAÖĞRETİM MATEMATİK UYGULAMALARI DERSİ (2026)",
+      "pid": "2180",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2180"
+    },
+    "2181": {
+      "ad": "ORTAÖĞRETİM TEMEL MATEMATİK DERSİ (11-12) (2026)",
+      "pid": "2181",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2181"
+    },
+    "2182": {
+      "ad": "ORTAÖĞRETİM SOSYAL BİLİM ÇALIŞMALARI DERSİ (2026)",
+      "pid": "2182",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2182"
+    },
+    "2183": {
+      "ad": "GSL ÇALGI EĞİTİMİ PİYANO DERSİ (9-12) (2026)",
+      "pid": "2183",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2183"
+    },
+    "2184": {
+      "ad": "GSL PİYANO DERSİ (9-10) (2026)",
+      "pid": "2184",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2184"
+    },
+    "2185": {
+      "ad": "GSL ÇALGI EĞİTİMİ KANUN DERSİ (9-12) (2026)",
+      "pid": "2185",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2185"
+    },
+    "2186": {
+      "ad": "GSL KANUN DERSİ (11-12) (2026)",
+      "pid": "2186",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2186"
+    },
+    "2188": {
+      "ad": "GSL ÇALGI EĞİTİMİ UD DERSİ (9-12) (2026)",
+      "pid": "2188",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2188"
+    },
+    "2190": {
+      "ad": "GSL ÇALGI TOPLULUKLARI (TÜRK MÜZİĞİ) DERSİ (11-12) (2026)",
+      "pid": "2190",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2190"
+    },
+    "2192": {
+      "ad": "SL GENEL JİMNASTİK DERSİ (9. Sınıf) (2026)",
+      "pid": "2192",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2192"
+    },
+    "2193": {
+      "ad": "SL SPOR VE BESLENME DERSİ (9. Sınıf) (2026)",
+      "pid": "2193",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2193"
+    },
+    "2194": {
+      "ad": "SL TEMEL SPOR EĞİTİMİ DERSİ (9. Sınıf) (2026)",
+      "pid": "2194",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2194"
+    },
+    "2210": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ DİNLER TARİHİ DERSİ (12. Sınıf) (2026)",
+      "pid": "2210",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2210"
+    },
+    "2211": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ HİTABET VE MESLEKİ UYGULAMA DERSİ (11. Sınıf) (2026)",
+      "pid": "2211",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2211"
+    },
+    "2212": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ KELAM DERSİ (12. Sınıf) (2026)",
+      "pid": "2212",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2212"
+    },
+    "2213": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ KUR'AN-I KERİM DERSİ (Hazırlık, 9-12. Sınıflar) (2026)",
+      "pid": "2213",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2213"
+    },
+    "2214": {
+      "ad": "ORTAÖĞRETİM TEMEL DİNÎ BİLGİLER (İslam 1-2) DERSİ (2026)",
+      "pid": "2214",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2214"
+    },
+    "2215": {
+      "ad": "ORTAOKUL VE İMAM HATİP ORTAOKULU TEMEL DİNÎ BİLGİLER (İslam 1-2) DERSİ (2026)",
+      "pid": "2215",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2215"
+    },
+    "2216": {
+      "ad": "ANADOLU İMAM HATİP LİSESİ TEFSİR DERSİ (11. Sınıf) (2026)",
+      "pid": "2216",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2216"
+    },
+    "2217": {
+      "ad": "ORTAÖĞRETİM SAĞLIK BİLGİSİ VE TRAFİK KÜLTÜRÜ DERSİ (2026)",
+      "pid": "2217",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2217"
+    },
+    "2230": {
+      "ad": "TEKNOLOJİ VE TASARIM DERSİ (2026)",
+      "pid": "2230",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2230"
+    },
+    "2250": {
+      "ad": "BİYOLOJİ DERSİ (9-12) (2026)",
+      "pid": "2250",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2250"
+    },
+    "2251": {
+      "ad": "COĞRAFYA DERSİ (9-12) (2026)",
+      "pid": "2251",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2251"
+    },
+    "2252": {
+      "ad": "TÜRK DİLİ VE EDEBİYATI DERSİ (Hazırlık, 9-12) (2026)",
+      "pid": "2252",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2252"
+    },
+    "2253": {
+      "ad": "FELSEFE DERSİ (10-11) (2026)",
+      "pid": "2253",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2253"
+    },
+    "2254": {
+      "ad": "FİZİK DERSİ (9-12) (2026)",
+      "pid": "2254",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2254"
+    },
+    "2255": {
+      "ad": "KİMYA DERSİ (9-12) (2026)",
+      "pid": "2255",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2255"
+    },
+    "2256": {
+      "ad": "MATEMATİK DERSİ (Hazırlık, 9-12) (2026)",
+      "pid": "2256",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2256"
+    },
+    "2270": {
+      "ad": "T.C. İNKILAP TARİHİ VE ATATÜRKÇÜLÜK DERSİ (12. Sınıf) (2026)",
+      "pid": "2270",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2270"
+    },
+    "2271": {
+      "ad": "TARİH DERSİ (9-11) (2026)",
+      "pid": "2271",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2271"
+    },
+    "2290": {
+      "ad": "ORAÖĞRETİM ASTRONOMİ VE UZAY BİLİMLERİ DERSİ (2026)",
+      "pid": "2290",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2290"
+    },
+    "2291": {
+      "ad": "GSL UD DERSİ (11-12) (2026)",
+      "pid": "2291",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2291"
+    },
+    "2292": {
+      "ad": "GSL BAĞLAMA DERSİ (11-12) (2026)",
+      "pid": "2292",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2292"
+    },
+    "2293": {
+      "ad": "GSL ÇALGI EĞİTİMİ BAĞLAMA DERSİ (9-12) (2026)",
+      "pid": "2293",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2293"
+    },
+    "2310": {
+      "ad": "HAYAT BİLGİSİ DERSİ (1-3) (2026)",
+      "pid": "2310",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2310"
+    },
+    "2311": {
+      "ad": "MASAL VE DESTANLARIMIZ DERSİ (2026)",
+      "pid": "2311",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2311"
+    },
+    "2330": {
+      "ad": "AFET BİLİNCİ DERSİ (2026)",
+      "pid": "2330",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2330"
+    },
+    "2331": {
+      "ad": "ÇEVRE EĞİTİMİ VE İKLİM DEĞİŞİKLİĞİ DERSİ (2026)",
+      "pid": "2331",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2331"
+    },
+    "2332": {
+      "ad": "DİJİTAL SANATLAR DERSİ (2026)",
+      "pid": "2332",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2332"
+    },
+    "2333": {
+      "ad": "DÜŞÜNME EĞİTİMİ DERSİ (2026)",
+      "pid": "2333",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2333"
+    },
+    "2334": {
+      "ad": "FEN BİLİMLERİ DERSİ (3-8) (2026)",
+      "pid": "2334",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2334"
+    },
+    "2335": {
+      "ad": "GELENEKSEL SANATLAR DERSİ (2026)",
+      "pid": "2335",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2335"
+    },
+    "2336": {
+      "ad": "GÖRGÜ KURALLARI VE NEZAKET DERSİ (2026)",
+      "pid": "2336",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2336"
+    },
+    "2337": {
+      "ad": "HALK OYUNLARI DERSİ (2026)",
+      "pid": "2337",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2337"
+    },
+    "2338": {
+      "ad": "HUKUK VE ADALET DERSİ (2026)",
+      "pid": "2338",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2338"
+    },
+    "2339": {
+      "ad": "İLKOKUL MATEMATİK DERSİ (1-4) (2026)",
+      "pid": "2339",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2339"
+    },
+    "2340": {
+      "ad": "ORTAOKUL MATEMATİK DERSİ (5-8) (2026)",
+      "pid": "2340",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2340"
+    },
+    "2341": {
+      "ad": "MATEMATİK VE BİLİM UYGULAMALARI DERSİ (2026)",
+      "pid": "2341",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2341"
+    },
+    "2342": {
+      "ad": "MEDYA OKURYAZARLIĞI DERSİ (2026)",
+      "pid": "2342",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2342"
+    },
+    "2343": {
+      "ad": "OKUL TEMELLİ SOSYAL SORUMLULUK ÇALIŞMALARI DERSİ (2026)",
+      "pid": "2343",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2343"
+    },
+    "2344": {
+      "ad": "OKUMA BECERİLERİ DERSİ (2026)",
+      "pid": "2344",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2344"
+    },
+    "2345": {
+      "ad": "PROJE TASARIMI VE UYGULAMALARI DERSİ (2026)",
+      "pid": "2345",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2345"
+    },
+    "2346": {
+      "ad": "ROBOTİK KODLAMA DERSİ (2026)",
+      "pid": "2346",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2346"
+    },
+    "2347": {
+      "ad": "SOSYAL BİLGİLER DERSİ (4-7) (2026)",
+      "pid": "2347",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2347"
+    },
+    "2348": {
+      "ad": "SPOR VE FİZİKİ ETKİNLİKLER DERSİ (2026)",
+      "pid": "2348",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2348"
+    },
+    "2349": {
+      "ad": "TEMEL YAŞAM BECERİLERİ DERSİ (2026)",
+      "pid": "2349",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2349"
+    },
+    "2350": {
+      "ad": "TÜRK SOSYAL HAYATINDA AİLE DERSİ (2026)",
+      "pid": "2350",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2350"
+    },
+    "2351": {
+      "ad": "İLKOKUL TÜRKÇE DERSİ (1-4) (2026)",
+      "pid": "2351",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2351"
+    },
+    "2352": {
+      "ad": "ORTAOKUL TÜRKÇE DERSİ (5-8) (2026)",
+      "pid": "2352",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2352"
+    },
+    "2353": {
+      "ad": "YAPAY ZEKÂ UYGULAMALARI DERSİ (2026)",
+      "pid": "2353",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2353"
+    },
+    "2354": {
+      "ad": "YAZARLIK VE YAZMA BECERİLERİ DERSİ (2026)",
+      "pid": "2354",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2354"
+    },
+    "2355": {
+      "ad": "AHLAK VE VATANDAŞLIK EĞİTİMİ DERSİ (2026)",
+      "pid": "2355",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2355"
+    },
+    "2356": {
+      "ad": "SEÇMELİ MÜZİK DERSİ BAĞLAMA MODÜLÜ (5-8) (2026)",
+      "pid": "2356",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2356"
+    },
+    "2357": {
+      "ad": "SEÇMELİ MÜZİK DERSİ GENEL MÜZİK EĞİTİMİ MODÜLÜ (5-8) (2026)",
+      "pid": "2357",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2357"
+    },
+    "2358": {
+      "ad": "SEÇMELİ MÜZİK DERSİ GİTAR MODÜLÜ (5-8) (2026)",
+      "pid": "2358",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2358"
+    },
+    "2359": {
+      "ad": "SEÇMELİ MÜZİK DERSİ KEMAN MODÜLÜ (5-8) (2026)",
+      "pid": "2359",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2359"
+    },
+    "2360": {
+      "ad": "SEÇMELİ MÜZİK DERSİ PİYANO MODÜLÜ (5-8) (2026)",
+      "pid": "2360",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2360"
+    },
+    "2361": {
+      "ad": "SEÇMELİ MÜZİK DERSİ UD MODÜLÜ (5-8) (2026)",
+      "pid": "2361",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2361"
+    },
+    "2362": {
+      "ad": "SEÇMELİ MÜZİK DERSİ TÜRK HALK MÜZİĞİ KORO MODÜLÜ (5-8) (2026)",
+      "pid": "2362",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2362"
+    },
+    "2363": {
+      "ad": "KÜLTÜR VE MEDENİYETİMİZE YÖN VERENLER (2026)",
+      "pid": "2363",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2363"
+    },
+    "2364": {
+      "ad": "ŞEHRİMİZ... DERSİ (2026)",
+      "pid": "2364",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2364"
+    },
+    "2365": {
+      "ad": "OYUN VE OYUN ETKİNLİKLERİ DERSİ DRAMA MODÜLÜ (2026)",
+      "pid": "2365",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2365"
+    },
+    "2366": {
+      "ad": "OYUN VE OYUN ETKİNLİKLERİ DERSİ GELENEKSEL OYUNLAR MODÜLÜ (2026)",
+      "pid": "2366",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2366"
+    },
+    "2367": {
+      "ad": "OYUN VE OYUN ETKİNLİKLERİ DERSİ SATRANÇ MODÜLÜ (2026)",
+      "pid": "2367",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2367"
+    },
+    "2368": {
+      "ad": "OYUN VE OYUN ETKİNLİKLERİ DERSİ ZEKÂ OYUNLARI MODÜLÜ (2026)",
+      "pid": "2368",
+      "url": "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=2368"
+    }
+  },
+  "kontrolTarihi": "2026-08-25T12:15:24.353Z",
+  "sonGuncelleme": null,
+  "mebProgramSayisi": 181,
+  "yeniProgramlar": [],
+  "durum": "yok"
+}

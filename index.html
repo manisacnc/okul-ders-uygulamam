@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Okul Ders Uygulamam</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#9b59b6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Okul Ders">
+</head>
+<body>
+
+<header>
+  <button class="logo" onclick="git('menu')">🏫 Okul Ders Uygulamam</button>
+  <div class="tabs">
+    <button data-tur="menu" onclick="git('menu')">🏠 <span class="tab-yazi">Anasayfa</span></button>
+    <button data-tur="sunum" onclick="git('sunum')">📊 <span class="tab-yazi">Sunum</span></button>
+    <button data-tur="plan" onclick="git('plan')">🗓️ <span class="tab-yazi">Çalışma Planı</span></button>
+    <button data-tur="gelisim" onclick="git('gelisim')">⭐ <span class="tab-yazi">Gelişimim</span></button>
+  </div>
+  <div class="profil-ust">
+    <button id="profilBtn" class="tema-btn-ust" onclick="git('profil')">🧑🎓</button>
+    <button id="geceBtn" class="tema-btn-ust" onclick="geceAcKapa()">🌙</button>
+  </div>
+</header>
+
+<main id="ekran"></main>
+
+<div id="overlay" class="overlay" onclick="kapatOverlay()"></div>
+<div id="modal" class="modal"></div>
+<div id="yazdirAlan" class="yazdir-alan"></div>
+
+<script>var MUFREDAT = {};</script>
+<script src="veri5.js"></script>
+<script src="konular5.js"></script>
+<script src="veri6.js"></script>
+<script src="konular6.js"></script>
+<script src="veri7.js"></script>
+<script src="konular7.js"></script>
+<script src="veri8.js"></script>
+<script src="konular8.js"></script>
+<script src="sorular.js"></script>
+<script src="soru578.js"></script>
+<script src="kitaplar.js"></script>
+<script src="fen3d.js"></script>
+<script src="canli.js"></script>
+<script src="eslestirme.js"></script>
+<script src="deneyler.js"></script>
+<script src="cozumler.js"></script>
+<script src="dinleme.js"></script>
+<script src="belgesel.js"></script>
+<script src="kodlama.js"></script>
+<script src="app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
