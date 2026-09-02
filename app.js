@@ -393,7 +393,8 @@ function cizMenu() {
    h += '<button class="arac" onclick="git(\'notlar\')"><span class="arac-ikon">📝</span>' + t('Notlarım') + '<br><small>' + t('Konu notların') + '</small></button>';
    h += '<button class="arac" onclick="git(\'pratik\')"><span class="arac-ikon">🧮</span>' + t('Pratik') + '<br><small>' + t('Hızlı alıştırma') + '</small></button>';
    h += '<button class="arac" onclick="git(\'hakimiyet\')"><span class="arac-ikon">📊</span>' + t('Hakimiyetim') + '<br><small>' + t('Genel başarı durumun') + '</small></button>';
-   h += '</div>';
+   if (typeof lisans_ !== 'undefined') h += '<button class="arac" style="border-color:#6a5cff" onclick="git(\'lisans\')"><span class="arac-ikon">🔑</span>' + t('Lisans') + '<br><small>' + esc(lisansBilgi()) + '</small></button>';
+    h += '</div>';
   h += mebBannerHTML();
   h += '<div id="meb-kontrol-yukleniyor" style="text-align:center;margin-bottom:10px"></div>';
   h += '<div style="text-align:center;margin-bottom:16px"><button class="kucuk-not" style="color:#2ecc71;cursor:pointer;border:1px solid #2ecc71;border-radius:8px;padding:6px 12px" onclick="mebKontrolEtManuel()">🔄 MEB Program Kontrolü</button>';
@@ -4192,6 +4193,9 @@ function cizLisans() {
   h += '<div class="unit-butonlar" style="margin-top:10px">'
     + '<button class="btn btn-mor" style="width:auto" onclick="lisansGir()">💾 Lisansı Doğrula ve Etkinleştir</button></div>';
   h += '<div id="lisansSonuc" style="margin-top:8px"></div>';
+  if (d.tip === 'deneme') {
+    h += '<div style="text-align:center;margin-top:14px"><button class="kucuk-buton" style="background:#1f8a70" onclick="git(\'menu\')">🚪 Denemeye Devam Et</button></div>';
+  }
   ekran.innerHTML = h;
 }
 function lisansGir() {
