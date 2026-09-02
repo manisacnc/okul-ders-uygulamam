@@ -1,5 +1,5 @@
 /* Okul Ders Uygulamam – stale-while-revalidate önbellek stratejisi */
-var SURUM = 'okul-v8';
+var SURUM = 'okul-v9';
 var DOSYALAR = [
   './index.html',
   './style.css',
@@ -48,7 +48,7 @@ self.addEventListener('activate', function (e) {
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
   var url = e.request.url;
-  if (/\/(api\/|\.json)(\?|$)/.test(url)) return;
+  if (/(\/api\/|\.json|\.netlify\/)(\?|$)/.test(url)) return;
   e.respondWith(
     caches.open(SURUM).then(function (cache) {
       return cache.match(e.request).then(function (cached) {
