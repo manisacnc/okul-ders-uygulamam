@@ -5401,7 +5401,8 @@ function cizHakimiyet() {
 
 /* ====== MEB GÜNCELLEME KONTROL ====== */
 var mebDurumCache = null;
-var MEB_API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '/api/meb-kontrol' : '/.netlify/functions/meb-kontrol';
+var MEB_API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '/api/meb-kontrol' : './meb-guncelleme.json';
+var MEB_STATIK = (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1');
 function mebGuvenceJson(r) {
   if (!r) return { durum: 'hata', hata: 'API yanıtı yok' };
   var ct = (r.headers.get && r.headers.get('Content-Type')) || '';
@@ -5448,9 +5449,12 @@ function mebKontrolEtManuel() {
     } else if (d.durum === 'hata') {
       alert('Kontrol sırasında hata: ' + (d.hata || 'Bilinmiyor'));
     } else if (d.kaynak === 'yok') {
-      alert('MEB kontrolü bu sürümde çevrimiçi yapılamıyor (sunucu API\'si yok).\nYerel sunucu (sunucu.js) ile çalıştırırsan kontrol edilebilir.');
+      alert(MEB_STATIK
+        ? 'MEB kontrol verisi bulunamadı. GitHub sayfası en son yayında otomatik kontrol edildi; site yeniden yayınlanınca güncellenir.'
+        : 'MEB kontrolü geçici olarak yapılamadı. Yerel sunucu ile çalıştırırsan yeniden denenebilir.');
     } else {
-      alert('Güncelleme yok! Tüm TYMM programları mevcut.\nToplam program: ' + d.mebProgramSayisi);
+      var _not = MEB_STATIK ? '\n(Bu GitHub sayfası; veri site yayınlanınca otomatik kontrol edilir)' : '';
+      alert('Güncelleme yok! Tüm TYMM programları mevcut.\nToplam program: ' + d.mebProgramSayisi + _not);
     }
     render();
   }).catch(function(e) { alert('Kontrol hatası: ' + e.message); });
