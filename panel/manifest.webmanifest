@@ -1,0 +1,14 @@
+{
+  "name": "Lisans Yönetim Paneli",
+  "short_name": "LisansYonetim",
+  "description": "Okul Ders Uygulamam - Öğrenci Takip ve Lisans Üretme Paneli",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#101b33",
+  "theme_color": "#101b33",
+  "icons": [
+    { "src": "ikon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "ikon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

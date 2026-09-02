@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lisans Yönetim Paneli</title>
+  <meta name="description" content="Okul Ders Uygulamam - Lisans Üretici ve Öğrenci Takip Paneli">
+  <meta name="theme-color" content="#101b33">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="ikon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">🔑</div>
+    <div class="baslik">
+      <h1>Lisans Yönetim</h1>
+      <p>Öğrenci Takip + Lisans Üretme</p>
+    </div>
+    <div class="yedekler">
+      <button class="btn sec" id="btnYedekle" title="Tüm kayıtları dosyaya indir">💾</button>
+      <button class="btn sec" id="btnGeriYukle" title="Yedek dosyasından geri yükle">📂</button>
+    </div>
+  </header>
+
+  <!-- Özel anahtar yoksa bu ekran -->
+  <section id="anahtarKarti" class="kart gizli">
+    <h2>🔐 Özel Anahtar (ozel.pem)</h2>
+    <p class="not">Lisans üretmek için özel anahtar gerekir. Anahtar <b>yalnızca bu cihazda</b> saklanır, asla internet'e gönderilmez. Anahtarını bilgisayarındaki <code>ozel.pem</code> dosyasından kopyala-yapıştır.</p>
+    <textarea id="anahtarAlani" rows="5" placeholder="-----BEGIN PRIVATE KEY----- ... kodunu buraya yapıştır" autocomplete="off" spellcheck="false"></textarea>
+    <label class="sifre-satir"><input type="password" id="anahtarParola" placeholder="Bu anahtarı şifrelemek için bir parola (opsiyonel)"></label>
+    <div class="satir"><button class="btn ana" id="btnAnahtarKaydet">💾 Anahtarı Kaydet</button><button class="btn sec" id="btnAnahtarDosya">📂 Dosyadan yükle</button></div>
+    <div id="anahtarSonuc" class="sonuc"></div>
+  </section>
+
+  <!-- Ana panel -->
+  <main id="panel" class="gizli">
+    <section class="kart form-kart">
+      <h2>➕ Yeni Lisans Verme</h2>
+      <div class="form-grid">
+        <div class="alan tam">
+          <label>Öğrencinin ADI SOYADI</label>
+          <input id="adSoyad" type="text" placeholder="Örn: Eymen Baytaroğlu" autocomplete="off">
+        </div>
+        <div class="alan">
+          <label>Süre</label>
+          <select id="sureTipi">
+            <option value="gun" selected>Gün sayısı</option>
+            <option value="sonsuz">Sınırsız</option>
+          </select>
+        </div>
+        <div class="alan" id="gunKutu">
+          <label>Kaç gün?</label>
+          <input id="gunSayisi" type="number" min="1" value="365" placeholder="örn: 30, 90, 365">
+        </div>
+      </div>
+      <button class="btn ana tam-btn" id="btnUret">🔑 Lisans Üret &amp; Kaydet</button>
+      <div id="uretimSonuc" class="sonuc"></div>
+    </section>
+
+    <section class="kart liste-kart">
+      <div class="liste-baslik">
+        <h2>📋 Öğrenci / Lisans Listesi</h2>
+        <input id="arama" type="text" placeholder="🔍 Ara..." autocomplete="off">
+        <button class="btn sec" id="btnAl" title="QR/kod ile kayıt al">📥 QR/Kod Al</button>
+        <button class="btn sec" id="btnVer" title="Kayıtları QR/kod olarak paylaş">📤 QR/Kod Ver</button>
+      </div>
+      <div class="tablo-sarici">
+        <table>
+          <thead><tr>
+            <th>#</th>
+            <th>Ad Soyad</th>
+            <th>Süre</th>
+            <th>Kalan</th>
+            <th>Veriliş</th>
+            <th>Lisans</th>
+            <th>İşlem</th>
+          </tr></thead>
+          <tbody id="tabloGovde"></tbody>
+        </table>
+      </div>
+      <div id="bosUyari" class="bos">Henüz kayıtlı öğrenci yok.</div>
+    </section>
+  </main>
+
+  <!-- QR GÖSTER / PAYLAS modali -->
+  <div class="modal gizli" id="modalQr">
+    <div class="modal-ic">
+      <h3 id="qrBaslik">📤 Kayıt Paylaş</h3>
+      <p id="qrAciklama" class="not"></p>
+      <div id="qrKutu" class="qr-kutu"></div>
+      <label class="not">...veya manuel kod (kopyala):</label>
+      <textarea id="qrKod" rows="3" readonly></textarea>
+      <div class="modal-butonlar">
+        <button class="btn ana" id="btnQrKopyala">📋 Kopyala</button>
+        <button class="btn sec" id="btnQrKapat">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR OKU / AL modali -->
+  <div class="modal gizli" id="modalAl">
+    <div class="modal-ic">
+      <h3>📥 Kayıt Al</h3>
+      <p class="not">QR'ı kameraya göster VEYA aşağıdaki kodu/farklı cihazda kopyalanan kodu yapıştır.</p>
+      <div id="kameraKutu" class="qr-kutu"><video id="video" playsinline muted></video><canvas id="scanCanvas" class="gizli"></canvas></div>
+      <div class="satir"><button class="btn sec" id="btnKamera">📷 Kamerayı Aç</button><button class="btn sec" id="btnKameraKapat" class="gizli">⏹ Kapat</button></div>
+      <textarea id="alKod" rows="3" placeholder="QR/kod buraya otomatik ya da elle girer"></textarea>
+      <div class="modal-butonlar">
+        <button class="btn ana" id="btnAlOnay">✅ Kaydı Ekle</button>
+        <button class="btn sec" id="btnAlKapat">Kapat</button>
+      </div>
+      <div id="alSonuc" class="sonuc"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast gizli"></div>
+
+  <script src="lib/qrcode.js"></script>
+  <script src="lib/jsQR.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
