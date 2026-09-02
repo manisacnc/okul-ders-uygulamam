@@ -301,6 +301,8 @@ function render() {
     else if (durum.tur === 'notlar') cizNotlar();
     else if (durum.tur === 'pratik') cizPratik();
     else if (durum.tur === 'hakimiyet') cizHakimiyet();
+    else if (durum.tur === 'rolSec') cizRolSec();
+    else if (durum.tur === 'ogr') cizOgretmen();
    window.scrollTo(0, 0);
 }
 
@@ -323,6 +325,16 @@ function cizMenu() {
   h += '<p>' + (pr.ad ? 'Merhaba ' + esc(pr.ad) + (pr.soyad ? ' ' + esc(pr.soyad) : '') + '! 👋 ' : 'Merhaba! ')
      + (pr.okul ? 'Okul: ' + esc(pr.okul) : '') + (pr.sinif ? (pr.okul ? ' · ' : '') + 'Sınıf: ' + esc(pr.sinif) : '') + '</p>';
   h += '<p>Sınıfını seç; konuları öğren, test çöz, gelişimini takip et.</p></div>';
+  var _aktifRol = aktifRol();
+  if (_aktifRol !== 'ogrenci') {
+    var _rolAd = _aktifRol === 'veli' ? '👨‍👩‍👧 Veli' : '👩‍🏫 Öğretmen';
+    h += '<div class="ozet-karti" style="border:2px solid #e67e22;margin-bottom:12px">'
+      + '<div style="display:flex;align-items:center;gap:8px">'
+      + '<span style="font-size:20px">' + (_aktifRol==='veli'?'👨‍👩‍👧':'👩‍🏫') + '</span>'
+      + '<div style="flex:1"><b>' + _rolAd + ' Modu</b><br><small>Ana çalışma araçları öğrenci modunda kullanılır.</small></div>'
+      + '<button class="kucuk-buton" style="background:' + (_aktifRol==='veli'?'#e67e22':'#6a5cff') + '" onclick="git(\'' + (_aktifRol==='veli'?'veli':'ogr') + '\')">Panele Git</button>'
+      + '</div></div>';
+  }
   var dv = oku('devam');
   if (dv && dv.L && dv.L.length) {
     h += '<div class="devam-karti">';
@@ -3332,6 +3344,10 @@ function cizProfil() {
   h += '</div>';
   h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">👨‍👩‍👧 Veli Kodu</h2></div>';
   h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#e67e22" onclick="veliKodAyarla()">🔑 Veli Kodunu Ayarla</button> <span class="kucuk-not">' + (oku('veliKod') ? 'Kod: ' + oku('veliKod') : 'Kod yok') + '</span></div>';
+  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">👩‍🏫 Öğretmen Şifresi</h2></div>';
+  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#6a5cff" onclick="ogretmenKodAyarla()">🔑 Öğretmen Şifresini Ayarla</button> <span class="kucuk-not">' + (oku('ogretmenKod') ? 'Şifre ayarlı' : 'Şifre yok') + '</span></div>';
+  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">👥 Rol Seçimi</h2></div>';
+  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#1f8a70" onclick="git(\'rolSec\')">🔄 Rol Değiştir (' + (aktifRol()==='ogrenci'?'Öğrenci':(aktifRol()==='veli'?'Veli':'Öğretmen')) + ')</button></div>';
   ekran.innerHTML = h;
 }
 
@@ -4692,6 +4708,101 @@ function unutmaEgridHTML() {
   h += '</div>';
   return h;
 }
+
+/* ====== ROL SİSTEMİ (Öğrenci / Veli / Öğretmen) ====== */
+function aktifRol() { return oku('aktifRol') || 'ogrenci'; }
+function rolAyarla(r) {
+  kaydet('aktifRol', r);
+  var p = profilOku();
+  p.rol = r;
+  kaydet('profil', p);
+}
+function ogretmenKodAyarla() {
+  var kod = prompt('Öğretmen panosu için şifre belirle (en az 4 karakter, boş = kapat):', oku('ogretmenKod') || '');
+  if (kod === null) return;
+  kaydet('ogretmenKod', kod ? String(kod) : '');
+  alert(kod ? 'Öğretmen şifresi ayarlandı.' : 'Öğretmen şifresi kaldırıldı.');
+}
+
+/* Rol seçim ekranı */
+function cizRolSec() {
+  var rivayet = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  rivayet += '<div class="baslik"><h1>👥 ' + t('Rol Seçimi') + '</h1><p>' + t('Hangi rol olarak devam etmek istiyorsun?') + '</p></div>';
+  rivayet += '<div class="dersler" style="flex-direction:column;gap:12px">';
+  rivayet += '<button class="ders-card" style="align-items:center" onclick="rolGir(\'ogrenci\')"><span class="ikon">🎓</span><span><span class="ad">' + t('Öğrenci') + '</span><br><span class="alt">' + t('Ders çalış, test çöz, plan yap') + '</span></span>' + (aktifRol()==='ogrenci'?'<span class="durum-ikon">✓ Aktif</span>':'') + '</button>';
+  rivayet += '<button class="ders-card" style="align-items:center" onclick="rolGir(\'veli\')"><span class="ikon">👨‍👩‍👧</span><span><span class="ad">' + t('Veli') + '</span><br><span class="alt">' + t('Özet rapor ve karne (kod gerekir)') + '</span></span>' + (aktifRol()==='veli'?'<span class="durum-ikon">✓ Aktif</span>':'') + '</button>';
+  rivayet += '<button class="ders-card" style="align-items:center" onclick="rolGir(\'ogretmen\')"><span class="ikon">👩‍🏫</span><span><span class="ad">' + t('Öğretmen') + '</span><br><span class="alt">' + t('Öğrenci performansı (şifre gerekir)') + '</span></span>' + (aktifRol()==='ogretmen'?'<span class="durum-ikon">✓ Aktif</span>':'') + '</button>';
+  rivayet += '</div>';
+  ekran.innerHTML = rivayet;
+}
+function rolGir(r) {
+  if (r === 'ogrenci') { rolAyarla('ogrenci'); alert('Öğrenci moduna geçildi. 🎓'); git('menu'); return; }
+  if (r === 'veli') {
+    var kod = oku('veliKod');
+    if (!kod) { rolAyarla('veli'); cizVeli(); return; }
+    var gir = prompt('Veli panosu kodu?', '');
+    if (gir === kod) { rolAyarla('veli'); cizVeli(); }
+    else alert('Kod yanlış.');
+    return;
+  }
+  if (r === 'ogretmen') {
+    var sifre = oku('ogretmenKod');
+    if (!sifre) { alert('Öğretmen şifresi henüz ayarlanmadı. Profilim sayfasından belirle.'); return; }
+    var gir2 = prompt('Öğretmen şifresi?', '');
+    if (gir2 === sifre) { rolAyarla('ogretmen'); cizOgretmen(); }
+    else alert('Şifre yanlış.');
+    return;
+  }
+}
+
+/* Öğretmen paneli (aynı cihazdaki öğrenci performansı) */
+function cizOgretmen() {
+  var s = statlar();
+  var p = profilOku();
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>👩‍🏫 ' + t('Öğretmen Paneli') + '</h1><p>' + esc(p.ad || 'Öğrenci') + ' için gelişim raporu ve öneriler.</p></div>';
+
+  h += '<div class="baslik"><h2>📌 Özet</h2></div><div class="ozet-karti">'
+    + '<div style="display:flex;flex-wrap:wrap;gap:10px">'
+    + '<div class="durum-huc"><b>🎓 Öğrenci</b><span>' + esc(p.ad || '—') + ' ' + esc(p.soyad || '') + '</span></div>'
+    + '<div class="durum-huc"><b>📚 Sınıf</b><span>' + (p.sinif ? (p.sinif + '. sınıf') : String(seciliSinif() || '') + '. sınıf') + '</span></div>'
+    + '<div class="durum-huc"><b>⭐ XP</b><span>' + s.xp + '</span></div>'
+    + '<div class="durum-huc"><b>🔥 Seri</b><span>' + s.seri + ' gün</span></div>'
+    + '<div class="durum-huc"><b>🏅 Rozet</b><span>' + (oku('odul') || []).length + '/' + ROZETLER.length + '</span></div>'
+    + '<div class="durum-huc"><b>📝 Test</b><span>' + s.testSay + ' çözüldü</span></div>'
+    + '<div class="durum-huc"><b>✅ Tam doğru</b><span>' + s.tamSay + '</span></div>'
+    + '</div></div>';
+
+  h += '<div class="baslik"><h2>📈 Gelişim Analizi</h2></div>';
+  h += '<div class="ozet-karti">' + haftalikRaporMetni().replace(/\n/g, '<br>') + '</div>';
+
+  h += '<div class="baslik"><h2>🎯 Ders Bazlı Başarı</h2></div>';
+  var sk = seciliSinif();
+  var puan = oku('puan') || {};
+  h += '<div class="araclar">';
+  if (sk && MUFREDAT[sk]) {
+    MUFREDAT[sk].dersler.forEach(function(d) {
+      var list = puan[d.id] || [];
+      var dt = 0, nt = 0;
+      list.forEach(function(e){ dt += e.d; nt += e.n; });
+      var yuz = nt ? Math.round(dt / nt * 100) : null;
+      var renk = yuz === null ? '#7f8c8d' : (yuz < 50 ? '#e05656' : (yuz < 70 ? '#e67e22' : '#1f8a70'));
+      h += '<div class="arac" style="flex-direction:column;gap:4px"><span class="arac-ikon">' + DERS_IKON(d.id) + '</span>'
+        + '<b style="font-size:13px;text-align:center">' + d.ad + '</b>'
+        + '<span style="font-weight:700;color:' + renk + '">' + (yuz === null ? 'Veri yok' : '%' + yuz) + '</span></div>';
+    });
+  }
+  h += '</div>';
+
+  h += '<div class="baslik"><h2>🖨️ Raporlar</h2></div>';
+  h += '<div class="unit-butonlar">';
+  h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="veliRaporYazdir()">🖨️ Yazdırılabilir Rapor</button>';
+  h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="git(\'karne\')">📄 Karne</button>';
+  h += '</div>';
+  h += '<div style="text-align:center;margin-top:16px"><button class="kucuk-buton" style="background:#e05656" onclick="ogretmenCikis()">🚪 Öğrenci Moduna Geç</button></div>';
+  ekran.innerHTML = h;
+}
+function ogretmenCikis() { rolAyarla('ogrenci'); alert('Öğrenci moduna geçildi. 🎓'); git('menu'); }
 
 /* 👨‍👩‍👧 Veli panosu (kod korumalı) */
 function veliKodAyarla() {
