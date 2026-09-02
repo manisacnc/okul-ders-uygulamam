@@ -79,6 +79,7 @@
   /* Kayıtlı lisans parse'la (imzayı doğrula) */
   function lisansAyristir(kod) {
     try {
+      kod = String(kod || '').replace(/\s+/g, '');
       var p = kod.split('.');
       if (p.length !== 2) return null;
       var veriB64 = p[0], imzaB64 = p[1];
