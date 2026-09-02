@@ -4177,7 +4177,7 @@ function cizLisans() {
     h += '<div class="ozet-karti"><div class="durum-huc"><b>Durum</b><span>✅ Aktif</span></div>'
       + '<div class="durum-huc"><b>Lisans sahibi</b><span>' + esc(d.ad) + '</span></div>'
       + '<div class="durum-huc"><b>Bitiş</b><span>' + esc(d.bitis) + ' (' + lisans_.kalanGun() + ' gün)</span></div>'
-      + '<div class="durum-huc"><b>Cihaz hakkı</b><span>' + d.cihaz + '</span></div></div>';
+      + '<div class="durum-huc"><b>Kullanım</b><span>' + (d.cihaz > 1 ? (d.cihaz + ' cihaz') : 'Tek cihaz') + '</span></div></div>';
     h += '<div style="text-align:center;margin-top:14px"><button class="btn btn-mor" onclick="git(\'menu\')">🚪 Devam Et</button></div>';
     ekran.innerHTML = h;
     return;
