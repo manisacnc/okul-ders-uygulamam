@@ -6,5 +6,5 @@
    Not: anon key "herkese açık" olarak tasarlanmıştır; asıl güvenlik
         RLS + sınıf kodu/etkinleştirme kodu ile sağlanır.
    ============================================================ */
-var SUPA_URL = "";
-var SUPA_KEY = "";
+var SUPA_URL = "https://hdnibwxujwzfplelhahy.supabase.co";
+var SUPA_KEY = "sb_publishable_PmEZqXKMNm-S99tJGlfwOw_2xm57ixN";
