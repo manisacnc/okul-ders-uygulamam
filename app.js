@@ -2635,8 +2635,7 @@ function sayacSil(i) {
   cizSaylar();
 }
 
-/* ====== BİLGİ KARTLARI (Aralıklı Tekrar) ====== */
-var KART_ARALIK = [1, 2, 4, 7, 14];
+/* ====== BİLGİ KARTLARI (FSRS Aralıklı Tekrar) ====== */
 
 function tarihFark(t1, t2) {
   var a = new Date(t1), b = new Date(t2);
@@ -2646,18 +2645,23 @@ function tarihFark(t1, t2) {
 function kartKartlari(dersId) {
   var kayit = oku('kartlar') || {};
   var list = kayit[dersId];
-  if (list) return list;
+  if (list) {
+    return list.map(function(c) {
+      if (c.sf !== undefined) return c;
+      return FSRS.eskiKart(c.s, c.c, c.kutu || 1);
+    });
+  }
   var es = ESLESTIRME[dersId];
   if (es && es.length) {
     var yeni = [];
-    es.forEach(function(t) { t.forEach(function(p) { yeni.push({ s: p[0], c: p[1], kutu: 1, son: null }); }); });
+    es.forEach(function(t) { t.forEach(function(p) { yeni.push(FSRS.yeniKart(p[0], p[1])); }); });
     return yeni;
   }
   var sor = SORULAR[dersId];
   if (sor) {
     var qList = [];
     Object.keys(sor).forEach(function(bi) {
-      (sor[bi] || []).forEach(function(q) { qList.push({ s: q.s, c: q.o ? q.o[q.d] : '', kutu: 1, son: null }); });
+      (sor[bi] || []).forEach(function(q) { qList.push(FSRS.yeniKart(q.s, q.o ? q.o[q.d] : '')); });
     });
     if (qList.length) return qList;
   }
@@ -2671,8 +2675,7 @@ function kartKaydet(dersId, list) {
 }
 
 function kartGecikmis(c, bugun) {
-  if (!c.son) return true;
-  return tarihFark(c.son, bugun) >= KART_ARALIK[Math.min((c.kutu || 1) - 1, KART_ARALIK.length - 1)];
+  return FSRS.tekrarGerektiriyorMu(c, bugun);
 }
 
 function kartBugun(dersId) {
@@ -2683,7 +2686,9 @@ function kartBugun(dersId) {
 }
 
 function kartYeni(dersId, mod) {
-  var list = kartKartlari(dersId).map(function(c) { return { s: c.s, c: c.c, kutu: c.kutu || 1, son: c.son || null }; });
+  var list = kartKartlari(dersId).map(function(c) {
+    return { s: c.s, c: c.c, d: c.d || 5, sf: c.sf || 2.5, r: c.r || 1, son: c.son || null, tekrar: c.tekrar || 0, sonPuan: c.sonPuan || 0 };
+  });
   if (!list.length) { alert('Bu ders için yeterli kart yok.'); return; }
   var deck;
   if (mod === 'tekrar') {
@@ -2694,7 +2699,7 @@ function kartYeni(dersId, mod) {
     deck = list.slice();
   }
   karistir(deck);
-  durum.kart = { d: dersId, hepsi: list, deck: deck, bilen: 0, basla: deck.length, goster: false, tekrar: (mod === 'tekrar') };
+  durum.kart = { d: dersId, hepsi: list, deck: deck, bilen: 0, basla: deck.length, goster: false, tekrar: (mod === 'tekrar'), istatistik: { again: 0, hard: 0, good: 0, easy: 0 } };
   durum.tur = 'kart'; tabGuncelle(); render();
 }
 
@@ -2720,7 +2725,7 @@ function cizKartSec() {
     });
   }
   h += '</div>';
-  h += '<div class="kucuk-not">💡 Kutu 1: her gün · Kutu 2: 2 günde · Kutu 3: 4 günde · Kutu 4: haftada · Kutu 5: 2 haftada bir tekrarlanır.</div>';
+  h += '<div class="kucuk-not">💡 FSRS: Kişisel hatırlama hızına göre akıllı tekrar. 4 derece: Tekrar(✗)/Zor(△)/İyi(○)/Kolay(★) — handleError.jpg</div>';
   ekran.innerHTML = h;
 }
 
@@ -2729,8 +2734,10 @@ function cizKart() {
   if (!k || !k.deck.length) { kartBitti(); return; }
   var c = k.deck[0];
   var yapilan = k.basla - k.deck.length;
+  var durumFSRS = FSRS.kartDurumu(c);
+  var durumSimge = { 'yeni': '🆕', 'hazir': '✅', 'gecikmis': '⏰', 'unutuluyor': '⚠️', 'aklimda': '🧠' }[durumFSRS] || '';
   var h = '<button class="geri" onclick="git(\'kartSec\')">⬅ Kartlara Dön</button>';
-  h += '<div class="baslik"><h1>' + (k.tekrar ? '🎯 Bugünkü Tekrarlar' : '🃏 ' + dersAdi(k.d)) + '</h1><p>Kart ' + (yapilan + 1) + '/' + k.basla + ' · Bilinen: ' + k.bilen + ' · 🗂️ Kutu ' + (c.kutu || 1) + '</p></div>';
+  h += '<div class="baslik"><h1>' + (k.tekrar ? '🎯 Bugünkü Tekrarlar' : '🃏 ' + dersAdi(k.d)) + '</h1><p>Kart ' + (yapilan + 1) + '/' + k.basla + ' · ' + durumSimge + ' ' + durumFSRS + ' · ⚡ Zorluk: ' + (c.d || 5) + '/10</p></div>';
   h += '<div class="kart-alan">';
   h += '<div class="kart">';
   h += '<div class="kart-on">' + c.s + '</div>';
@@ -2739,8 +2746,10 @@ function cizKart() {
   h += '<div class="kart-butonlar">';
   if (!k.goster) h += '<button class="btn btn-mor" onclick="kartGoster()">💡 Cevabı Göster</button>';
   else {
-    h += '<button class="btn btn-bitir" onclick="kartCevap(0)">✗ Bilmiyordum</button>';
-    h += '<button class="btn btn-test" onclick="kartCevap(1)">✓ Biliyordum</button>';
+    h += '<button class="btn btn-bitir" onclick="kartCevap(1)">✗ Tekrar</button>';
+    h += '<button class="btn" style="background:#f39c12;color:#fff" onclick="kartCevap(2)">△ Zor</button>';
+    h += '<button class="btn btn-test" onclick="kartCevap(3)">○ İyi</button>';
+    h += '<button class="btn btn-neo" onclick="kartCevap(4)">★ Kolay</button>';
   }
   h += '</div>';
   h += '</div>';
@@ -2749,12 +2758,18 @@ function cizKart() {
 
 function kartGoster() { durum.kart.goster = true; cizKart(); }
 
-function kartCevap(bil) {
+function kartCevap(puan) {
   var k = durum.kart;
   var c = k.deck.shift();
-  if (bil) { k.bilen++; c.kutu = Math.min((c.kutu || 1) + 1, 5); }
-  else { c.kutu = 1; k.deck.push(c); }
-  c.son = gunKod(new Date());
+  var sonuc = FSRS.puanSonrasiGuncelle(c, puan);
+  c = sonuc.kart;
+  if (puan >= 3) k.bilen++;
+  else k.deck.push(c);
+  k.hepsi.forEach(function(h) { if (h.s === c.s && h.c === c.c) { h.d = c.d; h.sf = c.sf; h.r = c.r; h.son = c.son; h.tekrar = c.tekrar; h.sonPuan = c.sonPuan; } });
+  if (puan === 1) k.istatistik.again++;
+  else if (puan === 2) k.istatistik.hard++;
+  else if (puan === 3) k.istatistik.good++;
+  else if (puan === 4) k.istatistik.easy++;
   k.goster = false;
   gorevIlerle('kart', 1);
   cizKart();
@@ -2767,10 +2782,17 @@ function kartBitti() {
   var toplam = k.basla;
   var yz = toplam ? Math.round(k.bilen / toplam * 100) : 0;
   xpEkle(k.bilen * 2 + 4);
+  var ist = k.istatistik || {};
   var h = '<div class="quiz-kutu"><div class="sonuc"><div class="buyuk">' + (yz >= 70 ? '🏆' : '🙂') + '</div>' +
           '<div class="puan">' + k.bilen + ' / ' + toplam + ' kartı biliyordum</div>' +
           '<p style="color:#5c6b85">%' + yz + ' başarı</p>' +
-          (k.tekrar ? '<p style="font-size:14px;color:#8b97ad">Doğru bildiklerin bir üst kutuya çıktı; yanlışlar birinci kutuya döndü.</p>' : '') +
+          '<div style="display:flex;gap:8px;justify-content:center;margin:10px 0;flex-wrap:wrap">' +
+          '<span style="color:#e74c3c">✗ Tekrar: ' + (ist.again || 0) + '</span>' +
+          '<span style="color:#f39c12">△ Zor: ' + (ist.hard || 0) + '</span>' +
+          '<span style="color:#3498db">○ İyi: ' + (ist.good || 0) + '</span>' +
+          '<span style="color:#2ecc71">★ Kolay: ' + (ist.easy || 0) + '</span>' +
+          '</div>' +
+          '<p style="font-size:13px;color:#8b97ad">FSRS: Tekrar edilen kartlar kişisel hızına göre zamanlanacak.</p>' +
           '<button class="btn btn-mor" onclick="git(\'menu\')">🏠 Anasayfa</button> ' +
           '<button class="btn btn-neo" onclick="kartBaslat(\'' + k.d + '\')">🔁 Tekrar</button></div></div>';
   durum.tur = 'kartSon';
@@ -2986,13 +3008,25 @@ function cizGorevler() {
 /* ====== YANLIŞLARIM ====== */
 function yanlisEkle(q, secim) {
   var havuz = oku('yanlis') || [];
-  havuz.push({
-    ders: durum.quiz, u: durum.qBirim,
-    ana: q.s + '||' + (q.o || []).join('|'),
-    s: q.s, o: (q.o || []).slice(),
-    dogru: q.d, sec: secim,
-    t: new Date().toLocaleDateString('tr-TR')
-  });
+  var ana = q.s + '||' + (q.o || []).join('|');
+  var mevcut = null;
+  havuz.forEach(function(e) { if (e.ana === ana) mevcut = e; });
+  if (mevcut) {
+    mevcut.tekrar = (mevcut.tekrar || 0) + 1;
+    mevcut.son = gunKod(new Date());
+    mevcut.d = Math.min(10, (mevcut.d || 5) + 0.5);
+    mevcut.sf = Math.max(0.5, (mevcut.sf || 1) * 0.8);
+  } else {
+    var yeni = {
+      ders: durum.quiz, u: durum.qBirim,
+      ana: ana,
+      s: q.s, o: (q.o || []).slice(),
+      dogru: q.d, sec: secim,
+      t: new Date().toLocaleDateString('tr-TR'),
+      d: 5, sf: 1, r: 1, son: gunKod(new Date()), tekrar: 1
+    };
+    havuz.push(yeni);
+  }
   if (havuz.length > 300) havuz.shift();
   kaydet('yanlis', havuz);
 }
@@ -3012,9 +3046,13 @@ function yanlisHavuzGuncelle(dogru) {
 function yanlisQuiz() {
   var havuz = oku('yanlis') || [];
   if (!havuz.length) { alert('Yanlış havuzun boş, harika! 🎉'); return; }
+  var bugun = gunKod(new Date());
+  var gecikmis = havuz.filter(function(e) { return !e.son || tarihFark(e.son, bugun) >= (e.sf || 1) * 0.9; });
+  var diger = havuz.filter(function(e) { return e.son && tarihFark(e.son, bugun) < (e.sf || 1) * 0.9; });
+  var sirali = karistir(gecikmis).concat(karistir(diger).slice(0, Math.max(0, 12 - gecikmis.length)));
   durum.quiz = 'yanlis';
   durum.qBirim = '';
-  durum.qListe = karistir(havuz.map(function(e) { return { s: e.s, o: e.o.slice(), d: e.dogru, z: 1 }; }));
+  durum.qListe = sirali.map(function(e) { return { s: e.s, o: e.o.slice(), d: e.dogru, z: 1, _yanlisAna: e.ana }; });
   durum.qSira = 0; durum.qDogru = 0;
   durum.qRekor = null; durum.qHavuz = true; durum.qSureDoldu = false;
   sureDurdur(); durum.sure = null;
@@ -3043,8 +3081,10 @@ function yanlisCozuldu(i) {
 
 function cizYanlis() {
   var havuz = oku('yanlis') || [];
+  var bugun = gunKod(new Date());
+  var gecikmisSay = havuz.filter(function(e) { return !e.son || tarihFark(e.son, bugun) >= (e.sf || 1) * 0.9; }).length;
   var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
-  h += '<div class="baslik"><h1>🔁 Yanlışlarım</h1><p>Yanlış yaptığın sorular burada birikir. Neden yanlış olduğunu gör ve tekrar çöz!</p></div>';
+  h += '<div class="baslik"><h1>🔁 Yanlışlarım</h1><p>FSRS ile zamanlanmış akıllı tekrar. Gecikmişler önce gelir.</p></div>';
   if (!havuz.length) {
     h += '<div class="quiz-kutu"><div class="sonuc"><div class="buyuk">🎉</div>' +
          '<div class="puan">Hiç yanlışın yok!</div>' +
@@ -3053,10 +3093,14 @@ function cizYanlis() {
     ekran.innerHTML = h;
     return;
   }
-  h += '<div style="text-align:center;margin-bottom:14px"><button class="btn btn-test" onclick="yanlisQuiz()">🧪 Yanlışları Tekrar Çöz (' + havuz.length + ')</button></div>';
+  h += '<div style="text-align:center;margin-bottom:14px">';
+  h += '<button class="btn btn-test" onclick="yanlisQuiz()">🧪 Tekrar Çöz (' + havuz.length + ')' + (gecikmisSay ? ' · ⏰ ' + gecikmisSay + ' gecikmiş' : '') + '</button>';
+  h += '</div>';
   havuz.forEach(function(e, i) {
-    h += '<div class="yanlis-kart">';
-    h += '<div class="yanlis-ust"><span>❌ ' + dersAdi(e.ders) + '</span><small>' + e.t + '</small></div>';
+    var durumFSRS = e.son ? FSRS.aralikMetin(Math.max(0, (e.sf || 1) * 0.9 - tarihFark(e.son, bugun))) : 'Yeni';
+    var gecikti = !e.son || tarihFark(e.son, bugun) >= (e.sf || 1) * 0.9;
+    h += '<div class="yanlis-kart" style="' + (gecikti ? 'border-left:4px solid #e74c3c' : 'border-left:4px solid #3498db') + '">';
+    h += '<div class="yanlis-ust"><span>❌ ' + dersAdi(e.ders) + '</span><small>' + e.t + (gecikti ? ' · ⏰ GECİKMİŞ' : ' · ' + durumFSRS) + '</small></div>';
     h += '<div class="yanlis-soru">' + e.s + '</div>';
     (e.o || []).forEach(function(o, j) {
       var cls = j === e.dogru ? 'yanlis-dogru' : j === e.sec ? 'yanlis-secim' : 'yanlis-duz';

@@ -1,9 +1,11 @@
-/* Okul Ders Uygulamam – çevrimdışı önbellek */
-var SURUM = 'okul-v6';
+/* Okul Ders Uygulamam – stale-while-revalidate önbellek stratejisi */
+var SURUM = 'okul-v7';
 var DOSYALAR = [
   './index.html',
   './style.css',
   './app.js',
+  './fsrs.js',
+  './sync.js',
   './veri5.js',
   './konular5.js',
   './veri6.js',
@@ -29,29 +31,38 @@ var DOSYALAR = [
   './apple-touch-icon.png',
   './index-tek.html'
 ];
+
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(SURUM).then(function (c) {
     return c.addAll(DOSYALAR);
   }).then(function () { return self.skipWaiting(); }));
 });
+
 self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (isimler) {
     return Promise.all(isimler.filter(function (i) { return i !== SURUM; }).map(function (i) { return caches.delete(i); }));
   }).then(function () { return self.clients.claim(); }));
 });
+
+/* Stale-while-revalidate: önce cached dön, arka planda güncelle */
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(function (yanit) {
-      if (yanit) return yanit;
-      return fetch(e.request).then(function (ag) {
-        if (ag && ag.status === 200 && ag.type === 'basic') {
-          var k = caches.open(SURUM);
-          k.then(function (c) { c.put(e.request, ag.clone()); });
-        }
-        return ag;
-      }).catch(function () {
-        return caches.match('./index.html');
+    caches.open(SURUM).then(function (cache) {
+      return cache.match(e.request).then(function (cached) {
+        var fetchPromise = fetch(e.request).then(function (networkResponse) {
+          if (networkResponse && networkResponse.status === 200) {
+            cache.put(e.request, networkResponse.clone());
+          }
+          return networkResponse;
+        }).catch(function () {
+          if (cached) return cached;
+          return new Response('Çevrimdışı – lütfen internete bağlanın.', {
+            headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+            status: 503
+          });
+        });
+        return cached || fetchPromise;
       });
     })
   );
