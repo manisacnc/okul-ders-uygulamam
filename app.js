@@ -5402,6 +5402,16 @@ function cizHakimiyet() {
 /* ====== MEB GÜNCELLEME KONTROL ====== */
 var mebDurumCache = null;
 var MEB_API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '/api/meb-kontrol' : '/.netlify/functions/meb-kontrol';
+function mebGuvenceJson(r) {
+  if (!r) return { durum: 'hata', hata: 'API yanıtı yok' };
+  var ct = (r.headers.get && r.headers.get('Content-Type')) || '';
+  if (ct && ct.indexOf('application/json') === -1) {
+    return { durum: 'yok', kontrolTarihi: new Date().toISOString(), yeniProgramlar: [], mebProgramSayisi: 0, kaynak: 'yok' };
+  }
+  return r.json().catch(function () {
+    return { durum: 'yok', kontrolTarihi: new Date().toISOString(), yeniProgramlar: [], mebProgramSayisi: 0, kaynak: 'yok' };
+  });
+}
 function mebBannerHTML() {
   if (!mebDurumCache || mebDurumCache.durum !== 'var' || !mebDurumCache.yeniProgramlar || !mebDurumCache.yeniProgramlar.length) return '';
   var adet = mebDurumCache.yeniProgramlar.length;
@@ -5416,7 +5426,7 @@ function mebBannerHTML() {
 function mebKontrolEt(cb) {
   var onceki = oku('mebDurum');
   if (onceki && onceki.durum) { mebDurumCache = onceki; }
-  fetch(MEB_API_URL).then(function(r) { return r.json(); }).then(function(d) {
+  fetch(MEB_API_URL).then(mebGuvenceJson).then(function(d) {
     mebDurumCache = d; kaydet('mebDurum', d); if (cb) cb(d);
   }).catch(function() { if (cb) cb(null); });
 }
@@ -5429,7 +5439,7 @@ function mebGuncelle() {
 function mebKontrolEtManuel() {
   var banner = $('meb-kontrol-yukleniyor');
   if (banner) banner.innerHTML = '<small>Kontrol ediliyor...</small>';
-  fetch(MEB_API_URL).then(function(r) { return r.json(); }).then(function(d) {
+  fetch(MEB_API_URL).then(mebGuvenceJson).then(function(d) {
     mebDurumCache = d; kaydet('mebDurum', d);
     if (d.durum === 'var') {
       alert('MEB\'de ' + d.yeniProgramlar.length + ' yeni TYMM programı bulundu!\n\n'
@@ -5437,6 +5447,8 @@ function mebKontrolEtManuel() {
         + '\n\nTüm programlar mevcut: ' + d.mebProgramSayisi);
     } else if (d.durum === 'hata') {
       alert('Kontrol sırasında hata: ' + (d.hata || 'Bilinmiyor'));
+    } else if (d.kaynak === 'yok') {
+      alert('MEB kontrolü bu sürümde çevrimiçi yapılamıyor (sunucu API\'si yok).\nYerel sunucu (sunucu.js) ile çalıştırırsan kontrol edilebilir.');
     } else {
       alert('Güncelleme yok! Tüm TYMM programları mevcut.\nToplam program: ' + d.mebProgramSayisi);
     }
