@@ -1,5 +1,5 @@
-/* Okul Ders Uygulamam – stale-while-revalidate önbellek stratejisi */
-var SURUM = 'okul-v11';
+/* Okul Ders Uygulamam – network-first önbellek stratejisi */
+var SURUM = 'okul-v12';
 var DOSYALAR = [
   './index.html',
   './style.css',
@@ -47,27 +47,27 @@ self.addEventListener('activate', function (e) {
   }).then(function () { return self.clients.claim(); }));
 });
 
-/* Stale-while-revalidate: önce cached dön, arka planda güncelle */
+/* Network-first: önce ağdan al (en güncel), ağ yoksa önbellekten dön */
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
   var url = e.request.url;
   if (/(\/api\/|\.json|\.netlify\/)(\?|$)/.test(url)) return;
   e.respondWith(
-    caches.open(SURUM).then(function (cache) {
-      return cache.match(e.request).then(function (cached) {
-        var fetchPromise = fetch(e.request).then(function (networkResponse) {
-          if (networkResponse && networkResponse.status === 200) {
-            cache.put(e.request, networkResponse.clone());
-          }
-          return networkResponse;
-        }).catch(function () {
+    fetch(e.request).then(function (networkResponse) {
+      if (networkResponse && networkResponse.status === 200 && (networkResponse.type === 'basic' || networkResponse.type === 'cors')) {
+        var klon = networkResponse.clone();
+        caches.open(SURUM).then(function (cache) { cache.put(e.request, klon); }).catch(function () {});
+      }
+      return networkResponse;
+    }).catch(function () {
+      return caches.open(SURUM).then(function (cache) {
+        return cache.match(e.request).then(function (cached) {
           if (cached) return cached;
           return new Response('Çevrimdışı – lütfen internete bağlanın.', {
             headers: { 'Content-Type': 'text/plain; charset=utf-8' },
             status: 503
           });
         });
-        return cached || fetchPromise;
       });
     })
   );
