@@ -1907,30 +1907,57 @@ function dinleMetin(dersId, bi) {
   var b = d && d.birimler[bi];
   return b ? (icerikCek(seciliSinif(), dersId, bi) || b.ozet || '') : '';
 }
+var _ttsLee = null;
+function ttsVoiceBul() {
+  try {
+    var ss = window.speechSynthesis;
+    if (!ss || !ss.getVoices) return null;
+    var sesler = ss.getVoices() || [];
+    if (!sesler.length) return 'YUKLENIYOR';
+    for (var v = 0; v < sesler.length; v++) { if ((sesler[v].lang || '').indexOf('tr') === 0) return sesler[v]; }
+    return sesler[0];
+  } catch (e) { return null; }
+}
+function ttsDurumGoster(s) {
+  var g = document.getElementById('ttsDurum');
+  if (g) g.innerHTML = s;
+}
 function seslendir(metin, turkce) {
   if (!window.speechSynthesis) { alert('Tarayıcı sesli okumayı desteklemiyor.'); return; }
   window.speechSynthesis.cancel();
-  var sesBulunamadi = false;
+  ttsDurumGoster('🔊 Hazırlanıyor…');
   var u = new (window.SpeechSynthesisUtterance || SpeechSynthesisUtterance)(metin);
   if (turkce) u.lang = 'tr-TR';
-  var sesler = [];
-  try { sesler = window.speechSynthesis.getVoices() || []; } catch (e) {}
-  function atrSes() {
-    try {
-      sesler = window.speechSynthesis.getVoices() || [];
-      for (var v = 0; v < sesler.length; v++) {
-        var l = (sesler[v].lang || '');
-        if (turkce) { if (l.indexOf('tr') === 0) { u.voice = sesler[v]; break; } }
-        else if (l.indexOf(langTr()) === 0) { u.voice = sesler[v]; break; }
-      }
-    } catch (e) {}
-  }
-  atrSes();
   u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
-  if (!window.speechSynthesis.getVoices || !window.speechSynthesis.getVoices().length) {
-    if (!sesBulunamadi) { sesBulunamadi = true; window.speechSynthesis.onvoiceschanged = atrSes; }
-  } else { window.speechSynthesis.onvoiceschanged = null; }
-  setTimeout(function () { window.speechSynthesis.speak(u); }, 150);
+  function denemek() {
+    var ses = ttsVoiceBul();
+    if (ses && ses !== 'YUKLENIYOR') u.voice = ses;
+    u.onstart = function () { ttsDurumGoster('🔊 Oynatılıyor… (ses cihazından gelmeli)'); };
+    u.onend = function () { ttsDurumGoster('✅ Tamamlandı'); };
+    u.onerror = function () { ttsDurumGoster('⚠️ Ses motoru hatası'); };
+    try { window.speechSynthesis.speak(u); } catch (e) { ttsDurumGoster('⚠️ Konuşma başlatılamadı'); }
+  }
+  var kez = 0;
+  function bekleVeKonus() {
+    kez++;
+    var ses = ttsVoiceBul();
+    if (ses === 'YUKLENIYOR' && kez < 40) { setTimeout(bekleVeKonus, 100); return; }
+    denemek();
+  }
+  if (window.speechSynthesis.onvoiceschanged === null || window.speechSynthesis.addEventListener) {
+    try { window.speechSynthesis.addEventListener('voiceschanged', function () { bekleVeKonus(); }); } catch (e) {}
+  }
+  bekleVeKonus();
+}
+function sesTesti() {
+  var durum = ttsVoiceBul();
+  if (!window.speechSynthesis) { alert('Bu tarayıcıda sesli okuma desteklenmiyor.'); return; }
+  if (durum === null) { alert('Ses motoru bulunamadı. Cihazına metin-okuma sesi eklemen gerekiyor.'); return; }
+  var mesaj = durum === 'YUKLENIYOR'
+    ? '🔊 Merhaba! Uygulama sesi için cihazının yüklenmesini bekliyor. Birkaç saniye sonra tekrar deneyin.'
+    : '🔊 Merhaba! Ses çalışıyorsa bu cümleyi duymuşsun. Ses dilin: ' + (durum.lang || '?') + ' (' + (durum.name || '') + ')';
+  seslendir(mesaj, durum === 'YUKLENIYOR' || (durum && durum.lang && durum.lang.indexOf('tr') === 0));
+  setTimeout(function () { if (!window.speechSynthesis.speaking) ttsDurumGoster('⚠️ Ses motoru hazır ama konuşmuyor'); }, 2000);
 }
 function langTr() {
   return (navigator.language || 'tr-TR').replace('-', '').toLowerCase().indexOf('tr') === 0 ? 'tr' : 'tr';
@@ -2394,7 +2421,9 @@ function acKapaOzet(dersId, bi) {
   h += '<div class="dinle-metin">' + (icerik ? detayHTML(icerik) : '<small>(Bu konu için ders notu henüz hazır değil.)</small>') + '</div>';
   if (b.kazanim) h += '<div class="meb-kazanim" style="margin-top:10px">🎯 ' + esc(b.kazanim) + '</div>';
   h += '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-test" onclick="sesliOkuDinleMetin()">🔊 Dinle</button>';
-  h += '<button class="btn btn-mor" onclick="kapatOverlay()">Tamam</button></div></div>';
+  h += '<button class="btn btn-mor" onclick="kapatOverlay()">Tamam</button></div>';
+  h += '<div id="ttsDurum" class="tts-durum" style="margin-top:8px;font-size:13px;color:#666"></div>';
+  h += '<button class="kucuk-buton" style="background:#555;margin-top:6px" onclick="sesTesti()">🔁 Ses Testi</button></div></div>';
   dinleSesMetni = (b.ad + '. ' + (icerik || ''));
   $('modal').innerHTML = h;
   $('overlay').classList.add('acik');
