@@ -117,6 +117,20 @@ function kapatOverlay() {
 }
 
 /* ====== KONU DERS NOTLARI (Konu İçerikleri) ====== */
+function sesMetniTemizle(t) {
+  if (!t) return '';
+  return String(t)
+    .replace(/\n+/g, ' ')
+    .replace(/^##\s+/gm, '')
+    .replace(/\s*##\s+/g, '. ')
+    .replace(/^\s*-\s+/gm, '')
+    .replace(/\s+-\s+/g, '. ')
+    .replace(/[#*_`>]/g, '')
+    .replace(/💡|✅|🎯|📖|🔊|▶|📄|❶|❷|❸|❹|❺|\d+\)/g, '')
+    .replace(/\.\s*\./g, '.')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
 function icerikCek(s, dersId, bi) {
   var D = window['DETAY' + s];
   if (D && D[dersId] && D[dersId][bi]) return D[dersId][bi];
@@ -152,9 +166,9 @@ function konuSesliOku(dersId, i) {
   var d = dersBul(seciliSinif(), dersId);
   var b = d && d.birimler[i];
   var icerik = icerikCek(seciliSinif(), dersId, i);
-  var metin = b ? (b.ad + '. ' + (icerik || b.detay || b.ozet || '')) : '';
+  var metin = sesMetniTemizle((b ? b.ad + '. ' : '') + (icerik || b.detay || b.ozet || ''));
   if (!metin) { alert('Bu konu için sesli okunacak metin yok.'); return; }
-  seslendir(metin.replace(/## /g, '').replace(/- /g, ''), true);
+  seslendir(metin, true);
 }
 
 /* ====== OKUL KÜTÜPHANESİ (e-Kitap) ====== */
@@ -1961,7 +1975,7 @@ function sesTesti() {
 function langTr() {
   return (navigator.language || 'tr-TR').replace('-', '').toLowerCase().indexOf('tr') === 0 ? 'tr' : 'tr';
 }
-function sesliOku(metin) { seslendir(metin, true); }
+function sesliOku(metin) { if (!metin || !String(metin).trim()) { alert('Dinlenecek metin boş.'); return; } seslendir(metin, true); }
 function cizDinle() {
   var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   var s = seciliSinif() || '6';
@@ -2004,7 +2018,7 @@ function dinleAc(dersId, bi) {
   var b = d && d.birimler[bi];
   var metin = dinleMetin(dersId, bi);
   if (!metin) { alert('Bu konu için metin bulunamadı.'); return; }
-  dinleSesMetni = metin;
+  dinleSesMetni = sesMetniTemizle(metin);
   var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">✕</span>';
   h += '<h3>🎧 ' + (b ? esc(b.ad) : (dersId + ' - ' + (bi + 1))) + '</h3>';
   h += '<div class="dinle-metin">' + esc(metin) + '</div>';
@@ -2423,7 +2437,7 @@ function acKapaOzet(dersId, bi) {
   h += '<button class="btn btn-mor" onclick="kapatOverlay()">Tamam</button></div>';
   h += '<div id="ttsDurum" class="tts-durum" style="margin-top:8px;font-size:13px;color:#666"></div>';
   h += '<button class="kucuk-buton" style="background:#555;margin-top:6px" onclick="sesTesti()">🔁 Ses Testi</button></div></div>';
-  dinleSesMetni = (b.ad + '. ' + (icerik || ''));
+  dinleSesMetni = sesMetniTemizle((b.ad + '. ' + (icerik || '')));
   $('modal').innerHTML = h;
   $('overlay').classList.add('acik');
   $('modal').classList.add('acik');
