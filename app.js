@@ -86,21 +86,29 @@ function videoEmbedHTML(url) {
   if (/youtu\.be\/|youtube\.com\/(embed|v)\//.test(url)) {
     var id = (url.match(/(?:youtu\.be\/|embed\/|v=)([A-Za-z0-9_-]{6,})/));
     id = id ? id[1] : '';
-    return '<iframe src="https://www.youtube.com/embed/' + id + '?rel=0&modestbranding=1" frameborder="0" allowfullscreen></iframe>';
+    return '<div class="video-wrap"><iframe src="https://www.youtube.com/embed/' + id + '?rel=0&modestbranding=1&playsinline=1" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>';
   }
   if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) {
-    return '<video controls autoplay muted><source src="' + url + '"></video>';
+    return '<div class="video-wrap"><video controls playsinline preload="metadata" style="width:100%;height:100%"><source src="' + url + '"></video></div>';
   }
-  return '<iframe src="' + url + '" allowfullscreen></iframe>';
+  return '<div class="video-wrap"><iframe src="' + url + '" allowfullscreen allow="autoplay; encrypted-media" playsinline></iframe></div>';
 }
 function acKapaVideo(dersId, i, baslik) {
   var url = videoUrl(dersId, i);
-  if (!url) return;
+  if (!url) { alert('Bu konuya henüz video eklenmemiş. "📄 Ders Notu" ile konuyu okuyabilir veya "▶ Bul" ile YouTube\u2019da konu anlatımını bulabilirsin.'); return; }
   var bas = baslik || (MUFREDAT[seciliSinif()] && MUFREDAT[seciliSinif()].dersler) ? dersBul(seciliSinif(), dersId) : null;
   var ad = bas && bas.birimler[i] ? bas.birimler[i].ad : (dersId + '-' + (i + 1));
  $('modal').innerHTML = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">✕</span><h3>🎬 ' + ad + '</h3><div class="video-wrap">' + videoEmbedHTML(url) + '</div></div>';
   $('overlay').classList.add('acik');
   $('modal').classList.add('acik');
+}
+function videoAraYouTube(konuAd, dersId) {
+  var s = seciliSinif() || '6';
+  var d = dersBul(s, dersId);
+  var derAd = d ? d.ad : '';
+  var sorgu = (s + '. Sınıf ' + derAd + ' ' + konuAd + ' konu anlatımı').replace(/\s+/g, ' ').trim();
+  var url = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(sorgu);
+  window.open(url, '_blank');
 }
 function kapatOverlay() {
   $('modal').innerHTML = '';
@@ -136,17 +144,11 @@ function konuCalis(dersId, i) {
   $('modal').classList.add('acik');
 }
 function konuSesliOku(dersId, i) {
-  if (!window.speechSynthesis) { alert('Tarayıcı sesli okumayı desteklemiyor.'); return; }
   var d = dersBul(seciliSinif(), dersId);
   var b = d && d.birimler[i];
   var metin = b ? (b.ad + '. ' + (b.detay || b.ozet || '')) : '';
-  if (!metin) return;
-  window.speechSynthesis.cancel();
-  var u = new SpeechSynthesisUtterance(metin.replace(/## /g, '').replace(/- /g, ''));
-  u.lang = 'tr-TR';
-  var sesler = window.speechSynthesis.getVoices();
-  for (var v = 0; v < sesler.length; v++) { if ((sesler[v].lang || '').indexOf('tr') === 0) { u.voice = sesler[v]; break; } }
-  window.speechSynthesis.speak(u);
+  if (!metin) { alert('Bu konu için sesli okunacak metin yok.'); return; }
+  seslendir(metin.replace(/## /g, '').replace(/- /g, ''), true);
 }
 
 /* ====== OKUL KÜTÜPHANESİ (e-Kitap) ====== */
@@ -1899,11 +1901,35 @@ function dinleMetin(dersId, bi) {
   var b = d && d.birimler[bi];
   return b ? b.ozet : '';
 }
-function sesliOku(metin) {
+function seslendir(metin, turkce) {
   if (!window.speechSynthesis) { alert('Tarayıcı sesli okumayı desteklemiyor.'); return; }
   window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(new (window.SpeechSynthesisUtterance || SpeechSynthesisUtterance)(metin));
+  var sesBulunamadi = false;
+  var u = new (window.SpeechSynthesisUtterance || SpeechSynthesisUtterance)(metin);
+  if (turkce) u.lang = 'tr-TR';
+  var sesler = [];
+  try { sesler = window.speechSynthesis.getVoices() || []; } catch (e) {}
+  function atrSes() {
+    try {
+      sesler = window.speechSynthesis.getVoices() || [];
+      for (var v = 0; v < sesler.length; v++) {
+        var l = (sesler[v].lang || '');
+        if (turkce) { if (l.indexOf('tr') === 0) { u.voice = sesler[v]; break; } }
+        else if (l.indexOf(langTr()) === 0) { u.voice = sesler[v]; break; }
+      }
+    } catch (e) {}
+  }
+  atrSes();
+  u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
+  if (!window.speechSynthesis.getVoices || !window.speechSynthesis.getVoices().length) {
+    if (!sesBulunamadi) { sesBulunamadi = true; window.speechSynthesis.onvoiceschanged = atrSes; }
+  } else { window.speechSynthesis.onvoiceschanged = null; }
+  setTimeout(function () { window.speechSynthesis.speak(u); }, 150);
 }
+function langTr() {
+  return (navigator.language || 'tr-TR').replace('-', '').toLowerCase().indexOf('tr') === 0 ? 'tr' : 'tr';
+}
+function sesliOku(metin) { seslendir(metin, true); }
 function cizDinle() {
   var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   var s = seciliSinif() || '6';
@@ -2344,7 +2370,7 @@ function cizVideo() {
       h += '<div class="deney-ikon">' + (v ? '🎬' : '📭') + '</div>';
       h += '<div class="deney-bilgi"><b>' + esc(b.ad) + '</b><br><small>' + (v ? 'Video ders mevcut' : 'Video eklenmemiş') + '</small></div>';
       if (v) h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="acKapaVideo(\'' + d.id + '\',' + i + ',\'' + esc(b.ad).replace(/'/g, "\\'") + '\')">▶ Oynat</button></div>';
-      else h += '<div><button class="btn btn-geri" style="padding:6px 10px;font-size:13px" onclick="acKapaOzet(\'' + d.id + '\',' + i + ')">📄 Ders Notu</button></div>';
+      else h += '<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-geri" style="padding:6px 10px;font-size:13px" onclick="acKapaOzet(\'' + d.id + '\',' + i + ')">📄 Ders Notu</button><button class="btn btn-mor" style="padding:6px 10px;font-size:13px" onclick="videoAraYouTube(\'' + esc(b.ad).replace(/'/g, "\\'") + '\',\'' + d.id + '\')">▶ Bul</button></div>';
       h += '</div>';
     });
     h += '</div>';
