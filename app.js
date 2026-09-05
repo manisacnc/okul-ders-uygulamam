@@ -1928,14 +1928,9 @@ function seslendir(metin, turkce) {
   ttsDurumGoster('🔊 Hazırlanıyor…');
   var u = new (window.SpeechSynthesisUtterance || SpeechSynthesisUtterance)(metin);
   u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
-  function trSesVar() {
-    try { var sl = window.speechSynthesis.getVoices() || []; for (var v = 0; v < sl.length; v++) { if ((sl[v].lang || '').indexOf('tr') === 0) return true; } } catch (e) {}
-    return false;
-  }
-  if (turkce && trSesVar()) u.lang = 'tr-TR';
   function denemek() {
     var ses = ttsVoiceBul();
-    if (ses && ses !== 'YUKLENIYOR') u.voice = ses;
+    if (ses && ses !== 'YUKLENIYOR') { u.voice = ses; if (!u.lang && ses.lang) u.lang = ses.lang; }
     u.onstart = function () { ttsDurumGoster('🔊 Oynatılıyor… (ses cihazından gelmeli)'); };
     u.onend = function () { ttsDurumGoster('✅ Tamamlandı'); };
     u.onerror = function () { ttsDurumGoster('⚠️ Ses motoru hatası'); };
