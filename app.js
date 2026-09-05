@@ -1927,8 +1927,12 @@ function seslendir(metin, turkce) {
   window.speechSynthesis.cancel();
   ttsDurumGoster('🔊 Hazırlanıyor…');
   var u = new (window.SpeechSynthesisUtterance || SpeechSynthesisUtterance)(metin);
-  if (turkce) u.lang = 'tr-TR';
   u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
+  function trSesVar() {
+    try { var sl = window.speechSynthesis.getVoices() || []; for (var v = 0; v < sl.length; v++) { if ((sl[v].lang || '').indexOf('tr') === 0) return true; } } catch (e) {}
+    return false;
+  }
+  if (turkce && trSesVar()) u.lang = 'tr-TR';
   function denemek() {
     var ses = ttsVoiceBul();
     if (ses && ses !== 'YUKLENIYOR') u.voice = ses;
@@ -1944,7 +1948,7 @@ function seslendir(metin, turkce) {
     if (ses === 'YUKLENIYOR' && kez < 40) { setTimeout(bekleVeKonus, 100); return; }
     denemek();
   }
-  if (window.speechSynthesis.onvoiceschanged === null || window.speechSynthesis.addEventListener) {
+  if (window.speechSynthesis.addEventListener) {
     try { window.speechSynthesis.addEventListener('voiceschanged', function () { bekleVeKonus(); }); } catch (e) {}
   }
   bekleVeKonus();
