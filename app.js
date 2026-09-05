@@ -30,6 +30,11 @@ var durum = { tur: 'menu', sinif: null, ders: null, kitap: null, sayfa: 0, quiz:
 
 /* ====== VERİ YARDIMCILARI ====== */
 function dersBul(s, dersId) {
+  if (!s) {
+    var m = String(dersId).match(/(\d+)\s*$/);
+    if (m && MUFREDAT[m[1]]) s = m[1];
+    else { for (var d in MUFREDAT) { s = d; break; } }
+  }
   var bilgi = MUFREDAT[s];
   if (!bilgi) return null;
   for (var i = 0; i < bilgi.dersler.length; i++) if (bilgi.dersler[i].id === dersId) return bilgi.dersler[i];
@@ -2461,7 +2466,7 @@ function cizVideo() {
       h += '<div class="deney-kart">';
       h += '<div class="deney-ikon">' + (v ? '🎬' : '📭') + '</div>';
       h += '<div class="deney-bilgi"><b>' + esc(b.ad) + '</b><br><small>' + (v ? 'Video ders mevcut' : 'Video eklenmemiş') + '</small></div>';
-      if (v) h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="acKapaVideo(\'' + d.id + '\',' + i + ',\'' + esc(b.ad).replace(/'/g, "\\'") + '\')">▶ Oynat</button></div>';
+      if (v) h += '<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="acKapaVideo(\'' + d.id + '\',' + i + ',\'' + esc(b.ad).replace(/'/g, "\\'") + '\')">▶ Oynat</button><button class="btn btn-geri" style="padding:6px 10px;font-size:13px" onclick="acKapaOzet(\'' + d.id + '\',' + i + ')">📄 Ders Notu</button></div>';
       else h += '<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-geri" style="padding:6px 10px;font-size:13px" onclick="acKapaOzet(\'' + d.id + '\',' + i + ')">📄 Ders Notu</button><button class="btn btn-mor" style="padding:6px 10px;font-size:13px" onclick="videoAraYouTube(\'' + esc(b.ad).replace(/'/g, "\\'") + '\',\'' + d.id + '\')">▶ Bul</button></div>';
       h += '</div>';
     });
