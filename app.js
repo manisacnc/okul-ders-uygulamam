@@ -346,7 +346,7 @@ function tabGuncelle() {
 /* ====== ANA SAYFA ====== */
 function cizMenu() {
   var pr = profilOku();
-  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam</h1>';
+  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v13</span></h1>';
   h += '<p>' + (pr.ad ? 'Merhaba ' + esc(pr.ad) + (pr.soyad ? ' ' + esc(pr.soyad) : '') + '! 👋 ' : 'Merhaba! ')
      + (pr.okul ? 'Okul: ' + esc(pr.okul) : '') + (pr.sinif ? (pr.okul ? ' · ' : '') + 'Sınıf: ' + esc(pr.sinif) : '') + '</p>';
   h += '<p>Sınıfını seç; konuları öğren, test çöz, gelişimini takip et.</p></div>';
@@ -1941,6 +1941,7 @@ function googleSesCal(metin) {
   ttsDurumGoster('🔊 Oynatılıyor… (internet sesiyle)');
   if (_sesAudio) { try { _sesAudio.pause(); } catch (e) {} _sesAudio = null; }
   try {
+    if (/iPad|iPhone|iPod/i.test(navigator.userAgent)) { ttsDurumGoster('⚠️ Bu cihazda internet sesi desteklenmiyor'); return; }
     var temiz = sesMetniTemizle(metin).slice(0, 1200);
     if (!temiz) { ttsDurumGoster('⚠️ Okunacak metin yok'); return; }
     var url = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=tr&q=' + encodeURIComponent(temiz);
@@ -1951,35 +1952,61 @@ function googleSesCal(metin) {
     a.play().catch(function () { ttsDurumGoster('⚠️ Ses çalınamadı'); });
   } catch (e) { ttsDurumGoster('⚠️ Ses hatası'); }
 }
+
+var _ttsParcalar = [];
+var _ttsParcaIdx = 0;
+function _ttsParcala(metin) {
+  var m = sesMetniTemizle(metin);
+  var bol = [];
+  if (!m) return bol;
+  var cumle = m.match(/[^.!?…]+[.!?…]+/g) || [m];
+  var ak = '';
+  for (var i = 0; i < cumle.length; i++) {
+    if ((ak + cumle[i]).length > 160 && ak) { bol.push(ak.trim()); ak = cumle[i]; }
+    else ak += cumle[i];
+  }
+  if (ak.trim()) bol.push(ak.trim());
+  if (!bol.length) bol.push(m);
+  return bol;
+}
+
 function seslendir(metin, turkce) {
-  let durduruldu = false, basladi = false;
   try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
   ttsDurumGoster('🔊 Hazırlanıyor…');
-  function gttsFallback() { if (!durduruldu && !basladi) googleSesCal(metin); }
-  function arkaPlan() { setTimeout(function () { if (!durduruldu && !basladi) gttsFallback(); }, 2600); }
-  if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { gttsFallback(); return; }
-  var u = new SpeechSynthesisUtterance(metin);
-  u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
-  function denemek() {
-    var ses = ttsVoiceBul();
-    if (ses && ses !== 'YUKLENIYOR') { u.voice = ses; if (!u.lang && ses.lang) u.lang = ses.lang; }
-    u.onstart = function () { basladi = true; ttsDurumGoster('🔊 Oynatılıyor…'); };
-    u.onend = function () { durduruldu = true; ttsDurumGoster('✅ Tamamlandı'); };
-    u.onerror = function () { durduruldu = true; if (!basladi) googleSesCal(metin); else ttsDurumGoster('⚠️ Ses motoru hatası'); };
-    try { window.speechSynthesis.speak(u); } catch (e) { durduruldu = true; googleSesCal(metin); }
+  _ttsParcalar = _ttsParcala(metin);
+  if (!_ttsParcalar.length) { ttsDurumGoster('⚠️ Okunacak metin yok'); return; }
+  if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { googleSesCal(metin); return; }
+  var ss = window.speechSynthesis;
+  var sesSecildi = null;
+  function topluOku() {
+    if (_ttsParcaIdx >= _ttsParcalar.length) { ttsDurumGoster('✅ Tamamlandı'); _ttsParcaIdx = 0; return; }
+    var parca = _ttsParcalar[_ttsParcaIdx];
+    var u = new SpeechSynthesisUtterance(parca);
+    u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
+    if (!sesSecildi) {
+      var ses = ttsVoiceBul();
+      sesSecildi = (ses && ses !== 'YUKLENIYOR') ? ses : null;
+    }
+    if (sesSecildi) { u.voice = sesSecildi; if (sesSecildi.lang) u.lang = sesSecildi.lang; }
+    else if (!u.lang) u.lang = 'tr-TR';
+    u.onstart = function () { ttsDurumGoster('🔊 Oynatılıyor… (' + (_ttsParcaIdx + 1) + '/' + _ttsParcalar.length + ')'); };
+    u.onend = function () { _ttsParcaIdx++; topluOku(); };
+    u.onerror = function () { _ttsParcaIdx++; topluOku(); };
+    try {
+      ss.speak(u);
+      if (/iPad|iPhone|iPod/i.test(navigator.userAgent)) { try { ss.pause(); ss.resume(); } catch (e) {} }
+    } catch (e) { _ttsParcaIdx++; topluOku(); }
   }
   var kez = 0;
-  function bekleVeKonus() {
+  function bekleVeBas() {
     kez++;
     var ses = ttsVoiceBul();
-    if (ses === 'YUKLENIYOR' && kez < 10) { setTimeout(bekleVeKonus, 100); return; }
-    denemek();
+    if (ses === 'YUKLENIYOR' && kez < 12) { setTimeout(bekleVeBas, 100); return; }
+    _ttsParcaIdx = 0; topluOku();
   }
-  if (window.speechSynthesis.addEventListener) {
-    try { window.speechSynthesis.addEventListener('voiceschanged', function () { bekleVeKonus(); }); } catch (e) {}
-  }
-  bekleVeKonus();
-  arkaPlan();
+  if (ss.addEventListener) { try { ss.addEventListener('voiceschanged', function () { if (!sesSecildi) bekleVeBas(); }); } catch (e) {} }
+  setTimeout(function () { if (_ttsParcaIdx === 0 && !ss.speaking) { ttsDurumGoster('⚠️ Ses motoru bu cihazda konuşmuyor'); } }, 2500);
+  bekleVeBas();
 }
 function sesTesti() {
   var durum = ttsVoiceBul();
