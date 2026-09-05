@@ -1936,31 +1936,50 @@ function ttsDurumGoster(s) {
   var g = document.getElementById('ttsDurum');
   if (g) g.innerHTML = s;
 }
+var _sesAudio = null;
+function googleSesCal(metin) {
+  ttsDurumGoster('🔊 Oynatılıyor… (internet sesiyle)');
+  if (_sesAudio) { try { _sesAudio.pause(); } catch (e) {} _sesAudio = null; }
+  try {
+    var temiz = sesMetniTemizle(metin).slice(0, 1200);
+    if (!temiz) { ttsDurumGoster('⚠️ Okunacak metin yok'); return; }
+    var url = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=tr&q=' + encodeURIComponent(temiz);
+    var a = new Audio(url);
+    _sesAudio = a;
+    a.onended = function () { ttsDurumGoster('✅ Tamamlandı'); _sesAudio = null; };
+    a.onerror = function () { ttsDurumGoster('⚠️ Ses getirilemedi (internet yok olabilir)'); };
+    a.play().catch(function () { ttsDurumGoster('⚠️ Ses çalınamadı'); });
+  } catch (e) { ttsDurumGoster('⚠️ Ses hatası'); }
+}
 function seslendir(metin, turkce) {
-  if (!window.speechSynthesis) { alert('Tarayıcı sesli okumayı desteklemiyor.'); return; }
-  window.speechSynthesis.cancel();
+  let durduruldu = false, basladi = false;
+  try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
   ttsDurumGoster('🔊 Hazırlanıyor…');
-  var u = new (window.SpeechSynthesisUtterance || SpeechSynthesisUtterance)(metin);
+  function gttsFallback() { if (!durduruldu && !basladi) googleSesCal(metin); }
+  function arkaPlan() { setTimeout(function () { if (!durduruldu && !basladi) gttsFallback(); }, 2600); }
+  if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { gttsFallback(); return; }
+  var u = new SpeechSynthesisUtterance(metin);
   u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
   function denemek() {
     var ses = ttsVoiceBul();
     if (ses && ses !== 'YUKLENIYOR') { u.voice = ses; if (!u.lang && ses.lang) u.lang = ses.lang; }
-    u.onstart = function () { ttsDurumGoster('🔊 Oynatılıyor… (ses cihazından gelmeli)'); };
-    u.onend = function () { ttsDurumGoster('✅ Tamamlandı'); };
-    u.onerror = function () { ttsDurumGoster('⚠️ Ses motoru hatası'); };
-    try { window.speechSynthesis.speak(u); } catch (e) { ttsDurumGoster('⚠️ Konuşma başlatılamadı'); }
+    u.onstart = function () { basladi = true; ttsDurumGoster('🔊 Oynatılıyor…'); };
+    u.onend = function () { durduruldu = true; ttsDurumGoster('✅ Tamamlandı'); };
+    u.onerror = function () { durduruldu = true; if (!basladi) googleSesCal(metin); else ttsDurumGoster('⚠️ Ses motoru hatası'); };
+    try { window.speechSynthesis.speak(u); } catch (e) { durduruldu = true; googleSesCal(metin); }
   }
   var kez = 0;
   function bekleVeKonus() {
     kez++;
     var ses = ttsVoiceBul();
-    if (ses === 'YUKLENIYOR' && kez < 40) { setTimeout(bekleVeKonus, 100); return; }
+    if (ses === 'YUKLENIYOR' && kez < 10) { setTimeout(bekleVeKonus, 100); return; }
     denemek();
   }
   if (window.speechSynthesis.addEventListener) {
     try { window.speechSynthesis.addEventListener('voiceschanged', function () { bekleVeKonus(); }); } catch (e) {}
   }
   bekleVeKonus();
+  arkaPlan();
 }
 function sesTesti() {
   var durum = ttsVoiceBul();
