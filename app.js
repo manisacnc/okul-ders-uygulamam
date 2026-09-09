@@ -351,7 +351,7 @@ function tabGuncelle() {
 /* ====== ANA SAYFA ====== */
 function cizMenu() {
   var pr = profilOku();
-  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v15</span></h1>';
+  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v16</span></h1>';
   h += '<p>' + (pr.ad ? 'Merhaba ' + esc(pr.ad) + (pr.soyad ? ' ' + esc(pr.soyad) : '') + '! 👋 ' : 'Merhaba! ')
      + (pr.okul ? 'Okul: ' + esc(pr.okul) : '') + (pr.sinif ? (pr.okul ? ' · ' : '') + 'Sınıf: ' + esc(pr.sinif) : '') + '</p>';
   h += '<p>Sınıfını seç; konuları öğren, test çöz, gelişimini takip et.</p></div>';
@@ -1957,9 +1957,17 @@ function internetSesCal(parcalar) {
       var a = new Audio(url);
       a.referrerPolicy = 'no-referrer';
       _sesAudio = a;
+      var denendi = 0;
+      function cal() {
+        a.play().then(function () {}).catch(function () {
+          denendi++;
+          if (denendi < 2) { setTimeout(cal, 400); }
+          else { ttsDurumGoster('⚠️ Ses çalınamadı (sessize alındı mı?)'); _sesAudio = null; }
+        });
+      }
       a.onended = function () { _sesParcaIdx++; sonraki(); };
       a.onerror = function () { ttsDurumGoster('⚠️ Ses getirilemedi (internet yok olabilir)'); _sesAudio = null; };
-      a.play().catch(function () { ttsDurumGoster('⚠️ Ses çalınamadı'); _sesAudio = null; });
+      if (a.play) cal();
     } catch (e) { ttsDurumGoster('⚠️ Ses hatası'); _sesAudio = null; }
   }
   sonraki();
@@ -1986,7 +1994,12 @@ function seslendir(metin, turkce) {
   ttsDurumGoster('🔊 Hazırlanıyor…');
   _ttsParcalar = _ttsParcala(metin);
   if (!_ttsParcalar.length) { ttsDurumGoster('⚠️ Okunacak metin yok'); return; }
-  if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { internetSesCal(_ttsParcalar); return; }
+  // iOS: speechSynthesis guvenilmez + autoplay surene takilmasin diye
+  // kullanici jesti iciyle hemen (senkron) internet sesini baslat.
+  if (/iPhone|iPad|iPod/i.test(navigator.userAgent) || !window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+    internetSesCal(_ttsParcalar);
+    return;
+  }
   var ss = window.speechSynthesis;
   var sesSecildi = null;
   function topluOku() {
