@@ -1,6 +1,6 @@
-﻿/* ===== YARDIMCILAR ===== */
-/* Depolama korumasÄ±: localStorage engellenen ortamlarda (bazÄ± tablet/viewer
-   tarayÄ±cÄ±larÄ±) uygulamanÄ±n Ã§Ã¶kmeden bellekte Ã§alÄ±ÅŸmasÄ±nÄ± saÄŸlar. */
+/* ===== YARDIMCILAR ===== */
+/* Depolama koruması: localStorage engellenen ortamlarda (bazı tablet/viewer
+   tarayıcıları) uygulamanın çökmeden bellekte çalışmasını sağlar. */
 (function () {
   var mem = {}, t = null;
   try { t = window.localStorage; var _k = '__depo_test__'; t.setItem(_k, '1'); t.removeItem(_k); } catch (e) { t = null; }
@@ -21,14 +21,14 @@ function oku(a) { try { return JSON.parse(localStorage.getItem('dersApp_' + a));
 var ekran = document.getElementById('ekran');
 
 function DERS_IKON(id) {
-  var ikon = { trk: 'ğŸ“–', mat: 'ğŸ§®', fen: 'ğŸ”¬', sos: 'ğŸŒ', ink: 'ğŸ‡¹ğŸ‡·', din: 'ğŸ•Œ', ing: 'ğŸ‡¬ğŸ‡§', alm: 'ğŸ‡©ğŸ‡ª', bty: 'ğŸ’»' };
-  return ikon[id.substr(0, 3)] || 'ğŸ“˜';
+  var ikon = { trk: '📖', mat: '🧮', fen: '🔬', sos: '🌍', ink: '🇹🇷', din: '🕌', ing: '🇬🇧', alm: '🇩🇪', bty: '💻' };
+  return ikon[id.substr(0, 3)] || '📘';
 }
 
 /* ====== DURUM ====== */
 var durum = { tur: 'menu', sinif: null, ders: null, kitap: null, sayfa: 0, quiz: null, qSira: 0, qDogru: 0, qListe: [] };
 
-/* ====== VERÄ° YARDIMCILARI ====== */
+/* ====== VERİ YARDIMCILARI ====== */
 function dersBul(s, dersId) {
   if (!s) {
     var m = String(dersId).match(/(\d+)\s*$/);
@@ -46,7 +46,7 @@ function biten(k) {
   return !!done[k];
 }
 
-/* ====== TEST VERÄ°SÄ° ====== */
+/* ====== TEST VERİSİ ====== */
 function birimTest(dersId, bi) {
   var q = SORULAR[dersId];
   if (!q) return [];
@@ -61,7 +61,7 @@ function tumSorular(dersId) {
 }
 function testVar(dersId) { return tumSorular(dersId).length > 0; }
 
-/* ====== NAVÄ°GASYON ====== */
+/* ====== NAVİGASYON ====== */
 function git(tur) {
   if (durum.pratikTimer) { clearInterval(durum.pratikTimer); durum.pratikTimer = null; }
   if (durum.tur === 'test' && tur !== 'test') sureDurdur();
@@ -79,7 +79,7 @@ function git(tur) {
    render();
  }
 
-/* ===== VIDEO DERS / Ã‡Ã–ZÃœMLÃœ VÄ°DEO ===== */
+/* ===== VIDEO DERS / ÇÖZÜMLÜ VİDEO ===== */
 function videoUrl(dersId, i) {
   var v = (typeof VIDEO !== 'undefined') && VIDEO && VIDEO[dersId];
   if (!v) return null;
@@ -100,10 +100,10 @@ function videoEmbedHTML(url) {
 }
 function acKapaVideo(dersId, i, baslik) {
   var url = videoUrl(dersId, i);
-  if (!url) { alert('Bu konuya henÃ¼z video eklenmemiÅŸ. "ğŸ“„ Ders Notu" ile konuyu okuyabilir veya "â–¶ Bul" ile YouTube\u2019da konu anlatÄ±mÄ±nÄ± bulabilirsin.'); return; }
+  if (!url) { alert('Bu konuya henüz video eklenmemiş. "📄 Ders Notu" ile konuyu okuyabilir veya "▶ Bul" ile YouTube\u2019da konu anlatımını bulabilirsin.'); return; }
   var bas = baslik || (MUFREDAT[seciliSinif()] && MUFREDAT[seciliSinif()].dersler) ? dersBul(seciliSinif(), dersId) : null;
   var ad = bas && bas.birimler[i] ? bas.birimler[i].ad : (dersId + '-' + (i + 1));
- $('modal').innerHTML = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">âœ•</span><h3>ğŸ¬ ' + ad + '</h3><div class="video-wrap">' + videoEmbedHTML(url) + '</div></div>';
+ $('modal').innerHTML = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">✕</span><h3>🎬 ' + ad + '</h3><div class="video-wrap">' + videoEmbedHTML(url) + '</div></div>';
   $('overlay').classList.add('acik');
   $('modal').classList.add('acik');
 }
@@ -111,7 +111,7 @@ function videoAraYouTube(konuAd, dersId) {
   var s = seciliSinif() || '6';
   var d = dersBul(s, dersId);
   var derAd = d ? d.ad : '';
-  var sorgu = (s + '. SÄ±nÄ±f ' + derAd + ' ' + konuAd + ' konu anlatÄ±mÄ±').replace(/\s+/g, ' ').trim();
+  var sorgu = (s + '. Sınıf ' + derAd + ' ' + konuAd + ' konu anlatımı').replace(/\s+/g, ' ').trim();
   var url = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(sorgu);
   window.open(url, '_blank');
 }
@@ -121,7 +121,7 @@ function kapatOverlay() {
   $('modal').classList.remove('acik');
 }
 
-/* ====== KONU DERS NOTLARI (Konu Ä°Ã§erikleri) ====== */
+/* ====== KONU DERS NOTLARI (Konu İçerikleri) ====== */
 function sesMetniTemizle(t) {
   if (!t) return '';
   return String(t)
@@ -131,7 +131,7 @@ function sesMetniTemizle(t) {
     .replace(/^\s*-\s+/gm, '')
     .replace(/\s+-\s+/g, '. ')
     .replace(/[#*_`>]/g, '')
-    .replace(/ğŸ’¡|âœ…|ğŸ¯|ğŸ“–|ğŸ”Š|â–¶|ğŸ“„|â¶|â·|â¸|â¹|âº|\d+\)/g, '')
+    .replace(/💡|✅|🎯|📖|🔊|▶|📄|❶|❷|❸|❹|❺|\d+\)/g, '')
     .replace(/\.\s*\./g, '.')
     .replace(/\s{2,}/g, ' ')
     .trim();
@@ -147,7 +147,7 @@ function detayHTML(t) {
     sat = sat.trim();
     if (!sat) return '';
     if (sat.indexOf('## ') === 0) return '<h3 class="detay-baslik">' + sat.slice(3) + '</h3>';
-    if (sat.indexOf('- ') === 0) return '<div class="detay-madde">â€¢ ' + sat.slice(2) + '</div>';
+    if (sat.indexOf('- ') === 0) return '<div class="detay-madde">• ' + sat.slice(2) + '</div>';
     return '<p class="detay-paragraf">' + sat + '</p>';
   }).join('');
 }
@@ -156,12 +156,12 @@ function konuCalis(dersId, i) {
   if (!d || !d.birimler[i]) return;
   var b = d.birimler[i];
   var detay = icerikCek(seciliSinif(), dersId, i) || b.detay;
-  if (!detay) { alert('Bu konu iÃ§in ders notu henÃ¼z hazÄ±r deÄŸil.'); return; }
-  var h = '<div class="modal-icerik konu-icerik"><span class="kap" onclick="kapatOverlay()">âœ•</span>';
-  h += '<h3 style="margin-bottom:4px">ğŸ“– ' + b.ad + '</h3>';
-  h += '<div class="konu-kazanim">ğŸ¯ ' + esc(b.kazanim || '') + '</div>';
+  if (!detay) { alert('Bu konu için ders notu henüz hazır değil.'); return; }
+  var h = '<div class="modal-icerik konu-icerik"><span class="kap" onclick="kapatOverlay()">✕</span>';
+  h += '<h3 style="margin-bottom:4px">📖 ' + b.ad + '</h3>';
+  h += '<div class="konu-kazanim">🎯 ' + esc(b.kazanim || '') + '</div>';
   h += '<div class="detay-alan">' + detayHTML(detay) + '</div>';
-  h += '<button class="kucuk-buton" style="background:#1f8a70;margin-top:12px" onclick="konuSesliOku(\'' + dersId + '\',' + i + ')">ğŸ”Š Bu Konuyu Sesli Dinle</button>';
+  h += '<button class="kucuk-buton" style="background:#1f8a70;margin-top:12px" onclick="konuSesliOku(\'' + dersId + '\',' + i + ')">🔊 Bu Konuyu Sesli Dinle</button>';
   h += '</div>';
   $('modal').innerHTML = h;
   $('overlay').classList.add('acik');
@@ -172,11 +172,11 @@ function konuSesliOku(dersId, i) {
   var b = d && d.birimler[i];
   var icerik = icerikCek(seciliSinif(), dersId, i);
   var metin = sesMetniTemizle((b ? b.ad + '. ' : '') + (icerik || b.detay || b.ozet || ''));
-  if (!metin) { alert('Bu konu iÃ§in sesli okunacak metin yok.'); return; }
+  if (!metin) { alert('Bu konu için sesli okunacak metin yok.'); return; }
   seslendir(metin, true);
 }
 
-/* ====== OKUL KÃœTÃœPHANESÄ° (e-Kitap) ====== */
+/* ====== OKUL KÜTÜPHANESİ (e-Kitap) ====== */
 function kitapProgress(id) { var s = oku('kitap') || {}; return (s[id] != null) ? s[id] : 0; }
 function kitapKaydet(id, sayfa) { var s = oku('kitap') || {}; s[id] = sayfa; kaydet('kitap', s); }
 function kitapTamam(id) {
@@ -196,7 +196,7 @@ function kitapAc(id) {
   git('okuma');
 }
 function okumaSes(ac) {
-  if (!window.speechSynthesis) { alert('TarayÄ±cÄ± sesli okumayÄ± desteklemiyor.'); return; }
+  if (!window.speechSynthesis) { alert('Tarayıcı sesli okumayı desteklemiyor.'); return; }
   if (!ac) { window.speechSynthesis.cancel(); return; }
   var k = KITAP[durum.kitap]; if (!k) return;
   var metin = k.sayfa[durum.sayfa] || '';
@@ -204,9 +204,9 @@ function okumaSes(ac) {
   window.speechSynthesis.speak(new (window.SpeechSynthesisUtterance || SpeechSynthesisUtterance)(metin));
 }
 function cizKitaplik() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ“š Okul KÃ¼tÃ¼phanesi</h1><p>Kitap seÃ§, oku, favorilere ekle, ilerlemenizi takip et.</p></div>';
-  if (!KITAP || Object.keys(KITAP).length === 0) { h += '<p class="kucuk-not">HenÃ¼z kÃ¼tÃ¼phaneye kitap eklenmemiÅŸ.</p>'; ekran.innerHTML = h; return; }
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>📚 Okul Kütüphanesi</h1><p>Kitap seç, oku, favorilere ekle, ilerlemenizi takip et.</p></div>';
+  if (!KITAP || Object.keys(KITAP).length === 0) { h += '<p class="kucuk-not">Henüz kütüphaneye kitap eklenmemiş.</p>'; ekran.innerHTML = h; return; }
   var s = seciliSinif();
   var fav = oku('kitapFavori') || {};
   var ada = 0;
@@ -218,16 +218,16 @@ function cizKitaplik() {
     var tam = kitapTamam(id);
     ada++;
     h += '<div class="kitap-kart">';
-    h += '<div class="kitap-kapak">' + (k.kapak || 'ğŸ“š') + '</div>';
+    h += '<div class="kitap-kapak">' + (k.kapak || '📚') + '</div>';
     h += '<div class="kitap-baslik">' + k.ad + '</div>';
     h += '<div class="kitap-yazar">' + (k.yazar ? '<small>' + k.yazar + '</small>' : '') + '</div>';
-    h += '<button class="kucuk-not" onclick="favToggle(\'' + id + '\')" title="Favoriye ekle/Ã§Ä±kar" style="background:transparent;font-size:22px;padding:0">' + (fav[id] ? 'â­' : 'ğŸ¤') + '</button>';
-    h += '<button class="btn btn-test" style="width:100%;margin-top:8px" onclick="kitapAc(\'' + id + '\')">' + (tam ? 'âœ… Tekrar Oku' : 'ğŸ“– Oku') + '</button>';
+    h += '<button class="kucuk-not" onclick="favToggle(\'' + id + '\')" title="Favoriye ekle/çıkar" style="background:transparent;font-size:22px;padding:0">' + (fav[id] ? '⭐' : '🤍') + '</button>';
+    h += '<button class="btn btn-test" style="width:100%;margin-top:8px" onclick="kitapAc(\'' + id + '\')">' + (tam ? '✅ Tekrar Oku' : '📖 Oku') + '</button>';
     h += (prog > 0 && !tam) ? '<div class="kucuk-not">' + (prog + 1) + '/' + k.sayfa.length + ' sayfa</div>' : '';
     h += '</div>';
   });
   h += '</div>';
-  if (!ada) h += '<p class="kucuk-not">SeÃ§tiÄŸin sÄ±nÄ±f iÃ§in kitap yok. SÄ±nÄ±fÄ± deÄŸiÅŸtir.</p>';
+  if (!ada) h += '<p class="kucuk-not">Seçtiğin sınıf için kitap yok. Sınıfı değiştir.</p>';
   ekran.innerHTML = h;
 }
 function cizOkuma() {
@@ -236,21 +236,21 @@ function cizOkuma() {
   if (!k) { git('kitaplik'); return; }
   if (typeof durum.sayfa !== 'number' || durum.sayfa < 0) durum.sayfa = 0;
   if (durum.sayfa > k.sayfa.length - 1) durum.sayfa = k.sayfa.length - 1;
-  var h = '<div class="okuma-bar"><button class="geri" onclick="git(\'kitaplik\')">â¬… KÃ¼tÃ¼phane</button>';
-  h += '<span class="okuma-baslik">' + (k.kapak || 'ğŸ“š') + ' ' + k.ad + '</span>';
-  h += '<span class="okuma-buton" onclick="okumaSes(true)" title="Oku">ğŸ”Š</span>';
-  h += '<span class="okuma-buton" onclick="okumaSes(false)" title="Durdur">ğŸ”‡</span></div>';
+  var h = '<div class="okuma-bar"><button class="geri" onclick="git(\'kitaplik\')">⬅ Kütüphane</button>';
+  h += '<span class="okuma-baslik">' + (k.kapak || '📚') + ' ' + k.ad + '</span>';
+  h += '<span class="okuma-buton" onclick="okumaSes(true)" title="Oku">🔊</span>';
+  h += '<span class="okuma-buton" onclick="okumaSes(false)" title="Durdur">🔇</span></div>';
   h += '<div class="okuma-sayfa"><div class="sayfa">' + esc(k.sayfa[durum.sayfa] || '') + '</div></div>';
-  h += '<div class="okuma-alt"><button class="btn" onclick="okumaOnce()"' + (durum.sayfa <= 0 ? ' disabled' : '') + '>â¬…ï¸ Ã–nceki</button>';
+  h += '<div class="okuma-alt"><button class="btn" onclick="okumaOnce()"' + (durum.sayfa <= 0 ? ' disabled' : '') + '>⬅️ Önceki</button>';
   h += '<span class="kucuk-not">' + (durum.sayfa + 1) + '/' + k.sayfa.length + '</span>';
-  h += '<button class="btn" onclick="okumaSonra()"' + (durum.sayfa >= k.sayfa.length - 1 ? ' disabled' : '') + '>Sonraki â¡ï¸</button></div>';
+  h += '<button class="btn" onclick="okumaSonra()"' + (durum.sayfa >= k.sayfa.length - 1 ? ' disabled' : '') + '>Sonraki ➡️</button></div>';
   kitapKaydet(id, durum.sayfa);
   if (kitapTamam(id)) {
     var tamList = oku('kitapTamam') || [];
     if (tamList.indexOf(id) < 0) { tamList.push(id); kaydet('kitapTamam', tamList); }
     var ilkTamam = tamList.indexOf(id) === 0;
     if (ilkTamam) {
-      setTimeout(function() { alert('ğŸ‰ KitabÄ± bitirdin: ' + k.ad + ' Â· ğŸ“š Okuyucu rozetin hazÄ±r!'); }, 200);
+      setTimeout(function() { alert('🎉 Kitabı bitirdin: ' + k.ad + ' · 📚 Okuyucu rozetin hazır!'); }, 200);
       rozetKontrol();
     }
   }
@@ -322,7 +322,7 @@ function render() {
     else if (durum.tur === 'veli') cizVeli();
     else if (durum.tur === 'matdueli') cizMatDueli();
     else if (durum.tur === 'kelimebulmaca') cizKelimeBulmaca();
-    else if (durum.tur === 'haftalikrapor') { ekran.innerHTML = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>' + haftalikRaporHTML(); }
+    else if (durum.tur === 'haftalikrapor') { ekran.innerHTML = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>' + haftalikRaporHTML(); }
     else if (durum.tur === 'medya') cizMedya();
     else if (durum.tur === 'bugun') cizBugun();
     else if (durum.tur === 'notlar') cizNotlar();
@@ -339,7 +339,7 @@ function render() {
 function tabGuncelle() {
   var aktifT = durum.tur;
   if (aktifT === 'sunranda') aktifT = 'sunum';
-  var tabEtiket = { menu: 'Anasayfa', sunum: 'Sunum', plan: 'Ã‡alÄ±ÅŸma PlanÄ±', gelisim: 'GeliÅŸimim' };
+  var tabEtiket = { menu: 'Anasayfa', sunum: 'Sunum', plan: 'Çalışma Planı', gelisim: 'Gelişimim' };
   document.querySelectorAll('.tabs button').forEach(function(b) {
     var tur = b.getAttribute('data-tur');
     var yazi = b.querySelector('.tab-yazi');
@@ -351,85 +351,85 @@ function tabGuncelle() {
 /* ====== ANA SAYFA ====== */
 function cizMenu() {
   var pr = profilOku();
-  var h = '<div class="baslik"><h1>ğŸ“š Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v18</span></h1>';
-  h += '<p>' + (pr.ad ? 'Merhaba ' + esc(pr.ad) + (pr.soyad ? ' ' + esc(pr.soyad) : '') + '! ğŸ‘‹ ' : 'Merhaba! ')
-     + (pr.okul ? 'Okul: ' + esc(pr.okul) : '') + (pr.sinif ? (pr.okul ? ' Â· ' : '') + 'SÄ±nÄ±f: ' + esc(pr.sinif) : '') + '</p>';
-  h += '<p>SÄ±nÄ±fÄ±nÄ± seÃ§; konularÄ± Ã¶ÄŸren, test Ã§Ã¶z, geliÅŸimini takip et.</p></div>';
+  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v19</span></h1>';
+  h += '<p>' + (pr.ad ? 'Merhaba ' + esc(pr.ad) + (pr.soyad ? ' ' + esc(pr.soyad) : '') + '! 👋 ' : 'Merhaba! ')
+     + (pr.okul ? 'Okul: ' + esc(pr.okul) : '') + (pr.sinif ? (pr.okul ? ' · ' : '') + 'Sınıf: ' + esc(pr.sinif) : '') + '</p>';
+  h += '<p>Sınıfını seç; konuları öğren, test çöz, gelişimini takip et.</p></div>';
   var _aktifRol = aktifRol();
   if (_aktifRol !== 'ogrenci') {
-    var _rolAd = _aktifRol === 'veli' ? 'ğŸ‘¨â€ğŸ‘©â€ğŸ‘§ Veli' : 'ğŸ‘©â€ğŸ« Ã–ÄŸretmen';
+    var _rolAd = _aktifRol === 'veli' ? '👨‍👩‍👧 Veli' : '👩‍🏫 Öğretmen';
     h += '<div class="ozet-karti" style="border:2px solid #e67e22;margin-bottom:12px">'
       + '<div style="display:flex;align-items:center;gap:8px">'
-      + '<span style="font-size:20px">' + (_aktifRol==='veli'?'ğŸ‘¨â€ğŸ‘©â€ğŸ‘§':'ğŸ‘©â€ğŸ«') + '</span>'
-      + '<div style="flex:1"><b>' + _rolAd + ' Modu</b><br><small>Ana Ã§alÄ±ÅŸma araÃ§larÄ± Ã¶ÄŸrenci modunda kullanÄ±lÄ±r.</small></div>'
+      + '<span style="font-size:20px">' + (_aktifRol==='veli'?'👨‍👩‍👧':'👩‍🏫') + '</span>'
+      + '<div style="flex:1"><b>' + _rolAd + ' Modu</b><br><small>Ana çalışma araçları öğrenci modunda kullanılır.</small></div>'
       + '<button class="kucuk-buton" style="background:' + (_aktifRol==='veli'?'#e67e22':'#6a5cff') + '" onclick="git(\'' + (_aktifRol==='veli'?'veli':'ogr') + '\')">Panele Git</button>'
       + '</div></div>';
   }
   var dv = oku('devam');
   if (dv && dv.L && dv.L.length) {
     h += '<div class="devam-karti">';
-    h += '<div><b>â–¶ï¸ YarÄ±da kalan testin var</b><br><small>' + dersAdi(dv.d) + ' Â· ' + dv.n + '/' + dv.L.length + ' soru Ã§Ã¶zÃ¼ldÃ¼</small></div>';
+    h += '<div><b>▶️ Yarıda kalan testin var</b><br><small>' + dersAdi(dv.d) + ' · ' + dv.n + '/' + dv.L.length + ' soru çözüldü</small></div>';
     h += '<div class="devam-btnler"><button class="btn btn-test" onclick="testDevam()">Devam Et</button>' +
-         '<button class="btn btn-geri" onclick="devamSil()">ğŸ—‘ï¸</button></div>';
+         '<button class="btn btn-geri" onclick="devamSil()">🗑️</button></div>';
     h += '</div>';
   }
   var xp = xpBilgi();
   var sev = seviyeHesapla(xp.p);
   h += '<div class="durum-karti">';
-  h += '<div class="durum-huc"><b>â­ XP</b><span>' + xp.p + '</span></div>';
-  h += '<div class="durum-huc"><b>ğŸ– Seviye</b><span>' + sev + '</span></div>';
-  h += '<div class="durum-huc"><b>ğŸ”¥ Seri</b><span>' + xp.seri + ' gÃ¼n</span></div>';
-  h += '<div class="durum-huc"><b>ğŸ… Rozet</b><span>' + ((oku('odul') || []).length) + '/' + ROZETLER.length + '</span></div>';
-  h += '<div class="durum-huc"><b>' + (typeof lisans_ !== 'undefined' ? 'ğŸ”‘ Lisans' : '') + '</b><span>' + (typeof lisans_ !== 'undefined' ? lisansBilgi() : '') + '</span></div>';
+  h += '<div class="durum-huc"><b>⭐ XP</b><span>' + xp.p + '</span></div>';
+  h += '<div class="durum-huc"><b>🎖 Seviye</b><span>' + sev + '</span></div>';
+  h += '<div class="durum-huc"><b>🔥 Seri</b><span>' + xp.seri + ' gün</span></div>';
+  h += '<div class="durum-huc"><b>🏅 Rozet</b><span>' + ((oku('odul') || []).length) + '/' + ROZETLER.length + '</span></div>';
+  h += '<div class="durum-huc"><b>' + (typeof lisans_ !== 'undefined' ? '🔑 Lisans' : '') + '</b><span>' + (typeof lisans_ !== 'undefined' ? lisansBilgi() : '') + '</span></div>';
     h += '</div>';
     h += cizHedefBar();
     h += '<div class="seviye-cubuk"><div class="cubuk"><div class="cubuk-dolgu" style="width:' + seviyeYuzde(xp.p) + '%"></div></div>' +
-         '<div class="kucuk-not">Sonraki seviye iÃ§in ' + (300 - (xp.p % 300)) + ' XP daha ğŸ“ˆ</div></div>';
-  h += '<div class="baslik" style="margin-top:0px;margin-bottom:14px"><h2>ğŸ§° AraÃ§larÄ±m</h2></div>';
+         '<div class="kucuk-not">Sonraki seviye için ' + (300 - (xp.p % 300)) + ' XP daha 📈</div></div>';
+  h += '<div class="baslik" style="margin-top:0px;margin-bottom:14px"><h2>🧰 Araçlarım</h2></div>';
   h += '<div class="araclar">';
-  h += '<button class="arac" onclick="git(\'pomodoro\')"><span class="arac-ikon">â±ï¸</span>' + t('Pomodoro') + '<br><small>' + t('Odaklanma zamanlayÄ±cÄ±sÄ±') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'saylar\')"><span class="arac-ikon">ğŸ“…</span>' + t('SÄ±nav Geri SayÄ±mÄ±') + '<br><small>' + t('SÄ±navÄ±na kaÃ§ gÃ¼n kaldÄ±?') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'harita\')"><span class="arac-ikon">ğŸ—ºï¸</span>' + t('Konu Hakimiyeti') + '<br><small>' + t('Neyi ne kadar Ã¶ÄŸrendim?') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'kartSec\')"><span class="arac-ikon">ğŸƒ</span>' + t('Bilgi KartlarÄ±') + '<br><small>' + t('KaÄŸÄ±t kart gibi Ã§alÄ±ÅŸ') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'odul\')"><span class="arac-ikon">ğŸ…</span>' + t('BaÅŸarÄ±larÄ±m') + '<br><small>' + t('Rozetler ve istatistikler') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'gorevler\')"><span class="arac-ikon">ğŸ“‹</span>' + t('GÃ¼nlÃ¼k GÃ¶revler') + '<br><small>' + t('BugÃ¼nÃ¼n hedefleri') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'yanlis\')"><span class="arac-ikon">ğŸ”</span>' + t('YanlÄ±ÅŸlarÄ±m') + '<br><small>' + t('YanlÄ±ÅŸlarÄ± tekrar Ã§Ã¶z') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'tekrar\')"><span class="arac-ikon">ğŸ“’</span>' + t('Tekrar Defterim') + '<br><small>' + t('ZayÄ±f konular iÃ§in plan') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'takvim\')"><span class="arac-ikon">ğŸ”¥</span>' + t('Ã‡alÄ±ÅŸma Takvimi') + '<br><small>' + t('Son 30 gÃ¼nÃ¼n') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'program\')"><span class="arac-ikon">ğŸ“…</span>' + t('Ders ProgramÄ±m') + '<br><small>' + t('Saate gÃ¶re planla') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'oyun\')"><span class="arac-ikon">ğŸ®</span>' + t('Mini Oyunlar') + '<br><small>' + t('Kim Milyoner ve hÄ±z yarÄ±ÅŸÄ±') + '</small></button>';
-  h += '<button class="arac" onclick="git(\'hafta\')"><span class="arac-ikon">ğŸ“Š</span>' + t('HaftalÄ±k Ã–zet') + '<br><small>' + t('Son 7 gÃ¼nÃ¼n') + '</small></button>';
-   h += '<button class="arac" onclick="git(\'karne\')"><span class="arac-ikon">ğŸ“„</span>' + t('Karnem') + '<br><small>' + t('YazdÄ±rÄ±labilir rapor') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'takip\')"><span class="arac-ikon">ğŸ“Œ</span>' + t('Takibimdekiler') + '<br><small>' + t('Ä°zlediÄŸin konular') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'kitaplik\')"><span class="arac-ikon">ğŸ“š</span>' + t('KÃ¼tÃ¼phane') + '<br><small>' + t('Oku, bitir, takip et') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'yarisma\')"><span class="arac-ikon">ğŸ†</span>' + t('HaftalÄ±k YarÄ±ÅŸma') + '<br><small>' + t('XP topla, Ã¶dÃ¼lÃ¼ kap') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'deneme\')"><span class="arac-ikon">ğŸ¯</span>' + t('Denematik') + '<br><small>' + t('AylÄ±k deneme sÄ±navÄ±') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'fen3d\')"><span class="arac-ikon">ğŸ”¬</span>' + t('3B Fen') + '<br><small>' + t('Animasyonlu konular') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'canli\')"><span class="arac-ikon">ğŸ“…</span>' + t('CanlÄ± Dersler') + '<br><small>' + t('HaftalÄ±k ders takvimi') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'etkinlik\')"><span class="arac-ikon">ğŸ–¨</span>' + t('Etkinlikler') + '<br><small>' + t('YazdÄ±rÄ±labilir Ã§alÄ±ÅŸmalar') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'deney\')"><span class="arac-ikon">ğŸ§ª</span>' + t('Fen Deneyleri') + '<br><small>' + t('AdÄ±m adÄ±m deneyler') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'cozumlu\')"><span class="arac-ikon">âœï¸</span>' + t('Ã‡Ã¶zÃ¼mlÃ¼ Sorular') + '<br><small>' + t('AdÄ±m adÄ±m Ã§Ã¶zÃ¼mler') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'seviye\')"><span class="arac-ikon">ğŸ¯</span>' + t('Seviye Belirleme') + '<br><small>' + t('BaÅŸlangÄ±Ã§ testi') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'dinle\')"><span class="arac-ikon">ğŸ§</span>' + t('Dinleme Metinleri') + '<br><small>' + t('Dinle ve Ã¶ÄŸren') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'belgesel\')"><span class="arac-ikon">ğŸ¬</span>' + t('Belgeseller') + '<br><small>' + t('Konulu anlatÄ±mlar') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'kodla\')"><span class="arac-ikon">ğŸ’»</span>' + t('Kodlama AtÃ¶lyesi') + '<br><small>' + t('Algoritma ve bloklar') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'video\')"><span class="arac-ikon">ğŸ¬</span>' + t('Konu VideolarÄ±') + '<br><small>' + t('Ders videolarÄ± havuzu') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'kontrol\')"><span class="arac-ikon">ğŸ¯</span>' + t('KazanÄ±m Listesi') + '<br><small>' + t('MEB kazanÄ±mlarÄ±') + '</small></button>';
-    h += '<button class="arac" onclick="git(\'veri\')"><span class="arac-ikon">ğŸ—„ï¸</span>' + t('Veri ve Yedek') + '<br><small>' + t('Yedekle, geri yÃ¼kle, gÃ¼ncelle') + '</small></button>';
-   h += '<button class="arac" onclick="git(\'ara\')"><span class="arac-ikon">ğŸ”</span>' + t('Konu Ara') + '<br><small>' + t('Kelimeyle konu bul') + '</small></button>';
-   h += '<button class="arac" onclick="git(\'flash\')"><span class="arac-ikon">ğŸŒ</span>' + t('Kelime KartlarÄ±') + '<br><small>' + t('Ä°ngilizce kelimeler') + '</small></button>';
-   h += '<button class="arac" onclick="git(\'bugun\')"><span class="arac-ikon">ğŸ“…</span>' + t('BugÃ¼nÃ¼n PlanÄ±') + '<br><small>' + t('AkÄ±llÄ± gÃ¼nlÃ¼k Ã¶neri') + '</small></button>';
-   h += '<button class="arac" onclick="git(\'notlar\')"><span class="arac-ikon">ğŸ“</span>' + t('NotlarÄ±m') + '<br><small>' + t('Konu notlarÄ±n') + '</small></button>';
-   h += '<button class="arac" onclick="git(\'pratik\')"><span class="arac-ikon">ğŸ§®</span>' + t('Pratik') + '<br><small>' + t('HÄ±zlÄ± alÄ±ÅŸtÄ±rma') + '</small></button>';
-   h += '<button class="arac" onclick="git(\'hakimiyet\')"><span class="arac-ikon">ğŸ“Š</span>' + t('Hakimiyetim') + '<br><small>' + t('Genel baÅŸarÄ± durumun') + '</small></button>';
-   if (typeof lisans_ !== 'undefined') h += '<button class="arac" style="border-color:#6a5cff" onclick="git(\'lisans\')"><span class="arac-ikon">ğŸ”‘</span>' + t('Lisans') + '<br><small>' + esc(lisansBilgi()) + '</small></button>';
+  h += '<button class="arac" onclick="git(\'pomodoro\')"><span class="arac-ikon">⏱️</span>' + t('Pomodoro') + '<br><small>' + t('Odaklanma zamanlayıcısı') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'saylar\')"><span class="arac-ikon">📅</span>' + t('Sınav Geri Sayımı') + '<br><small>' + t('Sınavına kaç gün kaldı?') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'harita\')"><span class="arac-ikon">🗺️</span>' + t('Konu Hakimiyeti') + '<br><small>' + t('Neyi ne kadar öğrendim?') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'kartSec\')"><span class="arac-ikon">🃏</span>' + t('Bilgi Kartları') + '<br><small>' + t('Kağıt kart gibi çalış') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'odul\')"><span class="arac-ikon">🏅</span>' + t('Başarılarım') + '<br><small>' + t('Rozetler ve istatistikler') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'gorevler\')"><span class="arac-ikon">📋</span>' + t('Günlük Görevler') + '<br><small>' + t('Bugünün hedefleri') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'yanlis\')"><span class="arac-ikon">🔁</span>' + t('Yanlışlarım') + '<br><small>' + t('Yanlışları tekrar çöz') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'tekrar\')"><span class="arac-ikon">📒</span>' + t('Tekrar Defterim') + '<br><small>' + t('Zayıf konular için plan') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'takvim\')"><span class="arac-ikon">🔥</span>' + t('Çalışma Takvimi') + '<br><small>' + t('Son 30 günün') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'program\')"><span class="arac-ikon">📅</span>' + t('Ders Programım') + '<br><small>' + t('Saate göre planla') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'oyun\')"><span class="arac-ikon">🎮</span>' + t('Mini Oyunlar') + '<br><small>' + t('Kim Milyoner ve hız yarışı') + '</small></button>';
+  h += '<button class="arac" onclick="git(\'hafta\')"><span class="arac-ikon">📊</span>' + t('Haftalık Özet') + '<br><small>' + t('Son 7 günün') + '</small></button>';
+   h += '<button class="arac" onclick="git(\'karne\')"><span class="arac-ikon">📄</span>' + t('Karnem') + '<br><small>' + t('Yazdırılabilir rapor') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'takip\')"><span class="arac-ikon">📌</span>' + t('Takibimdekiler') + '<br><small>' + t('İzlediğin konular') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'kitaplik\')"><span class="arac-ikon">📚</span>' + t('Kütüphane') + '<br><small>' + t('Oku, bitir, takip et') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'yarisma\')"><span class="arac-ikon">🏆</span>' + t('Haftalık Yarışma') + '<br><small>' + t('XP topla, ödülü kap') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'deneme\')"><span class="arac-ikon">🎯</span>' + t('Denematik') + '<br><small>' + t('Aylık deneme sınavı') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'fen3d\')"><span class="arac-ikon">🔬</span>' + t('3B Fen') + '<br><small>' + t('Animasyonlu konular') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'canli\')"><span class="arac-ikon">📅</span>' + t('Canlı Dersler') + '<br><small>' + t('Haftalık ders takvimi') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'etkinlik\')"><span class="arac-ikon">🖨</span>' + t('Etkinlikler') + '<br><small>' + t('Yazdırılabilir çalışmalar') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'deney\')"><span class="arac-ikon">🧪</span>' + t('Fen Deneyleri') + '<br><small>' + t('Adım adım deneyler') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'cozumlu\')"><span class="arac-ikon">✏️</span>' + t('Çözümlü Sorular') + '<br><small>' + t('Adım adım çözümler') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'seviye\')"><span class="arac-ikon">🎯</span>' + t('Seviye Belirleme') + '<br><small>' + t('Başlangıç testi') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'dinle\')"><span class="arac-ikon">🎧</span>' + t('Dinleme Metinleri') + '<br><small>' + t('Dinle ve öğren') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'belgesel\')"><span class="arac-ikon">🎬</span>' + t('Belgeseller') + '<br><small>' + t('Konulu anlatımlar') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'kodla\')"><span class="arac-ikon">💻</span>' + t('Kodlama Atölyesi') + '<br><small>' + t('Algoritma ve bloklar') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'video\')"><span class="arac-ikon">🎬</span>' + t('Konu Videoları') + '<br><small>' + t('Ders videoları havuzu') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'kontrol\')"><span class="arac-ikon">🎯</span>' + t('Kazanım Listesi') + '<br><small>' + t('MEB kazanımları') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'veri\')"><span class="arac-ikon">🗄️</span>' + t('Veri ve Yedek') + '<br><small>' + t('Yedekle, geri yükle, güncelle') + '</small></button>';
+   h += '<button class="arac" onclick="git(\'ara\')"><span class="arac-ikon">🔍</span>' + t('Konu Ara') + '<br><small>' + t('Kelimeyle konu bul') + '</small></button>';
+   h += '<button class="arac" onclick="git(\'flash\')"><span class="arac-ikon">🌐</span>' + t('Kelime Kartları') + '<br><small>' + t('İngilizce kelimeler') + '</small></button>';
+   h += '<button class="arac" onclick="git(\'bugun\')"><span class="arac-ikon">📅</span>' + t('Bugünün Planı') + '<br><small>' + t('Akıllı günlük öneri') + '</small></button>';
+   h += '<button class="arac" onclick="git(\'notlar\')"><span class="arac-ikon">📝</span>' + t('Notlarım') + '<br><small>' + t('Konu notların') + '</small></button>';
+   h += '<button class="arac" onclick="git(\'pratik\')"><span class="arac-ikon">🧮</span>' + t('Pratik') + '<br><small>' + t('Hızlı alıştırma') + '</small></button>';
+   h += '<button class="arac" onclick="git(\'hakimiyet\')"><span class="arac-ikon">📊</span>' + t('Hakimiyetim') + '<br><small>' + t('Genel başarı durumun') + '</small></button>';
+   if (typeof lisans_ !== 'undefined') h += '<button class="arac" style="border-color:#6a5cff" onclick="git(\'lisans\')"><span class="arac-ikon">🔑</span>' + t('Lisans') + '<br><small>' + esc(lisansBilgi()) + '</small></button>';
     h += '</div>';
   h += mebBannerHTML();
   h += '<div id="meb-kontrol-yukleniyor" style="text-align:center;margin-bottom:10px"></div>';
-  h += '<div style="text-align:center;margin-bottom:16px"><button class="kucuk-not" style="color:#2ecc71;cursor:pointer;border:1px solid #2ecc71;border-radius:8px;padding:6px 12px" onclick="mebKontrolEtManuel()">ğŸ”„ MEB Program KontrolÃ¼</button>';
+  h += '<div style="text-align:center;margin-bottom:16px"><button class="kucuk-not" style="color:#2ecc71;cursor:pointer;border:1px solid #2ecc71;border-radius:8px;padding:6px 12px" onclick="mebKontrolEtManuel()">🔄 MEB Program Kontrolü</button>';
   if (mebDurumCache && mebDurumCache.kontrolTarihi) h += ' <small style="color:#888">Son kontrol: ' + new Date(mebDurumCache.kontrolTarihi).toLocaleString('tr-TR') + '</small>';
   h += '</div>';
-  h += '<div class="baslik" style="margin-top:20px;margin-bottom:14px"><h2>ğŸ“š SÄ±nÄ±flar</h2></div>';
+  h += '<div class="baslik" style="margin-top:20px;margin-bottom:14px"><h2>📚 Sınıflar</h2></div>';
   h += '<div class="ozet-karti"><div class="grader">';
   var sk = seciliSinif();
   for (var s in MUFREDAT) {
@@ -439,16 +439,16 @@ function cizMenu() {
       d.birimler.forEach(function (_, i) { topl++; if (biten(d.id + '-' + i)) bitti++; });
     });
     h += '<button class="grade-card renk' + s + '" onclick="secSin(' + s + ')">' +
-         '<span class="yildiz">' + s + '</span>' + s + '. SÄ±nÄ±f<br>' +
+         '<span class="yildiz">' + s + '</span>' + s + '. Sınıf<br>' +
          '<span style="font-size:13px;font-weight:600">' + bitti + '/' + topl + ' konu tamam</span></button>';
   }
   h += '</div>';
-  if (sk) h += '<div style="text-align:center;padding-top:4px"><button class="kucuk-not" style="color:#9b59b6;cursor:pointer" onclick="git(\'sinifSec\')">ğŸ”„ SÄ±nÄ±fÄ± DeÄŸiÅŸtir</button></div>';
+  if (sk) h += '<div style="text-align:center;padding-top:4px"><button class="kucuk-not" style="color:#9b59b6;cursor:pointer" onclick="git(\'sinifSec\')">🔄 Sınıfı Değiştir</button></div>';
   h += '</div>';
   ekran.innerHTML = h + cizOneri();
 }
 
-/* ====== Ã–NERÄ°: ZAYIF KONULAR ====== */
+/* ====== ÖNERİ: ZAYIF KONULAR ====== */
 function oneriKonular(limit) {
   limit = limit || 5;
   var s = seciliSinif();
@@ -495,12 +495,12 @@ function cizOneri() {
   if (!l.length) return '';
   var s = seciliSinif();
   var h = '<div class="ozet-karti" style="margin-top:18px">';
-  h += '<div class="baslik"><h2 style="font-size:18px">ğŸ¤– Åu konulara Ã§alÄ±ÅŸ!</h2><p style="font-size:13px;color:#5c6b85">ZayÄ±f veya az Ã§alÄ±ÅŸÄ±lan birimler.</p></div>';
+  h += '<div class="baslik"><h2 style="font-size:18px">🤖 Şu konulara çalış!</h2><p style="font-size:13px;color:#5c6b85">Zayıf veya az çalışılan birimler.</p></div>';
   h += '<div class="unitler">';
   l.forEach(function(o) {
-    var etiket = o.skor === null ? 'âš¡ HiÃ§ Ã§alÄ±ÅŸÄ±lmadÄ±' : (o.skor < 70 ? 'ğŸ˜… ZayÄ±f (' + o.skor + '%)' : (o.skor < 100 ? 'ğŸ™‚ ' + o.skor + '%' : 'âœ… ' + o.skor + '%'));
+    var etiket = o.skor === null ? '⚡ Hiç çalışılmadı' : (o.skor < 70 ? '😅 Zayıf (' + o.skor + '%)' : (o.skor < 100 ? '🙂 ' + o.skor + '%' : '✅ ' + o.skor + '%'));
     h += '<div class="unit"><div class="unit-baslik" onclick="secDers(\'' + s + '\',\'' + o.dersId + '\')" style="justify-content:space-between">' +
-         '<span style="flex:1"><span class="uad">' + o.dersAd + ' â–¸ ' + (o.bi + 1) + '. ' + o.birimAd + '</span>' +
+         '<span style="flex:1"><span class="uad">' + o.dersAd + ' ▸ ' + (o.bi + 1) + '. ' + o.birimAd + '</span>' +
          '<div class="durum-ikon">' + etiket + '</div></span></div></div>';
   });
   h += '</div></div>';
@@ -512,8 +512,8 @@ function cizSinif() {
   var s = durum.sinif;
   var bilgi = MUFREDAT[s];
   if (!bilgi) return;
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>' + s + '. SÄ±nÄ±f Dersleri</h1><p>' + bilgi.bilgi + '</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>' + s + '. Sınıf Dersleri</h1><p>' + bilgi.bilgi + '</p></div>';
   h += '<div class="dersler">';
   bilgi.dersler.forEach(function(d) {
     var topl = d.birimler.length, bitti = 0;
@@ -533,17 +533,17 @@ function cizDers() {
   var d = dersBul(s, durum.ders);
   if (!d) { git('sinif'); return; }
   var p = profilOku();
-  var h = '<button class="geri" onclick="secSin(' + s + ')">â¬… ' + s + '. SÄ±nÄ±f</button>';
-  h += '<div class="baslik"><h1>' + DERS_IKON(d.id) + ' ' + d.ad + '</h1><p>' + s + '. sÄ±nÄ±f Â· MEB mÃ¼fredatÄ±na gÃ¶re</p></div>';
+  var h = '<button class="geri" onclick="secSin(' + s + ')">⬅ ' + s + '. Sınıf</button>';
+  h += '<div class="baslik"><h1>' + DERS_IKON(d.id) + ' ' + d.ad + '</h1><p>' + s + '. sınıf · MEB müfredatına göre</p></div>';
   h += '<div class="ust-satir">';
-  if (testVar(d.id)) h += '<button class="btn btn-test" onclick="testBaslat(\'' + d.id + '\',\'\')">ğŸ§ª TÃ¼m Konu Testi</button>';
-   if (testVar(d.id)) h += '<button class="btn btn-ogren" onclick="testBaslat(\'' + d.id + '\',\'\',0,1)">â±ï¸ SÃ¼reli Deneme</button>';
-   if (testVar(d.id)) h += '<button class="btn btn-adp" onclick="adaptifTestBaslat(\'' + d.id + '\')">ğŸ¯ Adaptif Test (AI)</button>';
-  if (esleVar(d.id)) h += '<button class="btn btn-mor" onclick="eslesBaslat(\'' + d.id + '\')">ğŸ§© EÅŸleÅŸtirme</button>';
-  if (esleVar(d.id) || soruVar(d.id)) h += '<button class="btn btn-neo" onclick="kartBaslat(\'' + d.id + '\')">ğŸƒ Bilgi KartÄ±</button>';
-  h += '<button class="btn btn-rap" onclick="git(\'konurapor\')">ğŸ“Š Konu Raporu</button>';
-  h += '<button class="btn btn-bitir" onclick="dersSifirla(\'' + d.id + '\')">ğŸ”„ Ders SÄ±fÄ±rla</button>';
-  if (d.mebLink) h += '<a class="btn btn-meb" href="' + esc(d.mebLink) + '" target="_blank" rel="noopener">ğŸ¯ MEB MÃ¼fredatÄ±</a>';
+  if (testVar(d.id)) h += '<button class="btn btn-test" onclick="testBaslat(\'' + d.id + '\',\'\')">🧪 Tüm Konu Testi</button>';
+   if (testVar(d.id)) h += '<button class="btn btn-ogren" onclick="testBaslat(\'' + d.id + '\',\'\',0,1)">⏱️ Süreli Deneme</button>';
+   if (testVar(d.id)) h += '<button class="btn btn-adp" onclick="adaptifTestBaslat(\'' + d.id + '\')">🎯 Adaptif Test (AI)</button>';
+  if (esleVar(d.id)) h += '<button class="btn btn-mor" onclick="eslesBaslat(\'' + d.id + '\')">🧩 Eşleştirme</button>';
+  if (esleVar(d.id) || soruVar(d.id)) h += '<button class="btn btn-neo" onclick="kartBaslat(\'' + d.id + '\')">🃏 Bilgi Kartı</button>';
+  h += '<button class="btn btn-rap" onclick="git(\'konurapor\')">📊 Konu Raporu</button>';
+  h += '<button class="btn btn-bitir" onclick="dersSifirla(\'' + d.id + '\')">🔄 Ders Sıfırla</button>';
+  if (d.mebLink) h += '<a class="btn btn-meb" href="' + esc(d.mebLink) + '" target="_blank" rel="noopener">🎯 MEB Müfredatı</a>';
   h += '</div>';
   h += '<div class="unitler">';
   d.birimler.forEach(function(b, i) {
@@ -553,42 +553,42 @@ function cizDers() {
     h += '<div class="unit-baslik" onclick="this.parentElement.classList.toggle(\'acik\')">';
     h += '<span class="num" style="background:' + (b.renk || '#6a5cff') + '">' + (i + 1) + '</span>';
     h += '<span class="uad">' + b.ad + '</span>';
-     h += '<span class="durum-ikon">' + (tamam ? 'âœ…' : 'â¬œ') + '</span>';
-     if (videoUrl(d.id, i)) h += '<span class="video-ikon" title="Video ders" onclick="acKapaVideo(\'' + d.id + '\',' + i + ',\'' + b.ad + '\')">ğŸ¬</span>';
-     h += '<span class="ok">â–¶</span>';
+     h += '<span class="durum-ikon">' + (tamam ? '✅' : '⬜') + '</span>';
+     if (videoUrl(d.id, i)) h += '<span class="video-ikon" title="Video ders" onclick="acKapaVideo(\'' + d.id + '\',' + i + ',\'' + b.ad + '\')">🎬</span>';
+     h += '<span class="ok">▶</span>';
     h += '</div>';
     h += '<div class="unit-acik">';
     if (b.ozet) h += '<div class="ozet-kutusu">' + b.ozet + '</div>';
-    if (b.kazanim) h += '<div class="meb-kazanim">ğŸ¯ MEB KazanÄ±mÄ±: ' + esc(b.kazanim) + '</div>';
+    if (b.kazanim) h += '<div class="meb-kazanim">🎯 MEB Kazanımı: ' + esc(b.kazanim) + '</div>';
     if (b.konular && b.konular.length) {
       h += '<div class="konular">' + b.konular.map(function(k) { return '<span class="konu-etiket">' + k + '</span>'; }).join('') + '</div>';
     }
     if (hak !== null) {
       var hR = hak < 50 ? 'hak-kotu' : hak < 80 ? 'hak-orta' : 'hak-iyi';
-      h += '<div class="hak"><div class="hak-ust"><span>ğŸ—ºï¸ Hakimiyet</span><span>%' + hak + '</span></div>' +
+      h += '<div class="hak"><div class="hak-ust"><span>🗺️ Hakimiyet</span><span>%' + hak + '</span></div>' +
            '<div class="cubuk hak' + (hak < 50 ? ' zayif' : hak < 80 ? ' orta' : ' guclu') + '"><div class="cubuk-dolgu" style="width:' + hak + '%"></div></div></div>';
     }
     h += '<div class="unit-butonlar">';
     if (birimTest(d.id, i).length) {
       h += '<div class="seviye-satir"><span>Seviye:</span>';
-      h += '<button class="zbut z1" onclick="testBaslat(\'' + d.id + '\',\'' + i + '\',1)">ğŸ˜Š Kolay</button>';
-      h += '<button class="zbut z2" onclick="testBaslat(\'' + d.id + '\',\'' + i + '\',2)">ğŸ™‚ Orta</button>';
-      h += '<button class="zbut z3" onclick="testBaslat(\'' + d.id + '\',\'' + i + '\',3)">ğŸ˜® Zor</button>';
+      h += '<button class="zbut z1" onclick="testBaslat(\'' + d.id + '\',\'' + i + '\',1)">😊 Kolay</button>';
+      h += '<button class="zbut z2" onclick="testBaslat(\'' + d.id + '\',\'' + i + '\',2)">🙂 Orta</button>';
+      h += '<button class="zbut z3" onclick="testBaslat(\'' + d.id + '\',\'' + i + '\',3)">😮 Zor</button>';
       h += '</div>';
     }
-  h += '<label>FotoÄŸrafÄ±m:</label>';
+  h += '<label>Fotoğrafım:</label>';
   h += '<label class="kucuk-not" style="display:inline-block;cursor:pointer;background:#6a5cff;border-radius:10px;padding:8px 14px;color:#fff;font-weight:700">';
-  h += 'ğŸ“· Resim SeÃ§<input type="file" accept="image/*" style="display:none" onchange="fotoSec(event)">';
+  h += '📷 Resim Seç<input type="file" accept="image/*" style="display:none" onchange="fotoSec(event)">';
   h += '</label>';
   if (p.foto) {
     h += '<div id="fotoOniz" style="text-align:center;margin-top:8px"><img src="' + esc(p.foto) + '" style="width:70px;height:70px;border-radius:12px;object-fit:cover;border:2px solid #6a5cff"><div>';
-    h += '<button class="kucuk-buton" style="background:#e74c3c;margin-top:6px" onclick="fotoSil()">ğŸ—‘ï¸ FotoÄŸrafÄ± KaldÄ±r</button>';
+    h += '<button class="kucuk-buton" style="background:#e74c3c;margin-top:6px" onclick="fotoSil()">🗑️ Fotoğrafı Kaldır</button>';
     h += '</div></div>';
   }
-    if (b.ozet) h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="sesliOkuKonu(' + i + ')">ğŸ”Š Konuyu Dinle</button>';
-    h += '<button class="kucuk-buton" style="background:#f39c12" onclick="notEkle(\'' + d.id + '\',' + i + ')">ğŸ“ Not</button> ';
-    if (b.detay) h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="konuCalis(\'' + d.id + '\',' + i + ')">ğŸ“– Konuyu Ã‡alÄ±ÅŸ</button>';
-    h += '<button class="kucuk-buton" style="background:' + (tamam ? '#7f8c8d' : '#2ecc71') + '" onclick="toggleTik(\'' + d.id + '\',' + i + ')">' + (tamam ? 'â†©ï¸ Geri Al' : 'âœ“ TamamladÄ±m') + '</button>';
+    if (b.ozet) h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="sesliOkuKonu(' + i + ')">🔊 Konuyu Dinle</button>';
+    h += '<button class="kucuk-buton" style="background:#f39c12" onclick="notEkle(\'' + d.id + '\',' + i + ')">📝 Not</button> ';
+    if (b.detay) h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="konuCalis(\'' + d.id + '\',' + i + ')">📖 Konuyu Çalış</button>';
+    h += '<button class="kucuk-buton" style="background:' + (tamam ? '#7f8c8d' : '#2ecc71') + '" onclick="toggleTik(\'' + d.id + '\',' + i + ')">' + (tamam ? '↩️ Geri Al' : '✓ Tamamladım') + '</button>';
     h += '</div>';
     h += '</div></div>';
   });
@@ -611,7 +611,7 @@ function toggleTik(dersId, i) {
 }
 
 function dersSifirla(dersId) {
-  if (!confirm('Bu dersteki tÃ¼m "tamamladÄ±m" iÅŸaretleri silinsin mi?')) return;
+  if (!confirm('Bu dersteki tüm "tamamladım" işaretleri silinsin mi?')) return;
   var done = oku('biti') || {};
   var d = dersBul(durum.sinif, dersId);
   if (d) d.birimler.forEach(function (_, i) { delete done[dersId + '-' + i]; });
@@ -622,7 +622,7 @@ function dersSifirla(dersId) {
 /* ====== TEST ====== */
 function testBaslat(dersId, bi, zli, sureli) {
   var liste = (bi === '' || bi === null || bi === undefined) ? tumSorular(dersId) : birimTest(dersId, bi);
-  if (!liste.length) { alert('Bu konu iÃ§in henÃ¼z soru eklenmemiÅŸ.'); return; }
+  if (!liste.length) { alert('Bu konu için henüz soru eklenmemiş.'); return; }
   if (zli === 1 || zli === 2 || zli === 3) {
     var f = liste.filter(function(s) { return s.z === zli; });
     if (f.length >= 2) liste = f;
@@ -655,16 +655,16 @@ function cizTest() {
   var q = L[n];
   var h = '<div class="quiz-kutu"><div class="quiz-baslik">' +
           '<div><b>' + DERS_IKON(durum.quiz) + ' ' + dersAdi(durum.quiz) + '</b></div>' +
-          '<div class="iller-puan">Soru ' + (n + 1) + '/' + L.length + ' &nbsp; â­ ' + durum.qDogru + ' doÄŸru' +
-          (durum.sure ? ' &nbsp; <span class="sure-goster" id="sureGoster">â±ï¸ ' + sureYaz(durum.sure.kalan) + '</span>' : '') +
+          '<div class="iller-puan">Soru ' + (n + 1) + '/' + L.length + ' &nbsp; ⭐ ' + durum.qDogru + ' doğru' +
+          (durum.sure ? ' &nbsp; <span class="sure-goster" id="sureGoster">⏱️ ' + sureYaz(durum.sure.kalan) + '</span>' : '') +
           '</div></div>';
   h += '<div class="quiz-soru">' + q.s + '</div>';
-  h += '<div style="text-align:center;margin-bottom:12px"><button class="kucuk-buton" style="background:#1f8a70" onclick="soruDinle()">ğŸ”Š Soruyu Dinle</button></div>';
+  h += '<div style="text-align:center;margin-bottom:12px"><button class="kucuk-buton" style="background:#1f8a70" onclick="soruDinle()">🔊 Soruyu Dinle</button></div>';
   q.o.forEach(function(o, i) {
     h += '<button class="secenek" onclick="cevapSec(' + i + ',this)">' + String.fromCharCode(65 + i) + ') ' + o + '</button>';
   });
   h += '</div>';
-  var geri = '<br><button class="geri" onclick="git(\'menu\')">â¬… Testten Ã§Ä±k</button>';
+  var geri = '<br><button class="geri" onclick="git(\'menu\')">⬅ Testten çık</button>';
   ekran.innerHTML = h + geri;
 }
 
@@ -707,27 +707,27 @@ function cSonuc() {
   devamSil();
   var L = durum.qListe || [];
   var yz = L.length ? Math.round(durum.qDogru / L.length * 100) : 0;
-  var ikon = yz >= 90 ? 'ğŸ†' : yz >= 70 ? 'ğŸ‰' : yz >= 50 ? 'ğŸ™‚' : 'ğŸ’ª';
-  var mesaj = yz >= 90 ? 'MÃ¼kemmel, sÃ¼persin! ğŸ¥³' :
-              yz >= 70 ? 'HarikasÄ±n! Biraz daha tekrar, yÄ±ldÄ±za ulaÅŸÄ±rsÄ±n.' :
-              yz >= 50 ? 'Fena deÄŸil! Konuyu tekrar edip yeniden dene.' :
-                        'ÃœzÃ¼lme, konuyu tekrar oku ve bir daha Ã§Ã¶z.';
+  var ikon = yz >= 90 ? '🏆' : yz >= 70 ? '🎉' : yz >= 50 ? '🙂' : '💪';
+  var mesaj = yz >= 90 ? 'Mükemmel, süpersin! 🥳' :
+              yz >= 70 ? 'Harikasın! Biraz daha tekrar, yıldıza ulaşırsın.' :
+              yz >= 50 ? 'Fena değil! Konuyu tekrar edip yeniden dene.' :
+                        'Üzülme, konuyu tekrar oku ve bir daha çöz.';
   var h = '<div class="quiz-kutu"><div class="sonuc"><div class="buyuk">' + ikon + '</div>' +
-          '<div class="puan">' + durum.qDogru + ' / ' + L.length + ' doÄŸru</div>' +
-          '<p style="color:#5c6b85">%' + yz + ' baÅŸarÄ±</p>' +
+          '<div class="puan">' + durum.qDogru + ' / ' + L.length + ' doğru</div>' +
+          '<p style="color:#5c6b85">%' + yz + ' başarı</p>' +
           '<p style="margin:16px 0;font-size:17px;font-weight:700">' + mesaj + '</p>';
-  if (durum.qSureDoldu) h += '<p style="color:#e67e22;font-weight:700;margin-bottom:12px">â° SÃ¼ren doldu; cevaplamadÄ±ÄŸÄ±n sorular boÅŸ sayÄ±ldÄ±.</p>';
+  if (durum.qSureDoldu) h += '<p style="color:#e67e22;font-weight:700;margin-bottom:12px">⏰ Süren doldu; cevaplamadığın sorular boş sayıldı.</p>';
   if (durum.qRekor) {
     var r = durum.qRekor;
-    if (r.yeni) h += '<div class="rekor-bilgi rekor-yeni">' + (r.ilk ? 'ğŸ¥‡ Ä°lk sonucun kaydedildi!' : 'ğŸ… YENÄ° REKOR! Ã–nceki en iyi: %' + Math.round(r.oz.y * 100) + ' (' + r.oz.t + ')') + '</div>';
-    else h += '<div class="rekor-bilgi">ğŸ‘» Hayalet YarÄ±ÅŸÄ±: en iyi sonucun %' + Math.round(r.oz.y * 100) + '. Bu sefer geÃ§meye Ã§alÄ±ÅŸ!</div>';
+    if (r.yeni) h += '<div class="rekor-bilgi rekor-yeni">' + (r.ilk ? '🥇 İlk sonucun kaydedildi!' : '🏅 YENİ REKOR! Önceki en iyi: %' + Math.round(r.oz.y * 100) + ' (' + r.oz.t + ')') + '</div>';
+    else h += '<div class="rekor-bilgi">👻 Hayalet Yarışı: en iyi sonucun %' + Math.round(r.oz.y * 100) + '. Bu sefer geçmeye çalış!</div>';
   }
-  h += '<button class="btn btn-mor" onclick="git(\'menu\')">ğŸ  Anasayfa</button> ';
-  if (durum.qHavuz) h += '<button class="btn btn-test" onclick="yanlisQuiz()">ğŸ” Tekrar Ã‡Ã¶z</button> ';
-  else if (durum.quiz === 'zayif') h += '<button class="btn btn-test" onclick="zayifTest()">ğŸ” Tekrar Ã‡Ã¶z</button> ';
-  else if (durum.quiz) h += '<button class="btn btn-test" onclick="testBaslat(\'' + durum.quiz + '\',\'\')">ğŸ” Tekrar Ã‡Ã¶z</button> ';
-  h += '<button class="btn btn-test" onclick="git(\'yanlis\')">ğŸ” YanlÄ±ÅŸlarÄ±m</button>';
-  h += '<button class="btn btn-ogren" onclick="cozumleriDinle()">ğŸ”Š Ã‡Ã¶zÃ¼mleri Dinle</button>';
+  h += '<button class="btn btn-mor" onclick="git(\'menu\')">🏠 Anasayfa</button> ';
+  if (durum.qHavuz) h += '<button class="btn btn-test" onclick="yanlisQuiz()">🔁 Tekrar Çöz</button> ';
+  else if (durum.quiz === 'zayif') h += '<button class="btn btn-test" onclick="zayifTest()">🔁 Tekrar Çöz</button> ';
+  else if (durum.quiz) h += '<button class="btn btn-test" onclick="testBaslat(\'' + durum.quiz + '\',\'\')">🔁 Tekrar Çöz</button> ';
+  h += '<button class="btn btn-test" onclick="git(\'yanlis\')">🔁 Yanlışlarım</button>';
+  h += '<button class="btn btn-ogren" onclick="cozumleriDinle()">🔊 Çözümleri Dinle</button>';
   h += '</div></div>';
   ekran.innerHTML = h;
 }
@@ -761,23 +761,23 @@ function puanKaydet(dersId, dogru, toplam, u) {
 }
 
 function dersAdi(id) {
-  if (id === 'yanlis') return 'YanlÄ±ÅŸlarÄ±m';
-  if (id === 'zayif') return 'ZayÄ±f Konular';
+  if (id === 'yanlis') return 'Yanlışlarım';
+  if (id === 'zayif') return 'Zayıf Konular';
   if (typeof id === 'string' && id.indexOf('esle-') === 0) {
     var alt = id.substr(5);
     for (var gz in MUFREDAT) {
       var dd = dersBul(gz, alt);
-      if (dd) return gz + '. SÄ±nÄ±f Â· EÅŸleÅŸtirme ' + dd.ad;
+      if (dd) return gz + '. Sınıf · Eşleştirme ' + dd.ad;
     }
   }
   for (var sy in MUFREDAT) {
     var d = dersBul(sy, id);
-    if (d) return sy + '. SÄ±nÄ±f Â· ' + d.ad;
+    if (d) return sy + '. Sınıf · ' + d.ad;
   }
   return 'Test';
 }
 
-/* ===== EÅLEÅTÄ°RME ===== */
+/* ===== EŞLEŞTİRME ===== */
 function esleVar(dersId) {
   var t = ESLESTIRME[dersId];
   if (!t) return false;
@@ -806,7 +806,7 @@ function eslesBaslat(dersId) {
   turs.forEach(function(t) {
     t.forEach(function(p) { ciftler.push({ terim: p[0], tanim: p[1] }); });
   });
-  if (ciftler.length < 4) { alert('Bu ders iÃ§in yeterli eÅŸleÅŸtirme yok.'); return; }
+  if (ciftler.length < 4) { alert('Bu ders için yeterli eşleştirme yok.'); return; }
   var sirali = [];
   for (var i = 0; i < ciftler.length; i++) sirali.push(i);
   karistir(sirali);
@@ -828,12 +828,12 @@ function eslesBaslat(dersId) {
 function cizEsle() {
   var e = durum.esle;
   if (!e) { git('ders'); return; }
-  var h = '<button class="geri" onclick="git(\'ders\')">â¬… Derse DÃ¶n</button>';
-  h += '<div class="baslik"><h1>ğŸ§© EÅŸleÅŸtirme Ã‡alÄ±ÅŸmasÄ±</h1><p>Soldaki kavrama, saÄŸdaki doÄŸru tanÄ±mÄ± seÃ§.</p></div>';
+  var h = '<button class="geri" onclick="git(\'ders\')">⬅ Derse Dön</button>';
+  h += '<div class="baslik"><h1>🧩 Eşleştirme Çalışması</h1><p>Soldaki kavrama, sağdaki doğru tanımı seç.</p></div>';
   h += '<div class="quiz-kutu">';
   var tamam = e.done.filter(function(x) { return x; }).length;
   h += '<div class="quiz-baslik"><div><b>' + dersAdi(e.ders) + '</b></div>' +
-       '<div class="iller-puan">EÅŸleÅŸen: ' + tamam + '/' + e.ciftler.length + '</div></div>';
+       '<div class="iller-puan">Eşleşen: ' + tamam + '/' + e.ciftler.length + '</div></div>';
   h += '<div class="esle-kutu">';
   h += '<div class="esle-sol"><div class="esle-bas">Kavramlar</div>';
   e.ciftler.forEach(function(c, i) {
@@ -843,7 +843,7 @@ function cizEsle() {
          (yapildi ? 'disabled' : '') + ' onclick="esleTerm(' + i + ')">' + c.terim + '</button>';
   });
   h += '</div>';
-  h += '<div class="esle-sag"><div class="esle-bas">TanÄ±mlar</div>';
+  h += '<div class="esle-sag"><div class="esle-bas">Tanımlar</div>';
   e.sirali.forEach(function(idx) {
     var c = e.ciftler[idx];
     var yapildi = e.done[idx];
@@ -853,7 +853,7 @@ function cizEsle() {
   });
   h += '</div>';
   h += '</div>';
-  h += '<div class="kucuk-not">Bir kavrama, bir tanÄ±ma tÄ±kalÄ±p eÅŸleÅŸtir.</div>';
+  h += '<div class="kucuk-not">Bir kavrama, bir tanıma tıkalıp eşleştir.</div>';
   h += '</div>';
   ekran.innerHTML = h;
 }
@@ -905,25 +905,25 @@ function cizEson() {
   var e = durum.esle;
   var n = e.ciftler.length;
   var yz = n ? Math.round(e.dogru / n * 100) : 0;
-  var ikon = e.dogru === n ? 'ğŸ†' : yz >= 70 ? 'ğŸ‰' : yz >= 50 ? 'ğŸ™‚' : 'ğŸ’ª';
-  var mesaj = e.dogru === n ? 'Harika! Hepsi doÄŸru, sÃ¼persin!' : yz >= 70 ? 'Ã‡ok iyi! Biraz daha bakarsan tamamÄ±nÄ± yaparsÄ±n.' : 'Tekrar dene, Ã¶ÄŸrenmek bu!';
+  var ikon = e.dogru === n ? '🏆' : yz >= 70 ? '🎉' : yz >= 50 ? '🙂' : '💪';
+  var mesaj = e.dogru === n ? 'Harika! Hepsi doğru, süpersin!' : yz >= 70 ? 'Çok iyi! Biraz daha bakarsan tamamını yaparsın.' : 'Tekrar dene, öğrenmek bu!';
   var h = '<div class="quiz-kutu"><div class="sonuc"><div class="buyuk">' + ikon + '</div>' +
-          '<div class="puan">' + e.dogru + ' / ' + n + ' doÄŸru eÅŸleÅŸme</div>' +
-          '<p style="color:#5c6b85">%' + yz + ' baÅŸarÄ±</p>' +
+          '<div class="puan">' + e.dogru + ' / ' + n + ' doğru eşleşme</div>' +
+          '<p style="color:#5c6b85">%' + yz + ' başarı</p>' +
           '<p style="margin:16px 0;font-size:17px;font-weight:700">' + mesaj + '</p>' +
-          '<button class="btn btn-mor" onclick="git(\'menu\')">ğŸ  Anasayfa</button> ' +
-          '<button class="btn btn-neo" onclick="eslesBaslat(\'' + e.ders + '\')">ğŸ” Tekrar</button></div></div>';
+          '<button class="btn btn-mor" onclick="git(\'menu\')">🏠 Anasayfa</button> ' +
+          '<button class="btn btn-neo" onclick="eslesBaslat(\'' + e.ders + '\')">🔁 Tekrar</button></div></div>';
   ekran.innerHTML = h;
 }
 
-/* ====== Ã‡ALIÅMA PLANI ====== */
-var GUNLER = ['Pazartesi', 'SalÄ±', 'Ã‡arÅŸamba', 'PerÅŸembe', 'Cuma', 'Cumartesi', 'Pazar'];
-var SLOTLAR = ['Ã‡alÄ±ÅŸma 1', 'Ã‡alÄ±ÅŸma 2', 'Ã‡alÄ±ÅŸma 3'];
-var SLOTIKON = ['ğŸ“˜', 'ğŸ“', 'ğŸ“'];
+/* ====== ÇALIŞMA PLANI ====== */
+var GUNLER = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
+var SLOTLAR = ['Çalışma 1', 'Çalışma 2', 'Çalışma 3'];
+var SLOTIKON = ['📘', '📝', '📐'];
 
 function cizPlan() {
   var p = oku('plan') || {};
-  var h = '<div class="baslik"><h1>ğŸ—“ï¸ HaftalÄ±k Ã‡alÄ±ÅŸma PlanÄ±</h1><p>GÃ¼nlÃ¼k planÄ±nÄ± iÅŸaretle, yÄ±ldÄ±zÄ±nÄ± yakala!</p></div>';
+  var h = '<div class="baslik"><h1>🗓️ Haftalık Çalışma Planı</h1><p>Günlük planını işaretle, yıldızını yakala!</p></div>';
   h += '<div class="plan-hafta">';
   GUNLER.forEach(function(g, gi) {
     h += '<div class="plan-gun"><h3>' + g + '</h3>';
@@ -934,9 +934,9 @@ function cizPlan() {
     h += '</div>';
   });
   h += '</div>';
-  h += '<div class="plan-not">ğŸ’¡ <b>BugÃ¼n ne yapmalÄ±yÄ±m?</b> ' + tavsiye() + '</div>';
-  h += '<div style="margin-top:14px;text-align:center"><button class="btn btn-neo" onclick="planSil()">ğŸ—‘ï¸ PlanÄ± SÄ±fÄ±rla</button></div>';
-  h += '<div class="kucuk-not">ğŸ“Œ Plan bilgileri yalnÄ±zca bu bilgisayarda saklanÄ±r.</div>';
+  h += '<div class="plan-not">💡 <b>Bugün ne yapmalıyım?</b> ' + tavsiye() + '</div>';
+  h += '<div style="margin-top:14px;text-align:center"><button class="btn btn-neo" onclick="planSil()">🗑️ Planı Sıfırla</button></div>';
+  h += '<div class="kucuk-not">📌 Plan bilgileri yalnızca bu bilgisayarda saklanır.</div>';
   ekran.innerHTML = h;
 }
 
@@ -947,7 +947,7 @@ function planIsaret(k, v) {
 }
 
 function planSil() {
-  if (!confirm('HaftalÄ±k plan sÄ±fÄ±rlansÄ±n mÄ±?')) return;
+  if (!confirm('Haftalık plan sıfırlansın mı?')) return;
   kaydet('plan', {});
   cizPlan();
 }
@@ -960,38 +960,38 @@ function tavsiye() {
       d.birimler.forEach(function (_, i) {
         if (!done[d.id + '-' + i]) {
           kalan++;
-          if (!secilen) secilen = d.ad + ' (' + s + '. sÄ±nÄ±f) konularÄ±ndan birini';
+          if (!secilen) secilen = d.ad + ' (' + s + '. sınıf) konularından birini';
         }
       });
     });
   }
-  if (!secilen) return 'TÃ¼m konularÄ± tamamladÄ±n, tebrikler! ğŸ† BugÃ¼n de bir test Ã§Ã¶z.';
-  return 'BugÃ¼n ' + secilen + ' tekrar et. Toplam ' + kalan + ' konu kaldÄ±. Yapabilirsin! ğŸ’ª';
+  if (!secilen) return 'Tüm konuları tamamladın, tebrikler! 🏆 Bugün de bir test çöz.';
+  return 'Bugün ' + secilen + ' tekrar et. Toplam ' + kalan + ' konu kaldı. Yapabilirsin! 💪';
 }
 
-/* ====== GELÄ°ÅÄ°M ====== */
+/* ====== GELİŞİM ====== */
 function cizGelisim() {
   var puan = oku('puan') || {};
   var p = profilOku();
   var s = seciliSinif();
   var st = statlar();
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>â­ GeliÅŸimim</h1><p>KonularÄ±nÄ± ve test sonuÃ§larÄ±nÄ± buradan takip et.</p></div>';
-  h += '<div style="text-align:center;margin-bottom:14px"><button class="btn btn-test" onclick="veliRaporYazdir()">ğŸ–¨ï¸ Veli Raporu YazdÄ±r / PDF</button></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>⭐ Gelişimim</h1><p>Konularını ve test sonuçlarını buradan takip et.</p></div>';
+  h += '<div style="text-align:center;margin-bottom:14px"><button class="btn btn-test" onclick="veliRaporYazdir()">🖨️ Veli Raporu Yazdır / PDF</button></div>';
   h += '<div class="ozet-karti" style="margin-bottom:14px;background:linear-gradient(135deg,#6a5cff,#9b59b6);color:#fff">';
-  h += '<div class="baslik"><h2 style="font-size:20px">ğŸ‘¤ ' + esc(p.ad || 'ArkadaÅŸ') + '</h2>';
-  h += '<p style="opacity:.95">' + (p.sinif ? (s + '. sÄ±nÄ±f') : 'SÄ±nÄ±fÄ± seÃ§ilmemiÅŸ') + (p.sube ? (' Â· Åube ' + esc(p.sube)) : '') + '</p></div>';
+  h += '<div class="baslik"><h2 style="font-size:20px">👤 ' + esc(p.ad || 'Arkadaş') + '</h2>';
+  h += '<p style="opacity:.95">' + (p.sinif ? (s + '. sınıf') : 'Sınıfı seçilmemiş') + (p.sube ? (' · Şube ' + esc(p.sube)) : '') + '</p></div>';
   h += '<hr style="border:none;border-top:1px solid rgba(255,255,255,.3);margin:10px 0">';
   h += '<div style="display:flex;gap:10px;flex-wrap:wrap;text-align:center;font-size:13px">';
-  h += '<span>ğŸ”¥ ' + st.seri + ' gÃ¼n</span>';
-  h += '<span>â­ ' + st.xp + ' XP</span>';
-  h += '<span>ğŸ§© ' + st.testSay + ' test</span>';
-  h += '<span>ğŸ… ' + (oku('odul') || []).length + '/' + ROZETLER.length + '</span>';
-  h += '<span>ğŸ¯ ' + st.tamSay + ' tamam</span>';
+  h += '<span>🔥 ' + st.seri + ' gün</span>';
+  h += '<span>⭐ ' + st.xp + ' XP</span>';
+  h += '<span>🧩 ' + st.testSay + ' test</span>';
+  h += '<span>🏅 ' + (oku('odul') || []).length + '/' + ROZETLER.length + '</span>';
+  h += '<span>🎯 ' + st.tamSay + ' tamam</span>';
   h += '</div></div>';
   var seri = st.seri;
-  h += '<div class="streak-banner">ğŸ”¥ <b>' + seri + '</b> gÃ¼nlÃ¼k seri! ' + (seri >= 3 ? 'Harika, bÃ¶yle devam! ğŸ’ª' : 'BugÃ¼n bir test Ã§Ã¶z, serini baÅŸlat!') + '</div>';
-  h += '<div class="baslik" style="margin-bottom:12px"><h2>ğŸ“Š KonularÄ±m</h2></div>';
+  h += '<div class="streak-banner">🔥 <b>' + seri + '</b> günlük seri! ' + (seri >= 3 ? 'Harika, böyle devam! 💪' : 'Bugün bir test çöz, serini başlat!') + '</div>';
+  h += '<div class="baslik" style="margin-bottom:12px"><h2>📊 Konularım</h2></div>';
   var toplamT = 0, bittiT = 0;
   for (var s in MUFREDAT) {
     var t = 0, b = 0;
@@ -1001,50 +1001,50 @@ function cizGelisim() {
     toplamT += t; bittiT += b;
     var yz = t ? Math.round(b / t * 100) : 0;
     h += '<div class="ilerleme-kutusu"><div class="ilerleme-ust">' +
-         '<span>' + s + '. SÄ±nÄ±f</span><span>' + b + '/' + t + ' konu Â· %' + yz + '</span></div>' +
+         '<span>' + s + '. Sınıf</span><span>' + b + '/' + t + ' konu · %' + yz + '</span></div>' +
          '<div class="cubuk"><div class="cubuk-dolgu" style="width:' + yz + '%"></div></div></div>';
   }
   var gy = toplamT ? Math.round(bittiT / toplamT * 100) : 0;
-  h += '<div class="ilerleme-kutusu" style="background:#fff8e1"><div class="ilerleme-ust"><span>ğŸ… GENEL DURUM</span><span>' + bittiT + '/' + toplamT + ' Â· %' + gy + '</span></div>' +
+  h += '<div class="ilerleme-kutusu" style="background:#fff8e1"><div class="ilerleme-ust"><span>🏅 GENEL DURUM</span><span>' + bittiT + '/' + toplamT + ' · %' + gy + '</span></div>' +
        '<div class="cubuk"><div class="cubuk-dolgu" style="width:' + gy + '%"></div></div></div>';
 
   var zk = zayifKonular();
-  h += '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>ğŸ“‰ ZayÄ±f KonularÄ±m</h2></div>';
-  h += '<div style="text-align:center;margin-bottom:14px"><button class="btn btn-ogren" onclick="zayifTest()">ğŸ’ª ZayÄ±f KonularÄ± Tekrar Ã‡Ã¶z</button></div>';
-  if (!zk.length) h += '<div class="skor-liste">TÃ¼m konularÄ±n iyi durumda, tebrikler! ğŸ†</div>';
+  h += '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>📉 Zayıf Konularım</h2></div>';
+  h += '<div style="text-align:center;margin-bottom:14px"><button class="btn btn-ogren" onclick="zayifTest()">💪 Zayıf Konuları Tekrar Çöz</button></div>';
+  if (!zk.length) h += '<div class="skor-liste">Tüm konuların iyi durumda, tebrikler! 🏆</div>';
   else {
     h += '<div class="skor-liste">';
     zk.slice(0, 6).forEach(function(z) {
-      h += '<div class="skor-satir"><span>âš ï¸ ' + DERS_IKON(z.d.id) + ' ' + z.b.ad + ' <small>(' + z.s + '. sÄ±nÄ±f Â· ' + z.d.ad + ')</small></span>' +
-           '<span>' + (z.hak === null ? 'hiÃ§ test yok' : '%' + z.hak) + ' <button class="kucuk-buton" style="background:#9b59b6" onclick="secDers(' + z.s + ',\'' + z.d.id + '\')">ğŸ“– Ã‡alÄ±ÅŸ</button></span></div>';
+      h += '<div class="skor-satir"><span>⚠️ ' + DERS_IKON(z.d.id) + ' ' + z.b.ad + ' <small>(' + z.s + '. sınıf · ' + z.d.ad + ')</small></span>' +
+           '<span>' + (z.hak === null ? 'hiç test yok' : '%' + z.hak) + ' <button class="kucuk-buton" style="background:#9b59b6" onclick="secDers(' + z.s + ',\'' + z.d.id + '\')">📖 Çalış</button></span></div>';
     });
     h += '</div>';
   }
 
   var keys = Object.keys(puan);
-  h += '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>ğŸ“ Test SonuÃ§larÄ±m</h2></div>';
+  h += '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>📝 Test Sonuçlarım</h2></div>';
   if (!keys.length) {
-    h += '<div class="skor-liste">HenÃ¼z test Ã§Ã¶zmedin. Ä°lk testini Ã§Ã¶z, buraya iÅŸlenecek! ğŸš€</div>';
+    h += '<div class="skor-liste">Henüz test çözmedin. İlk testini çöz, buraya işlenecek! 🚀</div>';
   } else {
     h += '<div class="skor-liste">';
     keys.forEach(function(k) {
       var list = puan[k];
       var son = list[list.length - 1];
       var oran = son.d / son.n;
-      var rozet = oran >= 0.9 ? 'ğŸ†' : oran >= 0.7 ? 'ğŸ¥‡' : oran >= 0.5 ? 'ğŸ¥ˆ' : 'ğŸ¥‰';
+      var rozet = oran >= 0.9 ? '🏆' : oran >= 0.7 ? '🥇' : oran >= 0.5 ? '🥈' : '🥉';
       h += '<div class="skor-satir"><span>' + rozet + ' ' + dersAdi(k) + '</span>' +
-           '<span>' + son.d + '/' + son.n + ' Â· ' + son.t + '</span></div>';
+           '<span>' + son.d + '/' + son.n + ' · ' + son.t + '</span></div>';
     });
     h += '</div>';
   }
   h += rozetDuvarHTML();
   h += pomoGrafikHTML();
-  h += '<div style="margin-top:16px;text-align:center"><button class="btn btn-bitir" onclick="gelisimSil()">ğŸ—‘ï¸ SonuÃ§larÄ± Temizle</button></div>';
+  h += '<div style="margin-top:16px;text-align:center"><button class="btn btn-bitir" onclick="gelisimSil()">🗑️ Sonuçları Temizle</button></div>';
   ekran.innerHTML = h;
 }
 
 function gelisimSil() {
-  if (!confirm('TÃ¼m test sonuÃ§larÄ± silinsin mi?')) return;
+  if (!confirm('Tüm test sonuçları silinsin mi?')) return;
   kaydet('puan', {});
   cizGelisim();
 }
@@ -1053,16 +1053,16 @@ function gelisimSil() {
 var SUN_TEMA = {
   mor:    { ad: 'Mor',    bg: 'linear-gradient(135deg,#7a5cff,#9b2fb8)', fg: '#ffffff' },
   mavi:   { ad: 'Mavi',   bg: 'linear-gradient(135deg,#3498db,#1b4f8a)', fg: '#ffffff' },
-  yesil:  { ad: 'YeÅŸil',  bg: 'linear-gradient(135deg,#2ecc71,#1e8449)', fg: '#ffffff' },
+  yesil:  { ad: 'Yeşil',  bg: 'linear-gradient(135deg,#2ecc71,#1e8449)', fg: '#ffffff' },
   turuncu:{ ad: 'Turuncu', bg: 'linear-gradient(135deg,#f39c12,#d35400)', fg: '#ffffff' },
   pembe:  { ad: 'Pembe',  bg: 'linear-gradient(135deg,#e84393,#8e44ad)', fg: '#ffffff' },
   gece:   { ad: 'Gece',   bg: 'linear-gradient(135deg,#2c3e50,#0f0f1a)', fg: '#ffffff' }
 };
-var SUN_EMOJI = ['ğŸ“˜', 'ğŸ“š', 'ğŸ§®', 'ğŸ”¬', 'ğŸŒŸ', 'ğŸŒ', 'ğŸš€', 'ğŸ†', 'ğŸ’¡', 'ğŸ¨', 'ğŸ²', 'ğŸµ'];
+var SUN_EMOJI = ['📘', '📚', '🧮', '🔬', '🌟', '🌍', '🚀', '🏆', '💡', '🎨', '🎲', '🎵'];
 var SUN_VARSAYILAN = [
-  { bas: 'Projem Ä°Ã§in Sunum',  metin: 'Selam, benim ilk sunumum bu.',    emoji: 'ğŸ“˜', tema: 'mor' },
-  { bas: 'Ä°Ã§indekiler',         metin: 'KonularÄ± bu slayta yazabilirim.',  emoji: 'ğŸ“š', tema: 'mavi' },
-  { bas: 'TeÅŸekkÃ¼rler!',        metin: 'Beni dinlediÄŸin iÃ§in teÅŸekkÃ¼rler!', emoji: 'ğŸ†', tema: 'yesil' }
+  { bas: 'Projem İçin Sunum',  metin: 'Selam, benim ilk sunumum bu.',    emoji: '📘', tema: 'mor' },
+  { bas: 'İçindekiler',         metin: 'Konuları bu slayta yazabilirim.',  emoji: '📚', tema: 'mavi' },
+  { bas: 'Teşekkürler!',        metin: 'Beni dinlediğin için teşekkürler!', emoji: '🏆', tema: 'yesil' }
 ];
 
 function sunYukle() {
@@ -1083,18 +1083,18 @@ function cizSunum() {
   var s = liste[i];
   var tema = SUN_TEMA[s.tema] || SUN_TEMA.mor;
 
-  var h = '<div class="baslik"><h1>ğŸ“Š Sunum ve Slayt HazÄ±rlama</h1><p>Kendi sunumunu hazÄ±rla, oynat ve yazdÄ±r.</p></div>';
+  var h = '<div class="baslik"><h1>📊 Sunum ve Slayt Hazırlama</h1><p>Kendi sunumunu hazırla, oynat ve yazdır.</p></div>';
 
   h += '<div class="ust-satir">';
-  h += '<button class="btn btn-mor" onclick="sunYeni()">â• Slayt Ekle</button>';
-  h += '<button class="btn btn-neo" onclick="sunSil()">ğŸ—‘ï¸ SlaytÄ± Sil</button>';
-  h += '<button class="btn btn-test" onclick="sunOynat()">â–¶ï¸ Sunumu BaÅŸlat</button>';
-  h += '<button class="btn btn-bitir" onclick="sunYazdir()">ğŸ–¨ï¸ YazdÄ±r / PDF</button>';
-  h += '<button class="btn btn-geri" onclick="sunTemizle()">ğŸ”„ SÄ±fÄ±rla</button>';
+  h += '<button class="btn btn-mor" onclick="sunYeni()">➕ Slayt Ekle</button>';
+  h += '<button class="btn btn-neo" onclick="sunSil()">🗑️ Slaytı Sil</button>';
+  h += '<button class="btn btn-test" onclick="sunOynat()">▶️ Sunumu Başlat</button>';
+  h += '<button class="btn btn-bitir" onclick="sunYazdir()">🖨️ Yazdır / PDF</button>';
+  h += '<button class="btn btn-geri" onclick="sunTemizle()">🔄 Sıfırla</button>';
   h += '</div>';
 
   h += '<div class="sunum-duzen">';
-  /* sol: kÃ¼Ã§Ã¼k slaytlar listesi */
+  /* sol: küçük slaytlar listesi */
   h += '<div class="sunum-list">';
   liste.forEach(function(x, k) {
     var tt = SUN_TEMA[x.tema] || SUN_TEMA.mor;
@@ -1104,20 +1104,20 @@ function cizSunum() {
   });
   h += '</div>';
 
-  /* saÄŸ: Ã¶nizleme + dÃ¼zenleme */
+  /* sağ: önizleme + düzenleme */
   h += '<div class="sunum-sag">';
   h += '<div class="slayt-buyuk" style="background:' + tema.bg + ';color:' + tema.fg + '">';
   h += '<div class="slayt-no">' + (i + 1) + ' / ' + liste.length + '</div>';
-  h += '<div class="slayt-emoji">' + (s.emoji || 'ğŸ“˜') + '</div>';
+  h += '<div class="slayt-emoji">' + (s.emoji || '📘') + '</div>';
   h += '<div class="slayt-baslik">' + (s.bas || '') + '</div>';
   h += '<div class="slayt-metin">' + (s.metin || '') + '</div>';
   h += '</div>';
 
   h += '<div class="sun-edit">';
-  h += '<label>BaÅŸlÄ±k:</label>';
+  h += '<label>Başlık:</label>';
   h += '<input type="text" value="' + esc(s.bas || '') + '" onchange="sunAlan(\'bas\', this.value)">';
   h += '<label>Metin:</label>';
-  h += '<textarea rows="3" onchange="sunAlan(\'metin\', this.value)" placeholder="SlaytÄ±n iÃ§eriÄŸini yaz">' + esc(s.metin || '') + '</textarea>';
+  h += '<textarea rows="3" onchange="sunAlan(\'metin\', this.value)" placeholder="Slaytın içeriğini yaz">' + esc(s.metin || '') + '</textarea>';
   h += '<label>Tema:</label><div class="sun-temalar">';
   for (var t in SUN_TEMA) {
     var tm = SUN_TEMA[t];
@@ -1132,9 +1132,9 @@ function cizSunum() {
   h += '</div>';
 
   h += '<div class="sun-nav">';
-  h += '<button class="btn btn-geri" onclick="sunGit(-1)">â€¹ Ã–nceki</button>';
+  h += '<button class="btn btn-geri" onclick="sunGit(-1)">‹ Önceki</button>';
   h += '<span class="sun-sayac">Slayt ' + (i + 1) + ' / ' + liste.length + '</span>';
-  h += '<button class="btn btn-mor" onclick="sunGit(1)">Sonraki â€º</button>';
+  h += '<button class="btn btn-mor" onclick="sunGit(1)">Sonraki ›</button>';
   h += '</div>';
   h += '</div>';
   h += '</div>';
@@ -1191,7 +1191,7 @@ function sunSec(k) {
 
 function sunYeni() {
   var liste = durum.sun || sunYukle();
-  liste.push({ bas: 'Yeni Slayt', metin: 'Buraya iÃ§erik yaz.', emoji: 'ğŸ’¡', tema: 'mor' });
+  liste.push({ bas: 'Yeni Slayt', metin: 'Buraya içerik yaz.', emoji: '💡', tema: 'mor' });
   durum.sunIndex = liste.length - 1;
   sunKaydet(liste);
   durum.sun = liste;
@@ -1210,7 +1210,7 @@ function sunSil() {
 }
 
 function sunTemizle() {
-  if (!confirm('Sunum ilk haline dÃ¶nsÃ¼n mÃ¼?')) return;
+  if (!confirm('Sunum ilk haline dönsün mü?')) return;
   kaydet('sunum', SUN_VARSAYILAN.map(function(x){ return { bas: x.bas, metin: x.metin, emoji: x.emoji, tema: x.tema }; }));
   durum.sun = sunYukle();
   durum.sunIndex = 0;
@@ -1233,19 +1233,19 @@ function cizSunranda() {
   var tema = SUN_TEMA[s.tema] || SUN_TEMA.mor;
   var h = '<div class="sun-tam">';
   h += '<div class="sun-ust">';
-  h += '<button class="sun-ust-btn" onclick="sunBiter()">âœ• Kapat</button>';
+  h += '<button class="sun-ust-btn" onclick="sunBiter()">✕ Kapat</button>';
   h += '<span class="sun-ad">Sunum</span>';
-  h += '<div><button class="sun-ust-btn" onclick="sunDur(-1)">â€¹</button>';
-  h += '<button class="sun-ust-btn" onclick="sunDur(1)">â€º</button>';
-  h += '<button class="sun-ust-btn" onclick="sunYazdir()">ğŸ–¨</button></div>';
+  h += '<div><button class="sun-ust-btn" onclick="sunDur(-1)">‹</button>';
+  h += '<button class="sun-ust-btn" onclick="sunDur(1)">›</button>';
+  h += '<button class="sun-ust-btn" onclick="sunYazdir()">🖨</button></div>';
   h += '</div>';
   h += '<div class="sun-slide" style="background:' + tema.bg + ';color:' + tema.fg + '">';
   h += '<div class="sun-slide-no">' + (i + 1) + ' / ' + liste.length + '</div>';
-  h += '<div class="slayt-emoji">' + (s.emoji || 'ğŸ“˜') + '</div>';
+  h += '<div class="slayt-emoji">' + (s.emoji || '📘') + '</div>';
   h += '<div class="slayt-buyuk-baslik">' + esc(s.bas || '') + '</div>';
   h += '<div class="slayt-buyuk-metin">' + esc(s.metin || '') + '</div>';
   h += '</div>';
-  h += '<div class="sun-not">Sunum sÄ±rasÄ±nda yÃ¶n tuÅŸlarÄ±nÄ± (â† â†’) kullanabilirsin.</div>';
+  h += '<div class="sun-not">Sunum sırasında yön tuşlarını (← →) kullanabilirsin.</div>';
   h += '</div>';
   ekran.innerHTML = h;
 }
@@ -1278,13 +1278,13 @@ function sunYazdir() {
     var tema = SUN_TEMA[s.tema] || SUN_TEMA.mor;
     ic += '<div class="p-slide" style="background:' + tema.bg + ';color:' + tema.fg + '">' +
           '<div class="p-no">' + (k + 1) + ' / ' + liste.length + '</div>' +
-          '<div class="p-emoji">' + (s.emoji || 'ğŸ“˜') + '</div>' +
+          '<div class="p-emoji">' + (s.emoji || '📘') + '</div>' +
           '<div class="p-bas">' + esc(s.bas || '') + '</div>' +
           '<div class="p-met">' + esc(s.metin || '') + '</div>' +
           '</div>';
   });
   var w = window.open('', '_blank');
-  if (!w) { alert('AÃ§Ä±lÄ±r pencere engellenmiÅŸ olabilir.'); return; }
+  if (!w) { alert('Açılır pencere engellenmiş olabilir.'); return; }
   w.document.write('<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Sunum</title>' +
     '<style>@page{size:landscape;} body{margin:0;font-family:Segoe UI,Arial,sans-serif;color:#243145;}' +
     '.p-slide{page-break-after:always;min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;position:relative;}' +
@@ -1296,7 +1296,7 @@ function sunYazdir() {
   setTimeout(function(){ w.print(); }, 400);
 }
 
-/* ====== XP / SEVÄ°YE / ROZET ====== */
+/* ====== XP / SEVİYE / ROZET ====== */
 function gunKod(d) { var y = d.getFullYear(), m = d.getMonth() + 1, g = d.getDate(); return y + '-' + (m < 10 ? '0' : '') + m + '-' + (g < 10 ? '0' : '') + g; }
 function xpBilgi() { return oku('xp') || { p: 0, gun: null, seri: 0 }; }
 function seviyeHesapla(p) { return Math.floor(p / 300) + 1; }
@@ -1323,7 +1323,7 @@ function xpEkle(miktar) {
   rozetKontrol();
 }
 
-/* ====== HAFTALIK YARIÅMA (Ã¶dÃ¼llÃ¼) ====== */
+/* ====== HAFTALIK YARIŞMA (ödüllü) ====== */
 function haftaKod(d) {
   d = d || new Date();
   var gun = new Date(d); gun.setHours(0, 0, 0, 0);
@@ -1353,42 +1353,42 @@ function yarismaOdulAl() {
   var tm = oku('yarismaTamam') || [];
   if (tm.indexOf(k) < 0) { tm.push(k); kaydet('yarismaTamam', tm); }
   xpEkle(50);
-  alert('ğŸ HaftalÄ±k Ã¶dÃ¼lÃ¼nÃ¼ kazandÄ±n: +50 XP! ğŸ†');
+  alert('🎁 Haftalık ödülünü kazandın: +50 XP! 🏆');
   rozetKontrol();
   cizYarisma();
 }
 function cizYarisma() {
   var d = yarismaDurum();
   var k = haftaKod();
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ† HaftalÄ±k YarÄ±ÅŸma</h1><p>Bu hafta ' + d.hedef + ' XP topla, Ã¶dÃ¼lÃ¼nÃ¼ kap!</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🏆 Haftalık Yarışma</h1><p>Bu hafta ' + d.hedef + ' XP topla, ödülünü kap!</p></div>';
   var yuz = Math.min(100, Math.round(d.xp / d.hedef * 100));
   h += '<div class="yarisma-kutu">';
   h += '<div class="yarisma-ust"><b>' + k + '</b><span>' + d.xp + ' / ' + d.hedef + ' XP</span></div>';
   h += '<div class="cubuk"><div class="cubuk-dolgu" style="width:' + yuz + '%;background:' + (d.tam ? '#2ecc71' : '#6a5cff') + '"></div></div>';
-  h += '<div class="kucuk-not">' + (d.tam ? 'ğŸ‰ Hedefe ulaÅŸtÄ±n!' : 'Hedefe ' + (d.hedef - d.xp) + ' XP kaldÄ±.') + '</div>';
-  if (d.tam && !d.alindi) h += '<button class="btn btn-test" style="width:100%;margin-top:10px" onclick="yarismaOdulAl()">ğŸ Ã–dÃ¼lÃ¼ Al (+50 XP)</button>';
-  else if (d.alindi) h += '<div class="odul-alindi">âœ… Bu haftanÄ±n Ã¶dÃ¼lÃ¼nÃ¼ aldÄ±n! (+50 XP)</div>';
+  h += '<div class="kucuk-not">' + (d.tam ? '🎉 Hedefe ulaştın!' : 'Hedefe ' + (d.hedef - d.xp) + ' XP kaldı.') + '</div>';
+  if (d.tam && !d.alindi) h += '<button class="btn btn-test" style="width:100%;margin-top:10px" onclick="yarismaOdulAl()">🎁 Ödülü Al (+50 XP)</button>';
+  else if (d.alindi) h += '<div class="odul-alindi">✅ Bu haftanın ödülünü aldın! (+50 XP)</div>';
   h += '</div>';
   var x = oku('xphafta') || {};
   var keys = Object.keys(x).sort();
   var enIyi = 0, enIyiK = '';
   keys.forEach(function(kk) { if (x[kk] > enIyi) { enIyi = x[kk]; enIyiK = kk; } });
-  h += '<div class="baslik" style="margin-top:18px"><h2>ğŸ“ˆ Son HaftalarÄ±n</h2></div>';
-  h += '<div class="kucuk-not">ğŸ… En iyi haftan: ' + (enIyiK || '-') + ' Â· ' + enIyi + ' XP</div>';
+  h += '<div class="baslik" style="margin-top:18px"><h2>📈 Son Haftaların</h2></div>';
+  h += '<div class="kucuk-not">🏅 En iyi haftan: ' + (enIyiK || '-') + ' · ' + enIyi + ' XP</div>';
   h += '<div class="yarisma-liste">';
   keys.slice(-8).forEach(function(kk) {
     var w = Math.min(100, Math.round(x[kk] / d.hedef * 100));
-    h += '<div class="yarisma-satir"><span class="yarisma-ad">' + (kk === k ? 'â–¶ ' : '') + kk + '</span>' +
+    h += '<div class="yarisma-satir"><span class="yarisma-ad">' + (kk === k ? '▶ ' : '') + kk + '</span>' +
          '<span class="yarisma-puan">' + x[kk] + ' XP</span>' +
          '<div class="cubuk" style="flex:1"><div class="cubuk-dolgu" style="width:' + w + '%;background:' + (x[kk] >= d.hedef ? '#2ecc71' : '#6a5cff') + '"></div></div></div>';
   });
   h += '</div>';
-  if (!keys.length) h += '<p class="kucuk-not">HenÃ¼z haftalÄ±k veri yok. XP kazandÄ±kÃ§a burada gÃ¶receksin.</p>';
+  if (!keys.length) h += '<p class="kucuk-not">Henüz haftalık veri yok. XP kazandıkça burada göreceksin.</p>';
   ekran.innerHTML = h;
 }
 
-/* ====== DENEMATÄ°K (AylÄ±k Deneme) ====== */
+/* ====== DENEMATİK (Aylık Deneme) ====== */
 function ayKod(d) { d = d || new Date(); var m = d.getMonth() + 1; return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m; }
 function denemeAktif(d) { d = d || new Date(); return d.getDate() <= 7; }
 function denemeSonuclar() { return oku('denemeSonuclari') || {}; }
@@ -1458,18 +1458,18 @@ function denemeEksikHTML(eksArr) {
   eksArr.forEach(function(e) {
     h += '<div class="deneme-eksik"><span>' + DERS_IKON(e.dersId) + '</span>' +
          '<span><b>' + esc(e.ad) + '</b><br><small>' + dersAdi(e.dersId) + '</small></span>' +
-         '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="testBaslat(\'' + e.dersId + '\',' + e.bi + ')">Ã‡Ã¶z</button></div>';
+         '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="testBaslat(\'' + e.dersId + '\',' + e.bi + ')">Çöz</button></div>';
   });
   return h;
 }
 function cizDeneme() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ¯ Denematik â€“ AylÄ±k Deneme</h1><p>Her ayÄ±n ilk haftasÄ±nda aÃ§Ä±lan 10 soruluk deÄŸerlendirme; eksik konularÄ±nÄ± Ã¶ÄŸren!</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🎯 Denematik – Aylık Deneme</h1><p>Her ayın ilk haftasında açılan 10 soruluk değerlendirme; eksik konularını öğren!</p></div>';
   var d = durum.deneme;
   if (d && d.liste) {
     var q = d.liste[d.sira];
-    h += '<div class="quiz-kutu"><div class="quiz-baslik"><div><b>ğŸ¯ Denematik</b></div>' +
-         '<div class="iller-puan">Soru ' + (d.sira + 1) + '/' + d.liste.length + ' &nbsp; â­ ' + d.dogru + ' doÄŸru</div></div>';
+    h += '<div class="quiz-kutu"><div class="quiz-baslik"><div><b>🎯 Denematik</b></div>' +
+         '<div class="iller-puan">Soru ' + (d.sira + 1) + '/' + d.liste.length + ' &nbsp; ⭐ ' + d.dogru + ' doğru</div></div>';
     h += '<div class="kucuk-not" style="text-align:center">' + DERS_IKON(q.d) + ' ' + dersAdi(q.d) + '</div>';
     h += '<div class="quiz-soru">' + q.s.s + '</div>';
     q.s.o.forEach(function(o, i) {
@@ -1481,19 +1481,19 @@ function cizDeneme() {
   }
   if (durum.denemeSonuc) {
     var s = durum.denemeSonuc;
-    var ikon = s.puan >= 80 ? 'ğŸ†' : s.puan >= 60 ? 'ğŸ‰' : 'ğŸ’ª';
+    var ikon = s.puan >= 80 ? '🏆' : s.puan >= 60 ? '🎉' : '💪';
     h += '<div class="quiz-kutu"><div class="sonuc"><div class="buyuk">' + ikon + '</div>';
-    h += '<div class="puan">' + s.d + ' / ' + s.t + ' doÄŸru</div>';
-    h += '<p style="color:#5c6b85">%' + s.puan + ' baÅŸarÄ±</p>';
+    h += '<div class="puan">' + s.d + ' / ' + s.t + ' doğru</div>';
+    h += '<p style="color:#5c6b85">%' + s.puan + ' başarı</p>';
     var eksArr = [];
     for (var k in (s.eksik || {})) eksArr.push(s.eksik[k]);
     if (eksArr.length) {
-      h += '<p style="margin:12px 0;font-weight:700">ğŸ“Œ Bu denemede eksik bÄ±raktÄ±ÄŸÄ±n konular:</p>';
+      h += '<p style="margin:12px 0;font-weight:700">📌 Bu denemede eksik bıraktığın konular:</p>';
       h += denemeEksikHTML(eksArr);
     } else {
-      h += '<p style="margin:12px 0;font-weight:700;color:#1f8a70">ğŸ‰ TÃ¼m sorularÄ± doÄŸru yaptÄ±n!</p>';
+      h += '<p style="margin:12px 0;font-weight:700;color:#1f8a70">🎉 Tüm soruları doğru yaptın!</p>';
     }
-    h += '<button class="btn btn-mor" onclick="git(\'deneme\')">ğŸ“… Deneme SayfasÄ±</button>';
+    h += '<button class="btn btn-mor" onclick="git(\'deneme\')">📅 Deneme Sayfası</button>';
     h += '</div></div>';
     durum.denemeSonuc = null;
     ekran.innerHTML = h;
@@ -1505,37 +1505,37 @@ function cizDeneme() {
   var yapildi = !!son[bugun];
   h += '<div class="deneme-kutu">';
   if (aktif && !yapildi) {
-    h += '<div class="deneme-acik">ğŸŸ¢ Bu ayÄ±n denemesi AÃ‡IK! ' + denemeHavuz().length + ' soruluk havuzdan 10 soru seÃ§ilir.</div>';
-    h += '<button class="btn btn-test" style="width:100%;margin-top:12px" onclick="denemeBasla()">ğŸš€ Denemeye BaÅŸla</button>';
+    h += '<div class="deneme-acik">🟢 Bu ayın denemesi AÇIK! ' + denemeHavuz().length + ' soruluk havuzdan 10 soru seçilir.</div>';
+    h += '<button class="btn btn-test" style="width:100%;margin-top:12px" onclick="denemeBasla()">🚀 Denemeye Başla</button>';
   } else if (aktif && yapildi) {
-    h += '<div class="deneme-acik">âœ… Bu ayÄ±n denemesini Ã§Ã¶zdÃ¼n: <b>' + son[bugun].d + '/' + son[bugun].t + '</b> (%' + son[bugun].puan + '). Gelecek deneme: Ã¶nÃ¼mÃ¼zdeki ayÄ±n ilk haftasÄ±.</div>';
+    h += '<div class="deneme-acik">✅ Bu ayın denemesini çözdün: <b>' + son[bugun].d + '/' + son[bugun].t + '</b> (%' + son[bugun].puan + '). Gelecek deneme: önümüzdeki ayın ilk haftası.</div>';
   } else {
-    h += '<div class="deneme-kapali">ğŸ”’ Deneme her ayÄ±n 1-7\'si arasÄ±nda aÃ§Ä±lÄ±r. Bir sonraki denemeyi bekle!</div>';
+    h += '<div class="deneme-kapali">🔒 Deneme her ayın 1-7\'si arasında açılır. Bir sonraki denemeyi bekle!</div>';
   }
   h += '</div>';
-  h += '<div class="baslik" style="margin-top:16px"><h2>ğŸ“… GeÃ§miÅŸ Denemeler</h2></div>';
+  h += '<div class="baslik" style="margin-top:16px"><h2>📅 Geçmiş Denemeler</h2></div>';
   var keys = Object.keys(son).sort();
-  if (!keys.length) h += '<p class="kucuk-not">HenÃ¼z deneme Ã§Ã¶zmedin.</p>';
+  if (!keys.length) h += '<p class="kucuk-not">Henüz deneme çözmedin.</p>';
   keys.slice(-12).forEach(function(kk) {
     var g = son[kk];
-    h += '<div class="deneme-satir"><span>' + kk + '</span><span class="deneme-puan">%' + g.puan + '</span><span>' + g.d + '/' + g.t + ' doÄŸru</span></div>';
+    h += '<div class="deneme-satir"><span>' + kk + '</span><span class="deneme-puan">%' + g.puan + '</span><span>' + g.d + '/' + g.t + ' doğru</span></div>';
   });
   var eks = denemeEksikTum();
   if (eks.length) {
-    h += '<div class="baslik" style="margin-top:16px"><h2>ğŸ“Œ Eksik KonularÄ±n</h2></div>';
+    h += '<div class="baslik" style="margin-top:16px"><h2>📌 Eksik Konuların</h2></div>';
     h += denemeEksikHTML(eks.slice(0, 6));
   }
   ekran.innerHTML = h;
 }
 
-/* ====== 3B FEN ANÄ°MASYONLARI ====== */
+/* ====== 3B FEN ANİMASYONLARI ====== */
 function fen3dDersId() { return 'fen' + (seciliSinif() || '6'); }
 function cizFen3D() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ”¬ 3B Fen AnimasyonlarÄ±</h1><p>Fen konularÄ±nÄ± 3 boyutlu sahnelere dokun, izle, Ã¶ÄŸren.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🔬 3B Fen Animasyonları</h1><p>Fen konularını 3 boyutlu sahnelere dokun, izle, öğren.</p></div>';
   var fid = fen3dDersId();
   var veri = FEN3D && FEN3D[fid];
-  if (!veri) { h += '<p class="kucuk-not">Bu sÄ±nÄ±f iÃ§in 3B animasyon bulunmuyor.</p>'; ekran.innerHTML = h; return; }
+  if (!veri) { h += '<p class="kucuk-not">Bu sınıf için 3B animasyon bulunmuyor.</p>'; ekran.innerHTML = h; return; }
   var ders = dersBul(fid.substr(3), fid);
   h += '<div class="fen3d-grid">';
   Object.keys(veri).forEach(function(bi) {
@@ -1555,31 +1555,31 @@ function fen3dAc(bi) {
   if (!v) return;
   var ders = dersBul(fid.substr(3), fid);
   var bAd = ders && ders.birimler[bi] ? ders.birimler[bi].ad : ('Konu ' + (Number(bi) + 1));
-  $('modal').innerHTML = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">âœ•</span>' +
-    '<h3>ğŸ”¬ ' + esc(bAd) + '</h3>' +
+  $('modal').innerHTML = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">✕</span>' +
+    '<h3>🔬 ' + esc(bAd) + '</h3>' +
     '<div class="fen3d-sahne-buyuk sahne-' + v.sahne + '">' + v.emoji + '</div>' +
     '<p class="fen3d-anlatim">' + esc(v.anlatim) + '</p></div>';
   $('overlay').classList.add('acik');
   $('modal').classList.add('acik');
 }
 
-/* ====== CANLI DERS TAKVÄ°MÄ° ====== */
+/* ====== CANLI DERS TAKVİMİ ====== */
 function canliGunIndex() { var g = new Date().getDay(); return (g === 0 || g === 6) ? -1 : g - 1; }
 function cizCanli() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   var takvim = (CANLI && CANLI[seciliSinif()]) ? CANLI[seciliSinif()] : (CANLI && CANLI['6']);
-  if (!takvim) { h += '<p class="kucuk-not">Bu sÄ±nÄ±f iÃ§in canlÄ± ders takvimi yok.</p>'; ekran.innerHTML = h; return; }
-  h += '<div class="baslik"><h1>ğŸ“… CanlÄ± Ders Takvimi</h1><p>' + esc(takvim.bilgi) + '</p></div>';
+  if (!takvim) { h += '<p class="kucuk-not">Bu sınıf için canlı ders takvimi yok.</p>'; ekran.innerHTML = h; return; }
+  h += '<div class="baslik"><h1>📅 Canlı Ders Takvimi</h1><p>' + esc(takvim.bilgi) + '</p></div>';
   var bugun = canliGunIndex();
   takvim.gunler.forEach(function(g, gi) {
     var aktif = gi === bugun;
     h += '<div class="canli-gun' + (aktif ? ' canli-bugun' : '') + '">';
-    h += '<div class="canli-gun-baslik">' + g.gun + (aktif ? ' <span class="canli-etiket">ğŸŸ¢ BugÃ¼n</span>' : '') + '</div>';
+    h += '<div class="canli-gun-baslik">' + g.gun + (aktif ? ' <span class="canli-etiket">🟢 Bugün</span>' : '') + '</div>';
     g.oturumlar.forEach(function(o) {
       h += '<div class="canli-oturum">';
       h += '<span class="canli-saat">' + o.saat + '</span>';
       h += '<div class="canli-bilgi"><b>' + DERS_IKON(o.d || 'reh') + ' ' + o.ad + '</b><br><small>' + esc(o.konu) + '</small></div>';
-      h += '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="canliKatil(\'' + (o.d || '') + '\',\'' + o.ad + '\',\'' + o.konu + '\')">ğŸ–¥ Derse KatÄ±l</button>';
+      h += '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="canliKatil(\'' + (o.d || '') + '\',\'' + o.ad + '\',\'' + o.konu + '\')">🖥 Derse Katıl</button>';
       h += '</div>';
     });
     h += '</div>';
@@ -1588,34 +1588,34 @@ function cizCanli() {
 }
 function canliKatil(dersId, ad, konu) {
   var sinif = seciliSinif() || '6';
-  var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">âœ•</span>';
-  h += '<div class="canli-modal"><div class="canli-canli">ğŸ”´ CANLI</div>';
+  var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">✕</span>';
+  h += '<div class="canli-modal"><div class="canli-canli">🔴 CANLI</div>';
   h += '<h3>' + DERS_IKON(dersId) + ' ' + esc(ad) + '</h3>';
   h += '<p class="canli-konu">Konu: ' + esc(konu) + '</p>';
   var d = dersBul(sinif, dersId);
   if (d && d.birimler[0]) h += '<div class="canli-ozet">' + esc(d.birimler[0].ozet) + '</div>';
-  else h += '<div class="canli-ozet">Rehberlik dersi: sorularÄ±nÄ± sor, planÄ±nÄ± gÃ¶zden geÃ§ir. Ã–ÄŸretmenin seninle birebir gÃ¶rÃ¼ÅŸÃ¼r.</div>';
-  h += '<button class="btn btn-mor" onclick="kapatOverlay()">GÃ¶rÃ¼ÅŸmeyi Bitir</button>';
+  else h += '<div class="canli-ozet">Rehberlik dersi: sorularını sor, planını gözden geçir. Öğretmenin seninle birebir görüşür.</div>';
+  h += '<button class="btn btn-mor" onclick="kapatOverlay()">Görüşmeyi Bitir</button>';
   h += '</div></div>';
   $('modal').innerHTML = h;
   $('overlay').classList.add('acik');
   $('modal').classList.add('acik');
 }
 
-/* ====== YAZDIRILABÄ°LÄ°R ETKÄ°NLÄ°KLER ====== */
+/* ====== YAZDIRILABİLİR ETKİNLİKLER ====== */
 function cizEtkinlikler() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ–¨ YazdÄ±rÄ±labilir Etkinlikler</h1><p>Konu Ã§alÄ±ÅŸma kaÄŸÄ±tlarÄ±nÄ± yazdÄ±r veya ekranda incele.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🖨 Yazdırılabilir Etkinlikler</h1><p>Konu çalışma kağıtlarını yazdır veya ekranda incele.</p></div>';
   var s = seciliSinif() || '6';
   var bilgi = MUFREDAT[s];
-  if (!bilgi) { h += '<p class="kucuk-not">Ã–nce sÄ±nÄ±fÄ±nÄ± seÃ§.</p>'; ekran.innerHTML = h; return; }
+  if (!bilgi) { h += '<p class="kucuk-not">Önce sınıfını seç.</p>'; ekran.innerHTML = h; return; }
   bilgi.dersler.forEach(function(d) {
     h += '<div class="baslik" style="margin-top:14px"><h2>' + DERS_IKON(d.id) + ' ' + d.ad + '</h2></div>';
     h += '<div class="etkinlik-liste">';
     d.birimler.forEach(function(b, bi) {
-      h += '<div class="etkinlik-satir"><div><b>' + esc(b.ad) + '</b><br><small>' + esc((b.konular || []).join(' Â· ')) + '</small></div>';
-      h += '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="etkinlikYazdir(\'' + d.id + '\',' + bi + ')">ğŸ–¨ YazdÄ±r</button>';
-      h += '<button class="btn btn-mor" style="padding:6px 10px;font-size:13px" onclick="yaprakTestYazdir(\'' + d.id + '\',' + bi + ')">ğŸ“ Yaprak Test</button></div>';
+      h += '<div class="etkinlik-satir"><div><b>' + esc(b.ad) + '</b><br><small>' + esc((b.konular || []).join(' · ')) + '</small></div>';
+      h += '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="etkinlikYazdir(\'' + d.id + '\',' + bi + ')">🖨 Yazdır</button>';
+      h += '<button class="btn btn-mor" style="padding:6px 10px;font-size:13px" onclick="yaprakTestYazdir(\'' + d.id + '\',' + bi + ')">📝 Yaprak Test</button></div>';
     });
     h += '</div>';
   });
@@ -1627,13 +1627,13 @@ function etkinlikYazdir(dersId, bi) {
   if (!d || !d.birimler[bi]) return;
   var b = d.birimler[bi];
   var pr = profilOku();
-  var h = '<div class="yazdir-baslik"><h2>' + s + '. SÄ±nÄ±f ' + d.ad + ' â€“ ' + esc(b.ad) + '</h2>';
+  var h = '<div class="yazdir-baslik"><h2>' + s + '. Sınıf ' + d.ad + ' – ' + esc(b.ad) + '</h2>';
   h += '<p class="yazdir-kimlik">Ad Soyad: <u>' + (pr.ad ? esc(pr.ad) + ' ' + esc(pr.soyad || '') : '..............................................') + '</u> &nbsp;&nbsp; Tarih: <u>......../......../........</u></p></div>';
-  h += '<div class="yazdir-ozet"><b>ğŸ“Œ Konu Ã–zeti:</b><br>' + esc(b.ozet) + '</div>';
-  h += '<div class="yazdir-soru"><b>1.</b> ' + esc(b.ad) + ' konusunda ne Ã¶ÄŸrendin? Ä°ki cÃ¼mleyle yaz.<br><div class="yazdir-cizgi">&nbsp;</div></div>';
-  h += '<div class="yazdir-soru"><b>2.</b> Bu konuyla ilgili bir Ã¶rnek ver.<br><div class="yazdir-cizgi">&nbsp;</div></div>';
-  h += '<div class="yazdir-soru"><b>3.</b> Konuyu tekrar etmek iÃ§in yapacaÄŸÄ±n iki ÅŸey nedir?<br><div class="yazdir-cizgi">&nbsp;</div></div>';
-  h += '<div class="yazdir-alt">Ä°yi Ã§alÄ±ÅŸmalar! ğŸ“š Okul Ders Uygulamam</div>';
+  h += '<div class="yazdir-ozet"><b>📌 Konu Özeti:</b><br>' + esc(b.ozet) + '</div>';
+  h += '<div class="yazdir-soru"><b>1.</b> ' + esc(b.ad) + ' konusunda ne öğrendin? İki cümleyle yaz.<br><div class="yazdir-cizgi">&nbsp;</div></div>';
+  h += '<div class="yazdir-soru"><b>2.</b> Bu konuyla ilgili bir örnek ver.<br><div class="yazdir-cizgi">&nbsp;</div></div>';
+  h += '<div class="yazdir-soru"><b>3.</b> Konuyu tekrar etmek için yapacağın iki şey nedir?<br><div class="yazdir-cizgi">&nbsp;</div></div>';
+  h += '<div class="yazdir-alt">İyi çalışmalar! 📚 Okul Ders Uygulamam</div>';
   $('yazdirAlan').innerHTML = '<div class="yazdir-icerik">' + h + '</div>';
   if (window.print) window.print();
 }
@@ -1643,9 +1643,9 @@ function yaprakTestYazdir(dersId, bi) {
   var d = dersBul(s, dersId);
   var b = d && d.birimler[bi];
   var qs = birimTest(dersId, bi);
-  if (!b || !qs.length) { alert('Bu konu iÃ§in yaprak test oluÅŸturacak soru yok.'); return; }
+  if (!b || !qs.length) { alert('Bu konu için yaprak test oluşturacak soru yok.'); return; }
   var pr = profilOku();
-  var h = '<div class="yazdir-baslik"><h2>' + s + '. SÄ±nÄ±f ' + d.ad + ' â€“ Yaprak Test: ' + esc(b.ad) + '</h2>';
+  var h = '<div class="yazdir-baslik"><h2>' + s + '. Sınıf ' + d.ad + ' – Yaprak Test: ' + esc(b.ad) + '</h2>';
   h += '<p class="yazdir-kimlik">Ad Soyad: <u>' + (pr.ad ? esc(pr.ad) + ' ' + esc(pr.soyad || '') : '..............................................') + '</u> &nbsp;&nbsp; Tarih: <u>......../......../........</u> &nbsp;&nbsp; Puan: <u>........</u></p></div>';
   qs.forEach(function(q, i) {
     h += '<div class="yazdir-soru"><b>' + (i + 1) + '.</b> ' + esc(q.s) + '</div>';
@@ -1653,13 +1653,13 @@ function yaprakTestYazdir(dersId, bi) {
       h += '<div class="yazdir-secenek">' + String.fromCharCode(65 + j) + ') ' + esc(o) + '</div>';
     });
   });
-  h += '<div class="yazdir-cevap"><b>ğŸ”‘ Cevap AnahtarÄ±:</b> ' + qs.map(function(q, i) { return (i + 1) + '-' + String.fromCharCode(65 + q.d); }).join(' &nbsp;Â·&nbsp; ') + '</div>';
-  h += '<div class="yazdir-alt">Ä°yi Ã§alÄ±ÅŸmalar! ğŸ“š Okul Ders Uygulamam</div>';
+  h += '<div class="yazdir-cevap"><b>🔑 Cevap Anahtarı:</b> ' + qs.map(function(q, i) { return (i + 1) + '-' + String.fromCharCode(65 + q.d); }).join(' &nbsp;·&nbsp; ') + '</div>';
+  h += '<div class="yazdir-alt">İyi çalışmalar! 📚 Okul Ders Uygulamam</div>';
   $('yazdirAlan').innerHTML = '<div class="yazdir-icerik">' + h + '</div>';
   if (window.print) window.print();
 }
 
-/* ====== FEN DENEYLERÄ° (interaktif) ====== */
+/* ====== FEN DENEYLERİ (interaktif) ====== */
 function deneylerList() { return (typeof DENEY !== 'undefined') ? (DENEY['fen' + (seciliSinif() || '6')] || []) : []; }
 function deneyBul(id) {
   var D = deneylerList();
@@ -1667,39 +1667,39 @@ function deneyBul(id) {
   return null;
 }
 function cizDeney() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   if (durum.deney) {
     var d = durum.deney.d;
     var a = d.adimlar[durum.deney.adim];
-    h += '<div class="baslik"><h1>' + d.ikon + ' ' + esc(d.ad) + '</h1><p>KazanÄ±m: ' + d.kazanim + '</p></div>';
+    h += '<div class="baslik"><h1>' + d.ikon + ' ' + esc(d.ad) + '</h1><p>Kazanım: ' + d.kazanim + '</p></div>';
     h += '<div class="deney-adim">';
-    h += '<div class="kucuk-not">AdÄ±m ' + (durum.deney.adim + 1) + '/' + d.adimlar.length + ' Â· DoÄŸru: ' + durum.deney.dogru + '</div>';
+    h += '<div class="kucuk-not">Adım ' + (durum.deney.adim + 1) + '/' + d.adimlar.length + ' · Doğru: ' + durum.deney.dogru + '</div>';
     h += '<h2>' + esc(a.baslik) + '</h2>';
     h += '<p>' + esc(a.metin) + '</p>';
     if (a.tip === 'secim') {
-      if (durum.deney.yanlis) h += '<div class="deney-hata">âŒ YanlÄ±ÅŸ seÃ§im! DoÄŸru ÅŸÄ±kkÄ± bulup tekrar dene.</div>';
+      if (durum.deney.yanlis) h += '<div class="deney-hata">❌ Yanlış seçim! Doğru şıkkı bulup tekrar dene.</div>';
       h += '<div class="deney-secenekler">';
       a.secenekler.forEach(function(sik, i) {
         h += '<button class="secenek" onclick="deneyCevap(' + i + ')">' + String.fromCharCode(65 + i) + ') ' + esc(sik) + '</button>';
       });
       h += '</div>';
     } else {
-      h += '<button class="btn btn-test" onclick="deneyIleri()">Ä°leri â–¶</button>';
+      h += '<button class="btn btn-test" onclick="deneyIleri()">İleri ▶</button>';
     }
     h += '</div>';
     ekran.innerHTML = h;
     return;
   }
-  h += '<div class="baslik"><h1>ğŸ§ª Fen Deneyleri</h1><p>' + (seciliSinif() || '6') + '. sÄ±nÄ±f fen konularÄ± iÃ§in adÄ±m adÄ±m interaktif deneyler. Her yeni deneyi tamamlayÄ±nca +20 XP kazanÄ±rsÄ±n.</p></div>';
+  h += '<div class="baslik"><h1>🧪 Fen Deneyleri</h1><p>' + (seciliSinif() || '6') + '. sınıf fen konuları için adım adım interaktif deneyler. Her yeni deneyi tamamlayınca +20 XP kazanırsın.</p></div>';
   var yapilan = oku('deney') || {};
   h += '<div class="deney-kutu">';
   deneylerList().forEach(function(d) {
     var bitti = !!yapilan[d.id];
     h += '<div class="deney-kart">';
     h += '<div class="deney-ikon">' + d.ikon + '</div>';
-    h += '<div class="deney-bilgi"><b>' + esc(d.ad) + '</b><br><small>KazanÄ±m: ' + d.kazanim + ' Â· â± ' + d.sure + '</small>';
-    h += '<div class="kucuk-not">ğŸ§° ' + esc(d.malzeme.join(', ')) + '</div></div>';
-    h += '<div>' + (bitti ? '<span class="deney-tamam">âœ…</span> ' : '') + '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="deneyBasla(\'' + d.id + '\')">' + (bitti ? 'Tekrar' : 'BaÅŸla') + '</button></div>';
+    h += '<div class="deney-bilgi"><b>' + esc(d.ad) + '</b><br><small>Kazanım: ' + d.kazanim + ' · ⏱ ' + d.sure + '</small>';
+    h += '<div class="kucuk-not">🧰 ' + esc(d.malzeme.join(', ')) + '</div></div>';
+    h += '<div>' + (bitti ? '<span class="deney-tamam">✅</span> ' : '') + '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="deneyBasla(\'' + d.id + '\')">' + (bitti ? 'Tekrar' : 'Başla') + '</button></div>';
     h += '</div>';
   });
   h += '</div>';
@@ -1748,11 +1748,11 @@ function deneyBitir() {
   var bittiSay = Object.keys(yap).length;
   var rozetVar = (oku('odul') || []).indexOf('deney1') > -1;
   var h = '<div class="modal-icerik">';
-  h += '<span class="kap" onclick="kapatOverlay()">âœ•</span>';
-  h += '<h3>' + d.ikon + ' Deney TamamlandÄ±!</h3>';
-  h += '<div class="deney-tamam-kutu">ğŸ‰ ' + esc(d.ad) + ' deneyini bitirdin!' + (ilk ? ' (+20 XP)' : '') + '</div>';
+  h += '<span class="kap" onclick="kapatOverlay()">✕</span>';
+  h += '<h3>' + d.ikon + ' Deney Tamamlandı!</h3>';
+  h += '<div class="deney-tamam-kutu">🎉 ' + esc(d.ad) + ' deneyini bitirdin!' + (ilk ? ' (+20 XP)' : '') + '</div>';
   h += '<p class="kucuk-not">Toplam tamamlanan deney: ' + bittiSay + '/' + deneylerList().length + '</p>';
-  if (bittiSay >= 3) h += '<div class="deney-tamam-kutu">ğŸ… ' + (rozetVar ? 'Deneyci rozetin sende!' : 'Deneyci rozetini kazandÄ±n!') + '</div>';
+  if (bittiSay >= 3) h += '<div class="deney-tamam-kutu">🏅 ' + (rozetVar ? 'Deneyci rozetin sende!' : 'Deneyci rozetini kazandın!') + '</div>';
   h += '<button class="btn btn-mor" onclick="kapatOverlay();git(\'deney\')">Tamam</button>';
   h += '</div>';
   $('modal').innerHTML = h;
@@ -1760,8 +1760,8 @@ function deneyBitir() {
   $('modal').classList.add('acik');
 }
 
-/* ====== SEVÄ°YE BELÄ°RLEME ====== */
-function seviyeAd(p) { return p >= 80 ? 'Ä°leri' : (p >= 50 ? 'Orta' : 'BaÅŸlangÄ±Ã§'); }
+/* ====== SEVİYE BELİRLEME ====== */
+function seviyeAd(p) { return p >= 80 ? 'İleri' : (p >= 50 ? 'Orta' : 'Başlangıç'); }
 function seviyeHavuz() {
   var s = seciliSinif() || '6';
   var bilgi = MUFREDAT[s];
@@ -1787,15 +1787,15 @@ function seviyeHavuz() {
 }
 function seviyeSonuc() { return oku('seviye'); }
 function cizSeviye() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   if (durum.sev) {
     var q = durum.sev.liste[durum.sev.sira];
     var dersAd = dersBul(seciliSinif(), q.dersId);
     h += '<div class="quiz-kutu"><div class="quiz-baslik">' +
-         '<div><b>ğŸ¯ Seviye Belirleme</b></div>' +
-         '<div class="iller-puan">Soru ' + (durum.sev.sira + 1) + '/' + durum.sev.liste.length + ' Â· â­ ' + durum.sev.dogru + ' doÄŸru</div></div>';
-    if (durum.sev.geri) h += '<div class="deney-hata">âŒ YanlÄ±ÅŸ! DoÄŸru cevap: ' + esc(q.q.o[q.q.d]) + '</div>';
-    h += '<div class="kucuk-not" style="text-align:center">ğŸ“˜ ' + (dersAd ? dersAd.ad : q.dersId) + '</div>';
+         '<div><b>🎯 Seviye Belirleme</b></div>' +
+         '<div class="iller-puan">Soru ' + (durum.sev.sira + 1) + '/' + durum.sev.liste.length + ' · ⭐ ' + durum.sev.dogru + ' doğru</div></div>';
+    if (durum.sev.geri) h += '<div class="deney-hata">❌ Yanlış! Doğru cevap: ' + esc(q.q.o[q.q.d]) + '</div>';
+    h += '<div class="kucuk-not" style="text-align:center">📘 ' + (dersAd ? dersAd.ad : q.dersId) + '</div>';
     h += '<div class="quiz-soru">' + esc(q.q.s) + '</div>';
     q.q.o.forEach(function(sik, i) {
       h += '<button class="secenek" onclick="seviyeCevap(' + i + ')">' + String.fromCharCode(65 + i) + ') ' + esc(sik) + '</button>';
@@ -1804,20 +1804,20 @@ function cizSeviye() {
     ekran.innerHTML = h;
     return;
   }
-  h += '<div class="baslik"><h1>ğŸ¯ Seviye Belirleme</h1><p>TÃ¼rkÃ§e, Matematik, Fen, Sosyal, Ä°ngilizce ve Din derslerinden 8 soruluk baÅŸlangÄ±Ã§ testiyle seviyeni Ã¶lÃ§. Sonucuna gÃ¶re sana konu Ã¶nerileri sunarÄ±z.</p></div>';
+  h += '<div class="baslik"><h1>🎯 Seviye Belirleme</h1><p>Türkçe, Matematik, Fen, Sosyal, İngilizce ve Din derslerinden 8 soruluk başlangıç testiyle seviyeni ölç. Sonucuna göre sana konu önerileri sunarız.</p></div>';
   var son = seviyeSonuc();
   if (son) {
     h += '<div class="seviye-sonuc">';
     h += '<div class="seviye-sonuc-puan">' + son.puan + ' <small>/100</small></div>';
-    h += '<div>Seviyen: <b>' + seviyeAd(son.puan) + '</b> Â· ' + son.dogru + '/' + son.toplam + ' doÄŸru Â· ' + son.tarih + '</div>';
+    h += '<div>Seviyen: <b>' + seviyeAd(son.puan) + '</b> · ' + son.dogru + '/' + son.toplam + ' doğru · ' + son.tarih + '</div>';
     h += '</div>';
   }
-  h += '<button class="btn btn-test" style="width:100%;margin-top:12px" onclick="seviyeBasla()">' + (son ? 'ğŸ” Tekrar Ã‡Ã¶z' : 'ğŸš€ Teste BaÅŸla') + '</button>';
+  h += '<button class="btn btn-test" style="width:100%;margin-top:12px" onclick="seviyeBasla()">' + (son ? '🔁 Tekrar Çöz' : '🚀 Teste Başla') + '</button>';
   ekran.innerHTML = h;
 }
 function seviyeBasla() {
   var liste = seviyeHavuz();
-  if (!liste.length) { alert('Yeterli soru bulunamadÄ±.'); return; }
+  if (!liste.length) { alert('Yeterli soru bulunamadı.'); return; }
   durum.sev = { liste: liste, sira: 0, dogru: 0, geri: false };
   render();
 }
@@ -1846,29 +1846,29 @@ function seviyeBitir() {
 }
 function cizSeviyeSon() {
   var son = durum.sevSon || seviyeSonuc();
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  if (!son) { h += '<div class="baslik"><h1>ğŸ¯ Seviye Belirleme</h1></div><p class="kucuk-not">HenÃ¼z sonuÃ§ yok. Ã–nce testi Ã§Ã¶z.</p>'; ekran.innerHTML = h; return; }
-  h += '<div class="baslik"><h1>ğŸ¯ Seviye Belirleme Sonucu</h1></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  if (!son) { h += '<div class="baslik"><h1>🎯 Seviye Belirleme</h1></div><p class="kucuk-not">Henüz sonuç yok. Önce testi çöz.</p>'; ekran.innerHTML = h; return; }
+  h += '<div class="baslik"><h1>🎯 Seviye Belirleme Sonucu</h1></div>';
   h += '<div class="seviye-sonuc">';
   h += '<div class="seviye-sonuc-puan">' + son.puan + ' <small>/100</small></div>';
   h += '<div>Seviyen: <b>' + seviyeAd(son.puan) + '</b></div>';
-  h += '<div class="kucuk-not">' + son.dogru + '/' + son.toplam + ' doÄŸru Â· +' + (son.xp || 0) + ' XP kazandÄ±n</div>';
+  h += '<div class="kucuk-not">' + son.dogru + '/' + son.toplam + ' doğru · +' + (son.xp || 0) + ' XP kazandın</div>';
   h += '</div>';
   var l = oneriKonular(3);
   if (l.length) {
-    h += '<div class="baslik" style="margin-top:16px"><h2>ğŸ“Œ Sana Ã–nerdiÄŸimiz Konular</h2></div>';
+    h += '<div class="baslik" style="margin-top:16px"><h2>📌 Sana Önerdiğimiz Konular</h2></div>';
     h += '<div class="deney-kutu">';
     l.forEach(function(o) {
       h += '<div class="deney-kart"><div class="deney-ikon">' + DERS_IKON(o.dersId) + '</div><div class="deney-bilgi"><b>' + esc(o.dersAd) + '</b><br><small>' + esc(o.birimAd) + '</small></div>';
-      h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="testBaslat(\'' + o.dersId + '\',' + o.bi + ')">Ã‡alÄ±ÅŸ</button></div></div>';
+      h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="testBaslat(\'' + o.dersId + '\',' + o.bi + ')">Çalış</button></div></div>';
     });
     h += '</div>';
   }
-  h += '<button class="btn btn-mor" style="width:100%;margin-top:14px" onclick="git(\'seviye\')">Seviye EkranÄ±</button>';
+  h += '<button class="btn btn-mor" style="width:100%;margin-top:14px" onclick="git(\'seviye\')">Seviye Ekranı</button>';
   ekran.innerHTML = h;
 }
 
-/* ====== Ã‡Ã–ZÃœMLÃœ SORULAR ====== */
+/* ====== ÇÖZÜMLÜ SORULAR ====== */
 function cozumBul(dersId, bi, q) {
   var C = (typeof COZUM !== 'undefined') && COZUM[dersId] && COZUM[dersId][bi];
   if (C) {
@@ -1876,40 +1876,40 @@ function cozumBul(dersId, bi, q) {
   }
   var d = dersBul(seciliSinif(), dersId);
   var b = d && d.birimler[bi];
-  return 'DoÄŸru cevap: ' + String.fromCharCode(65 + q.d) + ') ' + q.o[q.d] + '. ' + (b ? 'Konu Ã¶zeti: ' + b.ozet : 'Ä°lgili konuyu tekrar incele.');
+  return 'Doğru cevap: ' + String.fromCharCode(65 + q.d) + ') ' + q.o[q.d] + '. ' + (b ? 'Konu özeti: ' + b.ozet : 'İlgili konuyu tekrar incele.');
 }
 function cizCozumlu() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   var s = seciliSinif() || '6';
   if (durum.cozDers) {
     var d = dersBul(s, durum.cozDers);
-    h += '<button class="geri" onclick="cozumDersKapat()">â¬… Ders Listesi</button>';
+    h += '<button class="geri" onclick="cozumDersKapat()">⬅ Ders Listesi</button>';
     if (d) {
-      h += '<div class="baslik"><h1>' + DERS_IKON(d.id) + ' ' + d.ad + ' â€” Ã‡Ã¶zÃ¼mlÃ¼ Sorular</h1></div>';
+      h += '<div class="baslik"><h1>' + DERS_IKON(d.id) + ' ' + d.ad + ' — Çözümlü Sorular</h1></div>';
       d.birimler.forEach(function(b, bi) {
         var qs = (SORULAR[d.id] || {})[bi];
         if (!qs || !qs.length) return;
-        h += '<div class="baslik" style="margin-top:14px"><h2>ğŸ“— ' + esc(b.ad) + ' <span class="kucuk-not">(' + qs.length + ' soru)</span></h2></div>';
+        h += '<div class="baslik" style="margin-top:14px"><h2>📗 ' + esc(b.ad) + ' <span class="kucuk-not">(' + qs.length + ' soru)</span></h2></div>';
         qs.forEach(function(q, qi) {
           h += '<div class="cozum-soru"><div class="cozum-soru-metin"><b>S' + (qi + 1) + '.</b> ' + esc(q.s) + '</div>';
-          h += '<details class="cozum-detay"><summary>âœï¸ Ã‡Ã¶zÃ¼mÃ¼ GÃ¶r</summary><div class="cozum-icerik">' + esc(cozumBul(d.id, bi, q)) + '</div></details></div>';
+          h += '<details class="cozum-detay"><summary>✏️ Çözümü Gör</summary><div class="cozum-icerik">' + esc(cozumBul(d.id, bi, q)) + '</div></details></div>';
         });
       });
     }
     ekran.innerHTML = h;
     return;
   }
-  h += '<div class="baslik"><h1>âœï¸ Ã‡Ã¶zÃ¼mlÃ¼ Sorular</h1><p>Test sorularÄ±nÄ±n adÄ±m adÄ±m Ã§Ã¶zÃ¼mlerini incele. Uzman Ã§Ã¶zÃ¼mÃ¼ olmayan sorularda konu Ã¶zetiyle aÃ§Ä±klama sunulur.</p></div>';
+  h += '<div class="baslik"><h1>✏️ Çözümlü Sorular</h1><p>Test sorularının adım adım çözümlerini incele. Uzman çözümü olmayan sorularda konu özetiyle açıklama sunulur.</p></div>';
   var bilgi = MUFREDAT[s];
-  if (!bilgi) { h += '<p class="kucuk-not">Ã–nce sÄ±nÄ±fÄ±nÄ± seÃ§.</p>'; ekran.innerHTML = h; return; }
+  if (!bilgi) { h += '<p class="kucuk-not">Önce sınıfını seç.</p>'; ekran.innerHTML = h; return; }
   h += '<div class="deney-kutu">';
   bilgi.dersler.forEach(function(d) {
     var n = 0;
     var qs = SORULAR[d.id] || {};
     for (var k in qs) n += (qs[k] || []).length;
     h += '<div class="deney-kart"><div class="deney-ikon">' + DERS_IKON(d.id) + '</div>';
-    h += '<div class="deney-bilgi"><b>' + d.ad + '</b><br><small>' + n + ' soru Â· adÄ±m adÄ±m Ã§Ã¶zÃ¼m</small></div>';
-    h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="cozumDersAc(\'' + d.id + '\')">AÃ§</button></div></div>';
+    h += '<div class="deney-bilgi"><b>' + d.ad + '</b><br><small>' + n + ' soru · adım adım çözüm</small></div>';
+    h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="cozumDersAc(\'' + d.id + '\')">Aç</button></div></div>';
   });
   h += '</div>';
   ekran.innerHTML = h;
@@ -1917,7 +1917,7 @@ function cizCozumlu() {
 function cozumDersAc(id) { durum.cozDers = id; render(); }
 function cozumDersKapat() { durum.cozDers = null; render(); }
 
-/* ====== DÄ°NLEME METÄ°NLERÄ° ====== */
+/* ====== DİNLEME METİNLERİ ====== */
 var dinleSesMetni = '';
 function dinleMetin(dersId, bi) {
   var D = (typeof DINLEME !== 'undefined') && DINLEME[dersId] && DINLEME[dersId][bi];
@@ -1948,7 +1948,7 @@ function ttsYedekOku(parcalar) {
   try { window.speechSynthesis.cancel(); } catch (e) {}
   _ttsParcaIdx = 0;
   function oku() {
-    if (_ttsParcaIdx >= parcalar.length) { ttsDurumGoster('âœ… TamamlandÄ±'); _ttsParcaIdx = 0; return; }
+    if (_ttsParcaIdx >= parcalar.length) { ttsDurumGoster('✅ Tamamlandı'); _ttsParcaIdx = 0; return; }
     try {
       var u = new SpeechSynthesisUtterance(parcalar[_ttsParcaIdx]);
       u.rate = 1; u.pitch = 1; u.volume = 1; u.lang = 'tr-TR';
@@ -1961,12 +1961,12 @@ function ttsYedekOku(parcalar) {
 }
 
 function internetSesCal(parcalar) {
-  if (!parcalar || !parcalar.length) { ttsDurumGoster('âš ï¸ Okunacak metin yok'); return; }
-  ttsDurumGoster("ğŸ”Š OynatÄ±lÄ±yorâ€¦ (internet sesiyle)");
+  if (!parcalar || !parcalar.length) { ttsDurumGoster('⚠️ Okunacak metin yok'); return; }
+  ttsDurumGoster("🔊 Oynatılıyor… (internet sesiyle)");
   if (_sesAudio) { try { _sesAudio.pause(); } catch (e) {} _sesAudio = null; }
   _sesParcaIdx = 0;
   function sonraki() {
-    if (_sesParcaIdx >= parcalar.length) { ttsDurumGoster('âœ… TamamlandÄ±'); _sesAudio = null; return; }
+    if (_sesParcaIdx >= parcalar.length) { ttsDurumGoster('✅ Tamamlandı'); _sesAudio = null; return; }
     var parca = parcalar[_sesParcaIdx];
     try {
       var url = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=tr&q=' +
@@ -1979,13 +1979,13 @@ function internetSesCal(parcalar) {
         a.play().then(function () {}).catch(function () {
           denendi++;
           if (denendi < 2) { setTimeout(cal, 400); }
-          else { ttsDurumGoster('âš ï¸ Ses Ã§alÄ±namadÄ±, cihaz sesine geÃ§iliyorâ€¦'); _sesAudio = null; ttsYedekOku(parcalar); }
+          else { ttsDurumGoster('⚠️ Ses çalınamadı, cihaz sesine geçiliyor…'); _sesAudio = null; ttsYedekOku(parcalar); }
         });
       }
       a.onended = function () { _sesParcaIdx++; sonraki(); };
-      a.onerror = function () { ttsDurumGoster('âš ï¸ Ses getirilemedi, cihaz sesine geÃ§iliyorâ€¦'); _sesAudio = null; ttsYedekOku(parcalar); };
+      a.onerror = function () { ttsDurumGoster('⚠️ Ses getirilemedi, cihaz sesine geçiliyor…'); _sesAudio = null; ttsYedekOku(parcalar); };
       if (a.play) cal();
-    } catch (e) { ttsDurumGoster('âš ï¸ Ses hatasÄ±, cihaz sesine geÃ§iliyorâ€¦'); _sesAudio = null; ttsYedekOku(parcalar); }
+    } catch (e) { ttsDurumGoster('⚠️ Ses hatası, cihaz sesine geçiliyor…'); _sesAudio = null; ttsYedekOku(parcalar); }
   }
   sonraki();
 }
@@ -1995,7 +1995,7 @@ function _ttsParcala(metin) {
   var m = sesMetniTemizle(metin);
   var bol = [];
   if (!m) return bol;
-  var cumle = m.match(/[^.!?â€¦]+[.!?â€¦]+/g) || [m];
+  var cumle = m.match(/[^.!?…]+[.!?…]+/g) || [m];
   var ak = '';
   for (var i = 0; i < cumle.length; i++) {
     if ((ak + cumle[i]).length > 160 && ak) { bol.push(ak.trim()); ak = cumle[i]; }
@@ -2008,17 +2008,17 @@ function _ttsParcala(metin) {
 
 function seslendir(metin, turkce) {
   try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
-  ttsDurumGoster('ğŸ”Š HazÄ±rlanÄ±yorâ€¦');
+  ttsDurumGoster('🔊 Hazırlanıyor…');
   _ttsParcalar = _ttsParcala(metin);
-  if (!_ttsParcalar.length) { ttsDurumGoster('âš ï¸ Okunacak metin yok'); return; }
-  // GARANTÄ°LÄ° YOL: tum cihazlarda kullanici jesti icinde internet sesini baslat.
+  if (!_ttsParcalar.length) { ttsDurumGoster('⚠️ Okunacak metin yok'); return; }
+  // GARANTİLİ YOL: tum cihazlarda kullanici jesti icinde internet sesini baslat.
   // (speechSynthesis bazi masaustu tarayicilarinda sessiz kalabiliyor.)
   internetSesCal(_ttsParcalar);
   return;
   var ss = window.speechSynthesis;
   var sesSecildi = null;
   function topluOku() {
-    if (_ttsParcaIdx >= _ttsParcalar.length) { ttsDurumGoster('âœ… TamamlandÄ±'); _ttsParcaIdx = 0; return; }
+    if (_ttsParcaIdx >= _ttsParcalar.length) { ttsDurumGoster('✅ Tamamlandı'); _ttsParcaIdx = 0; return; }
     var parca = _ttsParcalar[_ttsParcaIdx];
     var u = new SpeechSynthesisUtterance(parca);
     u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
@@ -2028,7 +2028,7 @@ function seslendir(metin, turkce) {
     }
     if (sesSecildi) { u.voice = sesSecildi; if (sesSecildi.lang) u.lang = sesSecildi.lang; }
     else if (!u.lang) u.lang = 'tr-TR';
-    u.onstart = function () { ttsDurumGoster('ğŸ”Š OynatÄ±lÄ±yorâ€¦ (' + (_ttsParcaIdx + 1) + '/' + _ttsParcalar.length + ')'); };
+    u.onstart = function () { ttsDurumGoster('🔊 Oynatılıyor… (' + (_ttsParcaIdx + 1) + '/' + _ttsParcalar.length + ')'); };
     u.onend = function () { _ttsParcaIdx++; topluOku(); };
     u.onerror = function () { _ttsParcaIdx++; topluOku(); };
     try {
@@ -2049,34 +2049,34 @@ function seslendir(metin, turkce) {
 }
 function sesTesti() {
   var durum = ttsVoiceBul();
-  if (!window.speechSynthesis) { alert('Bu tarayÄ±cÄ±da sesli okuma desteklenmiyor.'); return; }
-  if (durum === null) { alert('Ses motoru bulunamadÄ±. CihazÄ±na metin-okuma sesi eklemen gerekiyor.'); return; }
+  if (!window.speechSynthesis) { alert('Bu tarayıcıda sesli okuma desteklenmiyor.'); return; }
+  if (durum === null) { alert('Ses motoru bulunamadı. Cihazına metin-okuma sesi eklemen gerekiyor.'); return; }
   var mesaj = durum === 'YUKLENIYOR'
-    ? 'ğŸ”Š Merhaba! Uygulama sesi iÃ§in cihazÄ±nÄ±n yÃ¼klenmesini bekliyor. BirkaÃ§ saniye sonra tekrar deneyin.'
-    : 'ğŸ”Š Merhaba! Ses Ã§alÄ±ÅŸÄ±yorsa bu cÃ¼mleyi duymuÅŸsun. Ses dilin: ' + (durum.lang || '?') + ' (' + (durum.name || '') + ')';
+    ? '🔊 Merhaba! Uygulama sesi için cihazının yüklenmesini bekliyor. Birkaç saniye sonra tekrar deneyin.'
+    : '🔊 Merhaba! Ses çalışıyorsa bu cümleyi duymuşsun. Ses dilin: ' + (durum.lang || '?') + ' (' + (durum.name || '') + ')';
   seslendir(mesaj, durum === 'YUKLENIYOR' || (durum && durum.lang && durum.lang.indexOf('tr') === 0));
-  setTimeout(function () { if (!window.speechSynthesis.speaking) ttsDurumGoster('âš ï¸ Ses motoru hazÄ±r ama konuÅŸmuyor'); }, 2000);
+  setTimeout(function () { if (!window.speechSynthesis.speaking) ttsDurumGoster('⚠️ Ses motoru hazır ama konuşmuyor'); }, 2000);
 }
 function langTr() {
   return (navigator.language || 'tr-TR').replace('-', '').toLowerCase().indexOf('tr') === 0 ? 'tr' : 'tr';
 }
 function sesliOku(metin) { if (!metin || !String(metin).trim()) { ttsDurumGoster('⚠️ Dinlenecek metin boş'); return; } seslendir(metin, true); }
 function cizDinle() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   var s = seciliSinif() || '6';
   if (durum.dinle) {
     var d = dersBul(s, durum.dinle);
-    h += '<button class="geri" onclick="dinleDersKapat()">â¬… Ders Listesi</button>';
+    h += '<button class="geri" onclick="dinleDersKapat()">⬅ Ders Listesi</button>';
     if (d) {
-      h += '<div class="baslik"><h1>' + DERS_IKON(d.id) + ' ' + d.ad + ' â€” Dinleme Metinleri</h1><p>Metni aÃ§, ğŸ”Š simgesiyle dinleyerek Ã¶ÄŸren. Her yeni dinleme +10 XP kazandÄ±rÄ±r.</p></div>';
+      h += '<div class="baslik"><h1>' + DERS_IKON(d.id) + ' ' + d.ad + ' — Dinleme Metinleri</h1><p>Metni aç, 🔊 simgesiyle dinleyerek öğren. Her yeni dinleme +10 XP kazandırır.</p></div>';
       var okunan = oku('dinleme') || {};
       h += '<div class="deney-kutu">';
       d.birimler.forEach(function(b, bi) {
         var ok = !!okunan[d.id + '-' + bi];
         h += '<div class="deney-kart">';
-        h += '<div class="deney-ikon">ğŸ§</div>';
-        h += '<div class="deney-bilgi"><b>' + esc(b.ad) + '</b><br><small>' + esc((b.konular || []).join(' Â· ')) + '</small></div>';
-        h += '<div>' + (ok ? '<span class="deney-tamam">âœ…</span> ' : '') + '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="dinleAc(\'' + d.id + '\',' + bi + ')">Dinle</button></div>';
+        h += '<div class="deney-ikon">🎧</div>';
+        h += '<div class="deney-bilgi"><b>' + esc(b.ad) + '</b><br><small>' + esc((b.konular || []).join(' · ')) + '</small></div>';
+        h += '<div>' + (ok ? '<span class="deney-tamam">✅</span> ' : '') + '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="dinleAc(\'' + d.id + '\',' + bi + ')">Dinle</button></div>';
         h += '</div>';
       });
       h += '</div>';
@@ -2084,14 +2084,14 @@ function cizDinle() {
     ekran.innerHTML = h;
     return;
   }
-  h += '<div class="baslik"><h1>ğŸ§ Dinleme Metinleri</h1><p>Derslerin konu metinlerini aÃ§ ve dinleyerek Ã¶ÄŸren.</p></div>';
+  h += '<div class="baslik"><h1>🎧 Dinleme Metinleri</h1><p>Derslerin konu metinlerini aç ve dinleyerek öğren.</p></div>';
   var bilgi = MUFREDAT[s];
-  if (!bilgi) { h += '<p class="kucuk-not">Ã–nce sÄ±nÄ±fÄ±nÄ± seÃ§.</p>'; ekran.innerHTML = h; return; }
+  if (!bilgi) { h += '<p class="kucuk-not">Önce sınıfını seç.</p>'; ekran.innerHTML = h; return; }
   h += '<div class="deney-kutu">';
   bilgi.dersler.forEach(function(d) {
     h += '<div class="deney-kart"><div class="deney-ikon">' + DERS_IKON(d.id) + '</div>';
     h += '<div class="deney-bilgi"><b>' + d.ad + '</b><br><small>' + d.birimler.length + ' konu metni</small></div>';
-    h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="dinleDersAc(\'' + d.id + '\')">AÃ§</button></div></div>';
+    h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="dinleDersAc(\'' + d.id + '\')">Aç</button></div></div>';
   });
   h += '</div>';
   ekran.innerHTML = h;
@@ -2102,14 +2102,14 @@ function dinleAc(dersId, bi) {
   var d = dersBul(seciliSinif(), dersId);
   var b = d && d.birimler[bi];
   var metin = dinleMetin(dersId, bi);
-  if (!metin) { alert('Bu konu iÃ§in metin bulunamadÄ±.'); return; }
+  if (!metin) { alert('Bu konu için metin bulunamadı.'); return; }
   dinleSesMetni = sesMetniTemizle(metin);
-  var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">âœ•</span>';
-  h += '<h3>ğŸ§ ' + (b ? esc(b.ad) : (dersId + ' - ' + (bi + 1))) + '</h3>';
+  var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">✕</span>';
+  h += '<h3>🎧 ' + (b ? esc(b.ad) : (dersId + ' - ' + (bi + 1))) + '</h3>';
   h += '<div class="dinle-metin">' + esc(metin) + '</div>';
   h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">';
-  h += '<button class="btn btn-test" onclick="sesliOku(dinleSesMetni)">ğŸ”Š Dinle</button>';
-  h += '<button class="btn btn-mor" onclick="dinleBitir(\'' + dersId + '\',' + bi + ')">âœ… Dinledim</button>';
+  h += '<button class="btn btn-test" onclick="sesliOku(dinleSesMetni)">🔊 Dinle</button>';
+  h += '<button class="btn btn-mor" onclick="dinleBitir(\'' + dersId + '\',' + bi + ')">✅ Dinledim</button>';
   h += '</div></div>';
   $('modal').innerHTML = h;
   $('overlay').classList.add('acik');
@@ -2136,16 +2136,16 @@ function belgeselVeri(dersId, bi) {
   if (B) return B;
   var d = dersBul(seciliSinif(), dersId);
   var b = d && d.birimler[bi];
-  return b ? { emoji: 'ğŸ¬', bas: b.ad, sure: '3 dk', belge: b.ozet } : null;
+  return b ? { emoji: '🎬', bas: b.ad, sure: '3 dk', belge: b.ozet } : null;
 }
 function cizBelgesel() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   var s = seciliSinif() || '6';
   if (durum.belDers) {
     var d = dersBul(s, durum.belDers);
-    h += '<button class="geri" onclick="belgeselDersKapat()">â¬… Ders Listesi</button>';
+    h += '<button class="geri" onclick="belgeselDersKapat()">⬅ Ders Listesi</button>';
     if (d && BELGESEL && BELGESEL[d.id]) {
-      h += '<div class="baslik"><h1>ğŸ¬ ' + d.ad + ' â€” Belgeseller</h1><p>Her belgeseli izleyince +15 XP kazanÄ±rsÄ±n.</p></div>';
+      h += '<div class="baslik"><h1>🎬 ' + d.ad + ' — Belgeseller</h1><p>Her belgeseli izleyince +15 XP kazanırsın.</p></div>';
       var izlenen = oku('belgesel') || {};
       h += '<div class="deney-kutu">';
       Object.keys(BELGESEL[d.id]).forEach(function(bi) {
@@ -2155,8 +2155,8 @@ function cizBelgesel() {
         var ok = !!izlenen[d.id + '-' + bi];
         h += '<div class="deney-kart">';
         h += '<div class="deney-ikon">' + v.emoji + '</div>';
-        h += '<div class="deney-bilgi"><b>' + esc(b.ad) + '</b><br><small>' + esc(v.bas) + ' Â· â± ' + v.sure + '</small></div>';
-        h += '<div>' + (ok ? '<span class="deney-tamam">âœ…</span> ' : '') + '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="belgeselAc(\'' + d.id + '\',' + bi + ')">Ä°zle</button></div>';
+        h += '<div class="deney-bilgi"><b>' + esc(b.ad) + '</b><br><small>' + esc(v.bas) + ' · ⏱ ' + v.sure + '</small></div>';
+        h += '<div>' + (ok ? '<span class="deney-tamam">✅</span> ' : '') + '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="belgeselAc(\'' + d.id + '\',' + bi + ')">İzle</button></div>';
         h += '</div>';
       });
       h += '</div>';
@@ -2164,16 +2164,16 @@ function cizBelgesel() {
     ekran.innerHTML = h;
     return;
   }
-  h += '<div class="baslik"><h1>ğŸ¬ Belgeseller</h1><p>Fen ve Sosyal Bilgiler konularÄ±nÄ± belgesel Ã¼slubuyla anlatan kÄ±sa metinler.</p></div>';
+  h += '<div class="baslik"><h1>🎬 Belgeseller</h1><p>Fen ve Sosyal Bilgiler konularını belgesel üslubuyla anlatan kısa metinler.</p></div>';
   var bilgi = MUFREDAT[s];
-  if (!bilgi) { h += '<p class="kucuk-not">Ã–nce sÄ±nÄ±fÄ±nÄ± seÃ§.</p>'; ekran.innerHTML = h; return; }
+  if (!bilgi) { h += '<p class="kucuk-not">Önce sınıfını seç.</p>'; ekran.innerHTML = h; return; }
   h += '<div class="deney-kutu">';
   bilgi.dersler.forEach(function(d) {
     if (!BELGESEL || !BELGESEL[d.id]) return;
     var n = Object.keys(BELGESEL[d.id]).length;
     h += '<div class="deney-kart"><div class="deney-ikon">' + DERS_IKON(d.id) + '</div>';
     h += '<div class="deney-bilgi"><b>' + d.ad + '</b><br><small>' + n + ' belgesel</small></div>';
-    h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="belgeselDersAc(\'' + d.id + '\')">AÃ§</button></div></div>';
+    h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="belgeselDersAc(\'' + d.id + '\')">Aç</button></div></div>';
   });
   h += '</div>';
   ekran.innerHTML = h;
@@ -2184,14 +2184,14 @@ function belgeselAc(dersId, bi) {
   var d = dersBul(seciliSinif(), dersId);
   var b = d && d.birimler[bi];
   var v = belgeselVeri(dersId, bi);
-  if (!v || !v.belge) { alert('Bu belgesel bulunamadÄ±.'); return; }
-  var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">âœ•</span>';
+  if (!v || !v.belge) { alert('Bu belgesel bulunamadı.'); return; }
+  var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">✕</span>';
   h += '<h3>' + v.emoji + ' ' + (b ? esc(b.ad) : (dersId + ' - ' + (bi + 1))) + '</h3>';
-  h += '<p class="kucuk-not">' + esc(v.bas) + ' Â· â± ' + v.sure + '</p>';
+  h += '<p class="kucuk-not">' + esc(v.bas) + ' · ⏱ ' + v.sure + '</p>';
   h += '<div class="belgesel-metin">' + esc(v.belge) + '</div>';
   h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">';
-  h += '<button class="btn btn-test" onclick="sesliOku(\'' + esc(v.belge).replace(/'/g, "\\'") + '\')">ğŸ”Š Dinle</button>';
-  h += '<button class="btn btn-mor" onclick="belgeselBitir(\'' + dersId + '\',' + bi + ')">âœ… Ä°zledim</button>';
+  h += '<button class="btn btn-test" onclick="sesliOku(\'' + esc(v.belge).replace(/'/g, "\\'") + '\')">🔊 Dinle</button>';
+  h += '<button class="btn btn-mor" onclick="belgeselBitir(\'' + dersId + '\',' + bi + ')">✅ İzledim</button>';
   h += '</div></div>';
   $('modal').innerHTML = h;
   $('overlay').classList.add('acik');
@@ -2212,7 +2212,7 @@ function belgeselBitir(dersId, bi) {
   if (durum.tur === 'belgesel') render();
 }
 
-/* ====== KODLAMA ATÃ–LYESÄ° (interaktif) ====== */
+/* ====== KODLAMA ATÖLYESİ (interaktif) ====== */
 function kodlamaList() { return (typeof KODLAMA !== 'undefined') ? (KODLAMA['bty' + (seciliSinif() || '6')] || []) : []; }
 function kodlaBul(id) {
   var K = kodlamaList();
@@ -2225,39 +2225,39 @@ function kodlaBirimAd(k) {
   return b ? b.ad : ('Konu ' + (Number(k.birim) + 1));
 }
 function cizKodla() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   if (durum.kodla) {
     var k = durum.kodla.k;
     var a = k.adimlar[durum.kodla.adim];
-    h += '<div class="baslik"><h1>' + k.ikon + ' ' + esc(k.ad) + '</h1><p>KazanÄ±m: ' + k.kazanim + '</p></div>';
+    h += '<div class="baslik"><h1>' + k.ikon + ' ' + esc(k.ad) + '</h1><p>Kazanım: ' + k.kazanim + '</p></div>';
     h += '<div class="deney-adim">';
-    h += '<div class="kucuk-not">AdÄ±m ' + (durum.kodla.adim + 1) + '/' + k.adimlar.length + ' Â· DoÄŸru: ' + durum.kodla.dogru + '</div>';
+    h += '<div class="kucuk-not">Adım ' + (durum.kodla.adim + 1) + '/' + k.adimlar.length + ' · Doğru: ' + durum.kodla.dogru + '</div>';
     h += '<h2>' + esc(a.baslik) + '</h2>';
     h += '<p>' + esc(a.metin) + '</p>';
     if (a.tip === 'secim') {
-      if (durum.kodla.yanlis) h += '<div class="deney-hata">âŒ YanlÄ±ÅŸ seÃ§im! DoÄŸru ÅŸÄ±kkÄ± bulup tekrar dene.</div>';
+      if (durum.kodla.yanlis) h += '<div class="deney-hata">❌ Yanlış seçim! Doğru şıkkı bulup tekrar dene.</div>';
       h += '<div class="deney-secenekler">';
       a.secenekler.forEach(function(sik, i) {
         h += '<button class="secenek" onclick="kodlaCevap(' + i + ')">' + String.fromCharCode(65 + i) + ') ' + esc(sik) + '</button>';
       });
       h += '</div>';
     } else {
-      h += '<button class="btn btn-test" onclick="kodlaIleri()">Ä°leri â–¶</button>';
+      h += '<button class="btn btn-test" onclick="kodlaIleri()">İleri ▶</button>';
     }
     h += '</div>';
     ekran.innerHTML = h;
     return;
   }
-  h += '<div class="baslik"><h1>ğŸ’» Kodlama AtÃ¶lyesi</h1><p>BiliÅŸim Teknolojileri konularÄ± iÃ§in adÄ±m adÄ±m interaktif atÃ¶lyeler. Her yeni atÃ¶lyeyi tamamlayÄ±nca +25 XP kazanÄ±rsÄ±n.</p></div>';
+  h += '<div class="baslik"><h1>💻 Kodlama Atölyesi</h1><p>Bilişim Teknolojileri konuları için adım adım interaktif atölyeler. Her yeni atölyeyi tamamlayınca +25 XP kazanırsın.</p></div>';
   var yapilan = oku('kodla') || {};
   h += '<div class="deney-kutu">';
   kodlamaList().forEach(function(k) {
     var bitti = !!yapilan[k.id];
     h += '<div class="deney-kart">';
     h += '<div class="deney-ikon">' + k.ikon + '</div>';
-    h += '<div class="deney-bilgi"><b>' + esc(k.ad) + '</b><br><small>' + esc(kodlaBirimAd(k)) + ' Â· â± ' + k.sure + '</small>';
-    h += '<div class="kucuk-not">ğŸ’¡ ' + esc(k.aciklama) + '</div></div>';
-    h += '<div>' + (bitti ? '<span class="deney-tamam">âœ…</span> ' : '') + '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="kodlaBasla(\'' + k.id + '\')">' + (bitti ? 'Tekrar' : 'BaÅŸla') + '</button></div>';
+    h += '<div class="deney-bilgi"><b>' + esc(k.ad) + '</b><br><small>' + esc(kodlaBirimAd(k)) + ' · ⏱ ' + k.sure + '</small>';
+    h += '<div class="kucuk-not">💡 ' + esc(k.aciklama) + '</div></div>';
+    h += '<div>' + (bitti ? '<span class="deney-tamam">✅</span> ' : '') + '<button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="kodlaBasla(\'' + k.id + '\')">' + (bitti ? 'Tekrar' : 'Başla') + '</button></div>';
     h += '</div>';
   });
   h += '</div>';
@@ -2306,11 +2306,11 @@ function kodlaBitir() {
   var bittiSay = Object.keys(yap).length;
   var rozetVar = (oku('odul') || []).indexOf('kodla1') > -1;
   var h = '<div class="modal-icerik">';
-  h += '<span class="kap" onclick="kapatOverlay()">âœ•</span>';
-  h += '<h3>' + k.ikon + ' AtÃ¶lye TamamlandÄ±!</h3>';
-  h += '<div class="deney-tamam-kutu">ğŸ‰ ' + esc(k.ad) + ' atÃ¶lyesini bitirdin!' + (ilk ? ' (+25 XP)' : '') + '</div>';
-  h += '<p class="kucuk-not">Toplam tamamlanan atÃ¶lye: ' + bittiSay + '/' + kodlamaList().length + '</p>';
-  if (bittiSay >= 1) h += '<div class="deney-tamam-kutu">ğŸ… ' + (rozetVar ? 'KodlayÄ±cÄ± rozetin sende!' : 'KodlayÄ±cÄ± rozetini kazandÄ±n!') + '</div>';
+  h += '<span class="kap" onclick="kapatOverlay()">✕</span>';
+  h += '<h3>' + k.ikon + ' Atölye Tamamlandı!</h3>';
+  h += '<div class="deney-tamam-kutu">🎉 ' + esc(k.ad) + ' atölyesini bitirdin!' + (ilk ? ' (+25 XP)' : '') + '</div>';
+  h += '<p class="kucuk-not">Toplam tamamlanan atölye: ' + bittiSay + '/' + kodlamaList().length + '</p>';
+  if (bittiSay >= 1) h += '<div class="deney-tamam-kutu">🏅 ' + (rozetVar ? 'Kodlayıcı rozetin sende!' : 'Kodlayıcı rozetini kazandın!') + '</div>';
   h += '<button class="btn btn-mor" onclick="kapatOverlay();git(\'kodla\')">Tamam</button>';
   h += '</div>';
   $('modal').innerHTML = h;
@@ -2318,7 +2318,7 @@ function kodlaBitir() {
   $('modal').classList.add('acik');
 }
 
-/* ====== VERÄ° VE YEDEK (iÃ§e/dÄ±ÅŸa aktarma) ====== */
+/* ====== VERİ VE YEDEK (içe/dışa aktarma) ====== */
 function veriYedekJSON() {
   var sonuc = {};
   Object.keys(localStorage).forEach(function(k) {
@@ -2337,15 +2337,15 @@ function veriIndir(metin, ad) {
     a.click();
     document.body.removeChild(a);
     setTimeout(function() { URL.revokeObjectURL(url); }, 500);
-  } catch (e) { alert('Ä°ndirme desteklenmiyor. Metni kopyala ve kaydet.'); }
+  } catch (e) { alert('İndirme desteklenmiyor. Metni kopyala ve kaydet.'); }
 }
 function veriDisaAktar() {
   var metin = veriYedekJSON();
-  var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">âœ•</span>';
-  h += '<h3>ğŸ—„ï¸ Yedek (Profil + Ä°lerleme)</h3>';
-  h += '<p class="kucuk-not">Bu JSON, tÃ¼m ilerlemeni iÃ§erir. Ä°ndir veya kopyala; baÅŸka cihazda iÃ§e aktarabilirsin.</p>';
+  var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">✕</span>';
+  h += '<h3>🗄️ Yedek (Profil + İlerleme)</h3>';
+  h += '<p class="kucuk-not">Bu JSON, tüm ilerlemeni içerir. İndir veya kopyala; başka cihazda içe aktarabilirsin.</p>';
   h += '<textarea rows="7" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:12px" readonly>' + esc(metin) + '</textarea>';
-  h += '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-test" onclick="veriIndir(\'' + esc(metin).replace(/'/g, "\\'") + '\',\'okul-yedek.json\')">â¬‡ï¸ Ä°ndir</button>';
+  h += '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-test" onclick="veriIndir(\'' + esc(metin).replace(/'/g, "\\'") + '\',\'okul-yedek.json\')">⬇️ İndir</button>';
   h += '<button class="btn btn-mor" onclick="kapatOverlay()">Tamam</button></div></div>';
   $('modal').innerHTML = h;
   $('overlay').classList.add('acik');
@@ -2363,10 +2363,10 @@ function veriGeriYukle(metin) {
     var veri = JSON.parse(metin);
     var say = 0;
     Object.keys(veri).forEach(function(k) { if (k.indexOf('dersApp_') === 0) { localStorage.setItem(k, veri[k]); say++; } });
-    alert('Yedek yÃ¼klendi: ' + say + ' kayÄ±t. Sayfa yenileniyor.');
+    alert('Yedek yüklendi: ' + say + ' kayıt. Sayfa yenileniyor.');
     if (typeof location !== 'undefined' && location.reload) location.reload();
     else veriEkUygula();
-  } catch (e) { alert('GeÃ§ersiz yedek dosyasÄ±.'); }
+  } catch (e) { alert('Geçersiz yedek dosyası.'); }
 }
 function veriEkUygula() {
   var ek = oku('veriEk');
@@ -2384,33 +2384,33 @@ function veriEkUygula() {
 function veriMufredatKaydet() {
   var el = $('veriMetin');
   var metin = el ? el.value : '';
-  if (!metin.trim()) { alert('LÃ¼tfen JSON verisi yapÄ±ÅŸtÄ±r.'); return; }
+  if (!metin.trim()) { alert('Lütfen JSON verisi yapıştır.'); return; }
   try {
     var veri = JSON.parse(metin);
-    if (!veri.MUFREDAT && !veri.SORULAR && !veri.ESLESTIRME) throw new Error('boÅŸ');
+    if (!veri.MUFREDAT && !veri.SORULAR && !veri.ESLESTIRME) throw new Error('boş');
     kaydet('veriEk', veri);
     veriEkUygula();
-    alert('âœ… Veri gÃ¼ncellendi! MÃ¼fredat, sorular ve eÅŸleÅŸtirmeler artÄ±k geÃ§erli.');
+    alert('✅ Veri güncellendi! Müfredat, sorular ve eşleştirmeler artık geçerli.');
     cizVeri();
-  } catch (e) { alert('GeÃ§ersiz JSON. Beklenen biÃ§im: { "MUFREDAT": {...}, "SORULAR": {...} }'); }
+  } catch (e) { alert('Geçersiz JSON. Beklenen biçim: { "MUFREDAT": {...}, "SORULAR": {...} }'); }
 }
 function cizVeri() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ—„ï¸ Veri ve Yedek</h1><p>Ä°lerlemeni yedekle, baÅŸka cihaza taÅŸÄ±; mÃ¼fredat ve soru verisini JSON ile gÃ¼ncelle.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🗄️ Veri ve Yedek</h1><p>İlerlemeni yedekle, başka cihaza taşı; müfredat ve soru verisini JSON ile güncelle.</p></div>';
   h += '<div class="ozet-karti" style="margin-bottom:14px">';
-  h += '<h2>ğŸ’¾ Profil ve Ä°lerleme YedeÄŸi</h2>';
-  h += '<p class="kucuk-not">TÃ¼m XP, rozet, puan, gÃ¶rev ve tercihlerin tek bir JSON dosyasÄ±nda toplanÄ±r.</p>';
+  h += '<h2>💾 Profil ve İlerleme Yedeği</h2>';
+  h += '<p class="kucuk-not">Tüm XP, rozet, puan, görev ve tercihlerin tek bir JSON dosyasında toplanır.</p>';
   h += '<div style="display:flex;gap:8px;flex-wrap:wrap">';
-  h += '<button class="btn btn-test" onclick="veriDisaAktar()">â¬‡ï¸ Yedek Al</button>';
-  h += '<label class="btn btn-mor" style="cursor:pointer">ğŸ“‚ Dosyadan Geri YÃ¼kle<input type="file" accept=".json,application/json" style="display:none" onchange="veriDosyaYukle(event)"></label>';
+  h += '<button class="btn btn-test" onclick="veriDisaAktar()">⬇️ Yedek Al</button>';
+  h += '<label class="btn btn-mor" style="cursor:pointer">📂 Dosyadan Geri Yükle<input type="file" accept=".json,application/json" style="display:none" onchange="veriDosyaYukle(event)"></label>';
   h += '</div></div>';
   h += '<div class="ozet-karti" style="margin-bottom:14px">';
-  h += '<h2>ğŸ“¥ MÃ¼fredat / Soru Verisini GÃ¼ncelle</h2>';
-  h += '<p class="kucuk-not">MEB veya kendi dÃ¼zenlediÄŸin veriyi JSON olarak yapÄ±ÅŸtÄ±r. <b>MUFREDAT</b> (sÄ±nÄ±f bazlÄ±) ve <b>SORULAR</b> (ders bazlÄ±) anahtarlarÄ±nÄ± destekler. Mevcut verinin Ã¼zerine yazÄ±lÄ±r, dosyalara dokunmaya gerek yoktur.</p>';
+  h += '<h2>📥 Müfredat / Soru Verisini Güncelle</h2>';
+  h += '<p class="kucuk-not">MEB veya kendi düzenlediğin veriyi JSON olarak yapıştır. <b>MUFREDAT</b> (sınıf bazlı) ve <b>SORULAR</b> (ders bazlı) anahtarlarını destekler. Mevcut verinin üzerine yazılır, dosyalara dokunmaya gerek yoktur.</p>';
   h += '<textarea id="veriMetin" rows="6" placeholder=\'{ "MUFREDAT": {"6": {...}}, "SORULAR": {"mat6": {...}} }\' style="width:100%;box-sizing:border-box;font-family:monospace;font-size:12px"></textarea>';
   h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">';
-  h += '<button class="btn btn-test" onclick="veriMufredatKaydet()">âœ… Kaydet ve Uygula</button>';
-  h += '<button class="btn btn-geri" onclick="veriEkSil()">ğŸ—‘ï¸ Ã–zel Veriyi Sil (fabrika verisine dÃ¶n)</button>';
+  h += '<button class="btn btn-test" onclick="veriMufredatKaydet()">✅ Kaydet ve Uygula</button>';
+  h += '<button class="btn btn-geri" onclick="veriEkSil()">🗑️ Özel Veriyi Sil (fabrika verisine dön)</button>';
   h += '</div></div>';
   ekran.innerHTML = h;
 }
@@ -2421,7 +2421,7 @@ function veriEkSil() {
   cizVeri();
 }
 
-/* ====== MEB KAZANIM KONTROL LÄ°STESÄ° ====== */
+/* ====== MEB KAZANIM KONTROL LİSTESİ ====== */
 function kazanimVar(dersId, bi) { return !!(oku('kazanim') || {})[dersId + '-' + bi]; }
 function kazanimToggle(dersId, bi) {
   var k = oku('kazanim') || {};
@@ -2432,11 +2432,11 @@ function kazanimToggle(dersId, bi) {
   if (durum.tur === 'kontrol') render();
 }
 function cizKontrol() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   var s = seciliSinif() || '6';
-  h += '<div class="baslik"><h1>ğŸ¯ MEB KazanÄ±m Kontrol Listesi</h1><p>Her kazanÄ±mÄ± Ã§alÄ±ÅŸtÄ±ÄŸÄ±nda âœ“ iÅŸaretle; sÄ±nÄ±f genelinde ilerlemeni takip et. Her yeni iÅŸaretleme +3 XP kazandÄ±rÄ±r.</p></div>';
+  h += '<div class="baslik"><h1>🎯 MEB Kazanım Kontrol Listesi</h1><p>Her kazanımı çalıştığında ✓ işaretle; sınıf genelinde ilerlemeni takip et. Her yeni işaretleme +3 XP kazandırır.</p></div>';
   var bilgi = MUFREDAT[s];
-  if (!bilgi) { h += '<p class="kucuk-not">Ã–nce sÄ±nÄ±fÄ±nÄ± seÃ§.</p>'; ekran.innerHTML = h; return; }
+  if (!bilgi) { h += '<p class="kucuk-not">Önce sınıfını seç.</p>'; ekran.innerHTML = h; return; }
   var yapilan = oku('kazanim') || {};
   var toplam = 0, yapToplam = 0;
   bilgi.dersler.forEach(function(d) {
@@ -2450,26 +2450,26 @@ function cizKontrol() {
     toplam += dTop;
     yapToplam += dYap;
     var yuz = Math.round(dYap / dTop * 100);
-    h += '<div class="baslik" style="margin-top:16px"><h2>' + DERS_IKON(d.id) + ' ' + d.ad + ' <span class="kucuk-not">' + dYap + '/' + dTop + ' kazanÄ±m</span></h2>';
-    h += '<div class="hak"><div class="hak-ust"><span>KazanÄ±m ilerlemesi</span><span>%' + yuz + '</span></div><div class="cubuk hak' + (yuz < 50 ? ' zayif' : yuz < 80 ? ' orta' : ' guclu') + '"><div class="cubuk-dolgu" style="width:' + yuz + '%"></div></div></div>';
+    h += '<div class="baslik" style="margin-top:16px"><h2>' + DERS_IKON(d.id) + ' ' + d.ad + ' <span class="kucuk-not">' + dYap + '/' + dTop + ' kazanım</span></h2>';
+    h += '<div class="hak"><div class="hak-ust"><span>Kazanım ilerlemesi</span><span>%' + yuz + '</span></div><div class="cubuk hak' + (yuz < 50 ? ' zayif' : yuz < 80 ? ' orta' : ' guclu') + '"><div class="cubuk-dolgu" style="width:' + yuz + '%"></div></div></div>';
     h += '<div class="deney-kutu">';
     d.birimler.forEach(function(b, i) {
       if (!b.kazanim) return;
       var yap = !!yapilan[d.id + '-' + i];
       h += '<div class="deney-kart">';
-      h += '<div class="deney-ikon">' + (yap ? 'âœ…' : 'ğŸ¯') + '</div>';
+      h += '<div class="deney-ikon">' + (yap ? '✅' : '🎯') + '</div>';
       h += '<div class="deney-bilgi"><b>' + esc(b.ad) + '</b><br><small>' + esc(b.kazanim) + '</small></div>';
-      h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="kazanimToggle(\'' + d.id + '\',' + i + ')">' + (yap ? 'â†©ï¸ Geri Al' : 'âœ“ Ã‡alÄ±ÅŸtÄ±m') + '</button></div>';
+      h += '<div><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="kazanimToggle(\'' + d.id + '\',' + i + ')">' + (yap ? '↩️ Geri Al' : '✓ Çalıştım') + '</button></div>';
       h += '</div>';
     });
     h += '</div>';
   });
   var yuzTop = toplam ? Math.round(yapToplam / toplam * 100) : 0;
-  h += '<div class="ozet-karti" style="margin-top:16px"><div class="hak"><div class="hak-ust"><span>ğŸ¯ SÄ±nÄ±f geneli</span><span>' + yapToplam + '/' + toplam + ' kazanÄ±m (%' + yuzTop + ')</span></div><div class="cubuk"><div class="cubuk-dolgu" style="width:' + yuzTop + '%"></div></div></div></div>';
+  h += '<div class="ozet-karti" style="margin-top:16px"><div class="hak"><div class="hak-ust"><span>🎯 Sınıf geneli</span><span>' + yapToplam + '/' + toplam + ' kazanım (%' + yuzTop + ')</span></div><div class="cubuk"><div class="cubuk-dolgu" style="width:' + yuzTop + '%"></div></div></div></div>';
   ekran.innerHTML = h;
 }
 
-/* ====== KONU ANLATIM VÄ°DEO HAVUZU ====== */
+/* ====== KONU ANLATIM VİDEO HAVUZU ====== */
 function videoDersList() {
   var s = seciliSinif() || '6';
   var bilgi = MUFREDAT[s];
@@ -2484,11 +2484,11 @@ function videoDersList() {
   return liste;
 }
 function cizVideo() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
   var s = seciliSinif() || '6';
-  h += '<div class="baslik"><h1>ğŸ¬ Konu AnlatÄ±m VideolarÄ±</h1><p>Ders konularÄ±na ait video havuzu. ğŸ¬ butonuyla videoyu aÃ§; olmayan konularda ders notunu okuyabilirsin.</p></div>';
+  h += '<div class="baslik"><h1>🎬 Konu Anlatım Videoları</h1><p>Ders konularına ait video havuzu. 🎬 butonuyla videoyu aç; olmayan konularda ders notunu okuyabilirsin.</p></div>';
   var bilgi = MUFREDAT[s];
-  if (!bilgi) { h += '<p class="kucuk-not">Ã–nce sÄ±nÄ±fÄ±nÄ± seÃ§.</p>'; ekran.innerHTML = h; return; }
+  if (!bilgi) { h += '<p class="kucuk-not">Önce sınıfını seç.</p>'; ekran.innerHTML = h; return; }
   var toplam = 0, varMi = 0;
   bilgi.dersler.forEach(function(d) {
     h += '<div class="baslik" style="margin-top:14px"><h2>' + DERS_IKON(d.id) + ' ' + d.ad + '</h2></div>';
@@ -2498,15 +2498,15 @@ function cizVideo() {
       toplam++;
       if (v) varMi++;
       h += '<div class="deney-kart">';
-      h += '<div class="deney-ikon">' + (v ? 'ğŸ¬' : 'ğŸ“­') + '</div>';
-      h += '<div class="deney-bilgi"><b>' + esc(b.ad) + '</b><br><small>' + (v ? 'Video ders mevcut' : 'Video eklenmemiÅŸ') + '</small></div>';
-      if (v) h += '<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="acKapaVideo(\'' + d.id + '\',' + i + ',\'' + esc(b.ad).replace(/'/g, "\\'") + '\')">â–¶ Oynat</button><button class="btn btn-geri" style="padding:6px 10px;font-size:13px" onclick="acKapaOzet(\'' + d.id + '\',' + i + ')">ğŸ“„ Ders Notu</button></div>';
-      else h += '<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-geri" style="padding:6px 10px;font-size:13px" onclick="acKapaOzet(\'' + d.id + '\',' + i + ')">ğŸ“„ Ders Notu</button><button class="btn btn-mor" style="padding:6px 10px;font-size:13px" onclick="videoAraYouTube(\'' + esc(b.ad).replace(/'/g, "\\'") + '\',\'' + d.id + '\')">â–¶ Bul</button></div>';
+      h += '<div class="deney-ikon">' + (v ? '🎬' : '📭') + '</div>';
+      h += '<div class="deney-bilgi"><b>' + esc(b.ad) + '</b><br><small>' + (v ? 'Video ders mevcut' : 'Video eklenmemiş') + '</small></div>';
+      if (v) h += '<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-test" style="padding:6px 10px;font-size:13px" onclick="acKapaVideo(\'' + d.id + '\',' + i + ',\'' + esc(b.ad).replace(/'/g, "\\'") + '\')">▶ Oynat</button><button class="btn btn-geri" style="padding:6px 10px;font-size:13px" onclick="acKapaOzet(\'' + d.id + '\',' + i + ')">📄 Ders Notu</button></div>';
+      else h += '<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-geri" style="padding:6px 10px;font-size:13px" onclick="acKapaOzet(\'' + d.id + '\',' + i + ')">📄 Ders Notu</button><button class="btn btn-mor" style="padding:6px 10px;font-size:13px" onclick="videoAraYouTube(\'' + esc(b.ad).replace(/'/g, "\\'") + '\',\'' + d.id + '\')">▶ Bul</button></div>';
       h += '</div>';
     });
     h += '</div>';
   });
-  h += '<div class="ozet-karti" style="margin-top:16px">ğŸ¬ ' + varMi + '/' + toplam + ' konuda video var. Video linklerini <b>sorular.js</b> dosyasÄ±ndaki VIDEO bÃ¶lÃ¼mÃ¼nden ekleyebilirsin.</div>';
+  h += '<div class="ozet-karti" style="margin-top:16px">🎬 ' + varMi + '/' + toplam + ' konuda video var. Video linklerini <b>sorular.js</b> dosyasındaki VIDEO bölümünden ekleyebilirsin.</div>';
   ekran.innerHTML = h;
 }
 function acKapaOzet(dersId, bi) {
@@ -2514,20 +2514,20 @@ function acKapaOzet(dersId, bi) {
   var b = d && d.birimler[bi];
   if (!b) return;
   var icerik = icerikCek(seciliSinif(), dersId, bi) || b.ozet || b.detay || '';
-  var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">âœ•</span>';
-  h += '<h3>ğŸ“„ ' + DERS_IKON(dersId) + ' ' + esc(b.ad) + '</h3>';
-  h += '<div class="dinle-metin">' + (icerik ? detayHTML(icerik) : '<small>(Bu konu iÃ§in ders notu henÃ¼z hazÄ±r deÄŸil.)</small>') + '</div>';
-  if (b.kazanim) h += '<div class="meb-kazanim" style="margin-top:10px">ğŸ¯ ' + esc(b.kazanim) + '</div>';
-  h += '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-test" onclick="sesliOkuDinleMetin()">ğŸ”Š Dinle</button>';
+  var h = '<div class="modal-icerik"><span class="kap" onclick="kapatOverlay()">✕</span>';
+  h += '<h3>📄 ' + DERS_IKON(dersId) + ' ' + esc(b.ad) + '</h3>';
+  h += '<div class="dinle-metin">' + (icerik ? detayHTML(icerik) : '<small>(Bu konu için ders notu henüz hazır değil.)</small>') + '</div>';
+  if (b.kazanim) h += '<div class="meb-kazanim" style="margin-top:10px">🎯 ' + esc(b.kazanim) + '</div>';
+  h += '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-test" onclick="sesliOkuDinleMetin()">🔊 Dinle</button>';
   h += '<button class="btn btn-mor" onclick="kapatOverlay()">Tamam</button></div>';
   h += '<div id="ttsDurum" class="tts-durum" style="margin-top:8px;font-size:13px;color:#666"></div>';
-  h += '<button class="kucuk-buton" style="background:#555;margin-top:6px" onclick="sesTesti()">ğŸ” Ses Testi</button></div></div>';
+  h += '<button class="kucuk-buton" style="background:#555;margin-top:6px" onclick="sesTesti()">🔁 Ses Testi</button></div></div>';
   dinleSesMetni = sesMetniTemizle((b.ad + '. ' + (icerik || '')));
   $('modal').innerHTML = h;
   $('overlay').classList.add('acik');
   $('modal').classList.add('acik');
 }
-function sesliOkuDinleMetin() { sesliOku(dinleSesMetni); }
+function sesliOkuDinleMetin() { seslendir(dinleSesMetni, true); }
 
 
 function hakimiyet(dersId, bi) {
@@ -2611,44 +2611,44 @@ function cizHedefBar() {
   var renk = tam ? '#2ecc71' : (y < 40 ? '#e74c3c' : (y < 80 ? '#f39c12' : '#2ecc71'));
   var h = '<div class="ozet-karti" style="margin:14px 0">';
   h += '<div class="ilerleme-ust" style="justify-content:space-between">';
-  h += '<span>ğŸ”¥ GÃ¼nlÃ¼k Hedef</span>';
-  h += '<span>' + (st.xpgunToday || 0) + '/' + hedef + ' XP' + (tam ? ' âœ…' : '') + '</span>';
+  h += '<span>🔥 Günlük Hedef</span>';
+  h += '<span>' + (st.xpgunToday || 0) + '/' + hedef + ' XP' + (tam ? ' ✅' : '') + '</span>';
   h += '</div>';
   h += '<div class="cubuk"><div class="cubuk-dolgu" style="width:' + y + '%;background:' + renk + '"></div></div>';
-  h += '<div class="kucuk-not" style="text-align:center">Hedefi kaÃ§Ä±rma, bugÃ¼n ' + hedef + ' XP toplayabilirsin!</div>';
+  h += '<div class="kucuk-not" style="text-align:center">Hedefi kaçırma, bugün ' + hedef + ' XP toplayabilirsin!</div>';
   h += '</div>';
   return h;
 }
 
 var ROZETLER = [
-  { id: 'ilk', ad: 'Ä°lk AdÄ±m', ikon: 'ğŸ‘£', aciklama: 'Ä°lk XPâ€™ni kazan', kontrol: function(s) { return s.xp >= 1; } },
-  { id: 'test1', ad: 'SÄ±nava BaÅŸla', ikon: 'ğŸ“', aciklama: 'Ä°lk testini Ã§Ã¶z', kontrol: function(s) { return s.testSay >= 1; } },
-  { id: 'test10', ad: 'Test CanavarÄ±', ikon: 'ğŸ‰', aciklama: '10 test Ã§Ã¶z', kontrol: function(s) { return s.testSay >= 10; } },
-  { id: 'yildiz', ad: 'YÄ±ldÄ±z Test', ikon: 'ğŸ’¯', aciklama: 'Bir testte %90+ al', kontrol: function(s) { return s.iyiSay >= 1; } },
-  { id: 'tam', ad: 'Kusursuz', ikon: 'ğŸ¯', aciklama: 'Bir testte hepsi doÄŸru', kontrol: function(s) { return s.tamSay >= 1; } },
-  { id: 'esle1', ad: 'EÅŸleÅŸtirici', ikon: 'ğŸ§©', aciklama: 'Ä°lk eÅŸleÅŸtirmeni bitir', kontrol: function(s) { return s.esleSay >= 1; } },
-  { id: 'esle3', ad: 'EÅŸleÅŸtirme UstasÄ±', ikon: 'ğŸ”—', aciklama: '3 eÅŸleÅŸtirme bitir', kontrol: function(s) { return s.esleSay >= 3; } },
-  { id: 'pomo1', ad: 'Odaklan', ikon: 'â±ï¸', aciklama: 'Ä°lk odak turunu bitir', kontrol: function(s) { return s.pomoSay >= 1; } },
-  { id: 'pomo5', ad: 'Odak Åampiyonu', ikon: 'ğŸ”¥', aciklama: '5 odak turunu bitir', kontrol: function(s) { return s.pomoSay >= 5; } },
-  { id: 'pomo4', ad: 'Sabah Rutinesi', ikon: 'â˜•', aciklama: 'GÃ¼nde 4 pomodoro Ã§alÄ±ÅŸ', kontrol: function(s) { return s.pomoGunSay >= 4; } },
-  { id: 'sev3', ad: 'RÃ¼tbeli', ikon: 'ğŸ–ï¸', aciklama: '3. seviyeye ulaÅŸ', kontrol: function(s) { return s.seviye >= 3; } },
-  { id: 'gunluk', ad: 'GÃ¼nlÃ¼k Asiyorum', ikon: 'ğŸ¯', aciklama: 'GÃ¼nlÃ¼k hedefe ulaÅŸ', kontrol: function(s) { return s.xpgunToday > 0 && s.xpgunToday >= s.hedefXP; } },
-  { id: 'program1', ad: 'PlanlÄ± Ã‡alÄ±ÅŸÄ±cÄ±', ikon: 'ğŸ“…', aciklama: 'Bir gÃ¼nde 3 saat planla', kontrol: function(s) { return s.planMaxGun >= 3; } },
-  { id: 'xp500', ad: '500 XP', ikon: 'ğŸ’', aciklama: '500 XP kazan', kontrol: function(s) { return s.xp >= 500; } },
-  { id: 'seri3', ad: 'Seri Ã‡alÄ±ÅŸan', ikon: 'ğŸ”¥', aciklama: '3 gÃ¼n Ã¼st Ã¼ste Ã§alÄ±ÅŸ', kontrol: function(s) { return s.seri >= 3; } },
-  { id: 'tum', ad: 'Her Åeyi Ã–ÄŸrenen', ikon: 'ğŸ†', aciklama: 'TÃ¼m konularÄ± tamamla', kontrol: function(s) { return s.bTop > 0 && s.bYap >= s.bTop; } },
-  { id: 'okuma', ad: 'Okuyucu', ikon: 'ğŸ“š', aciklama: 'Ä°lk kitabÄ±nÄ± bitir', kontrol: function(s) { return s.okunanKitap >= 1; } },
-  { id: 'yarisma1', ad: 'YarÄ±ÅŸmacÄ±', ikon: 'ğŸ†', aciklama: 'HaftalÄ±k yarÄ±ÅŸmayÄ± tamamla', kontrol: function(s) { return s.yarismaBitir >= 1; } },
-  { id: 'deney1', ad: 'Deneyci', ikon: 'ğŸ§ª', aciklama: '3 fen deneyi tamamla', kontrol: function(s) { return s.deneySay >= 3; } },
-  { id: 'seviye1', ad: 'Seviyeni Belirledin', ikon: 'ğŸ¯', aciklama: 'Seviye belirleme testini Ã§Ã¶z', kontrol: function(s) { return s.seviyeSay >= 1; } },
-  { id: 'dinle1', ad: 'Dinleyici', ikon: 'ğŸ§', aciklama: '2 dinleme metnini oku/dinle', kontrol: function(s) { return s.dinleSay >= 2; } },
-  { id: 'belgesel1', ad: 'Belgeselci', ikon: 'ğŸ¬', aciklama: '2 belgesel izle', kontrol: function(s) { return s.belgeselSay >= 2; } },
-  { id: 'kodla1', ad: 'KodlayÄ±cÄ±', ikon: 'ğŸ’»', aciklama: 'Ä°lk kodlama atÃ¶lyesini tamamla', kontrol: function(s) { return s.kodlaSay >= 1; } },
-  { id: 'xp500', ad: 'Efsane', ikon: 'ğŸŒŸ', aciklama: '500 XP kazan (gizli)', kontrol: function(s) { return s.xp >= 500; }, gizli: true },
-  { id: 'stre7', ad: 'AteÅŸ Topu', ikon: 'ğŸ”¥', aciklama: '7 gÃ¼n Ã¼st Ã¼ste Ã§alÄ±ÅŸ (gizli)', kontrol: function(s) { return s.gunSerisi >= 7; }, gizli: true },
-  { id: 'test50', ad: 'Test Dahisi', ikon: 'ğŸ§ ', aciklama: '50 test Ã§Ã¶z (gizli)', kontrol: function(s) { return s.testSay >= 50; }, gizli: true },
-  { id: 'yeniyil', ad: 'Yeni YÄ±l', ikon: 'ğŸ†', aciklama: 'YÄ±lbaÅŸÄ±nda aÃ§Ä±lÄ±r', kontrol: function(s) { var n = new Date(); return n.getMonth() === 0 && n.getDate() <= 3; }, mevsim: true },
-  { id: 'nisan23', ad: '23 Nisan', ikon: 'ğŸ‡¹ğŸ‡·', aciklama: '23 Nisanâ€™da aÃ§Ä±lÄ±r', kontrol: function(s) { var n = new Date(); return n.getMonth() === 3 && n.getDate() === 23; }, mevsim: true }
+  { id: 'ilk', ad: 'İlk Adım', ikon: '👣', aciklama: 'İlk XP’ni kazan', kontrol: function(s) { return s.xp >= 1; } },
+  { id: 'test1', ad: 'Sınava Başla', ikon: '📝', aciklama: 'İlk testini çöz', kontrol: function(s) { return s.testSay >= 1; } },
+  { id: 'test10', ad: 'Test Canavarı', ikon: '🐉', aciklama: '10 test çöz', kontrol: function(s) { return s.testSay >= 10; } },
+  { id: 'yildiz', ad: 'Yıldız Test', ikon: '💯', aciklama: 'Bir testte %90+ al', kontrol: function(s) { return s.iyiSay >= 1; } },
+  { id: 'tam', ad: 'Kusursuz', ikon: '🎯', aciklama: 'Bir testte hepsi doğru', kontrol: function(s) { return s.tamSay >= 1; } },
+  { id: 'esle1', ad: 'Eşleştirici', ikon: '🧩', aciklama: 'İlk eşleştirmeni bitir', kontrol: function(s) { return s.esleSay >= 1; } },
+  { id: 'esle3', ad: 'Eşleştirme Ustası', ikon: '🔗', aciklama: '3 eşleştirme bitir', kontrol: function(s) { return s.esleSay >= 3; } },
+  { id: 'pomo1', ad: 'Odaklan', ikon: '⏱️', aciklama: 'İlk odak turunu bitir', kontrol: function(s) { return s.pomoSay >= 1; } },
+  { id: 'pomo5', ad: 'Odak Şampiyonu', ikon: '🔥', aciklama: '5 odak turunu bitir', kontrol: function(s) { return s.pomoSay >= 5; } },
+  { id: 'pomo4', ad: 'Sabah Rutinesi', ikon: '☕', aciklama: 'Günde 4 pomodoro çalış', kontrol: function(s) { return s.pomoGunSay >= 4; } },
+  { id: 'sev3', ad: 'Rütbeli', ikon: '🎖️', aciklama: '3. seviyeye ulaş', kontrol: function(s) { return s.seviye >= 3; } },
+  { id: 'gunluk', ad: 'Günlük Asiyorum', ikon: '🎯', aciklama: 'Günlük hedefe ulaş', kontrol: function(s) { return s.xpgunToday > 0 && s.xpgunToday >= s.hedefXP; } },
+  { id: 'program1', ad: 'Planlı Çalışıcı', ikon: '📅', aciklama: 'Bir günde 3 saat planla', kontrol: function(s) { return s.planMaxGun >= 3; } },
+  { id: 'xp500', ad: '500 XP', ikon: '💎', aciklama: '500 XP kazan', kontrol: function(s) { return s.xp >= 500; } },
+  { id: 'seri3', ad: 'Seri Çalışan', ikon: '🔥', aciklama: '3 gün üst üste çalış', kontrol: function(s) { return s.seri >= 3; } },
+  { id: 'tum', ad: 'Her Şeyi Öğrenen', ikon: '🏆', aciklama: 'Tüm konuları tamamla', kontrol: function(s) { return s.bTop > 0 && s.bYap >= s.bTop; } },
+  { id: 'okuma', ad: 'Okuyucu', ikon: '📚', aciklama: 'İlk kitabını bitir', kontrol: function(s) { return s.okunanKitap >= 1; } },
+  { id: 'yarisma1', ad: 'Yarışmacı', ikon: '🏆', aciklama: 'Haftalık yarışmayı tamamla', kontrol: function(s) { return s.yarismaBitir >= 1; } },
+  { id: 'deney1', ad: 'Deneyci', ikon: '🧪', aciklama: '3 fen deneyi tamamla', kontrol: function(s) { return s.deneySay >= 3; } },
+  { id: 'seviye1', ad: 'Seviyeni Belirledin', ikon: '🎯', aciklama: 'Seviye belirleme testini çöz', kontrol: function(s) { return s.seviyeSay >= 1; } },
+  { id: 'dinle1', ad: 'Dinleyici', ikon: '🎧', aciklama: '2 dinleme metnini oku/dinle', kontrol: function(s) { return s.dinleSay >= 2; } },
+  { id: 'belgesel1', ad: 'Belgeselci', ikon: '🎬', aciklama: '2 belgesel izle', kontrol: function(s) { return s.belgeselSay >= 2; } },
+  { id: 'kodla1', ad: 'Kodlayıcı', ikon: '💻', aciklama: 'İlk kodlama atölyesini tamamla', kontrol: function(s) { return s.kodlaSay >= 1; } },
+  { id: 'xp500', ad: 'Efsane', ikon: '🌟', aciklama: '500 XP kazan (gizli)', kontrol: function(s) { return s.xp >= 500; }, gizli: true },
+  { id: 'stre7', ad: 'Ateş Topu', ikon: '🔥', aciklama: '7 gün üst üste çalış (gizli)', kontrol: function(s) { return s.gunSerisi >= 7; }, gizli: true },
+  { id: 'test50', ad: 'Test Dahisi', ikon: '🧠', aciklama: '50 test çöz (gizli)', kontrol: function(s) { return s.testSay >= 50; }, gizli: true },
+  { id: 'yeniyil', ad: 'Yeni Yıl', ikon: '🎆', aciklama: 'Yılbaşında açılır', kontrol: function(s) { var n = new Date(); return n.getMonth() === 0 && n.getDate() <= 3; }, mevsim: true },
+  { id: 'nisan23', ad: '23 Nisan', ikon: '🇹🇷', aciklama: '23 Nisan’da açılır', kontrol: function(s) { var n = new Date(); return n.getMonth() === 3 && n.getDate() === 23; }, mevsim: true }
 ];
 
 function rozetKontrol() {
@@ -2659,33 +2659,33 @@ function rozetKontrol() {
     if (r.kontrol(s) && acik.indexOf(r.id) < 0) { acik.push(r.id); yeni.push(r.ikon + ' ' + r.ad); }
   });
   kaydet('odul', acik);
-  if (yeni.length) setTimeout(function() { alert('ğŸ‰ Yeni rozet kazandÄ±n: ' + yeni.join(', ')); }, 200);
+  if (yeni.length) setTimeout(function() { alert('🎉 Yeni rozet kazandın: ' + yeni.join(', ')); }, 200);
 }
 
 function cizOdul() {
   var s = statlar();
   var acik = oku('odul') || [];
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ… BaÅŸarÄ±larÄ±m</h1><p>XP kazan, seviye atla, rozetleri topla!</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🏅 Başarılarım</h1><p>XP kazan, seviye atla, rozetleri topla!</p></div>';
   h += '<div class="durum-karti">';
-  h += '<div class="durum-huc"><b>â­ XP</b><span>' + s.xp + '</span></div>';
-  h += '<div class="durum-huc"><b>ğŸ– Seviye</b><span>' + s.seviye + '</span></div>';
-  h += '<div class="durum-huc"><b>ğŸ”¥ Seri</b><span>' + s.seri + ' gÃ¼n</span></div>';
-  h += '<div class="durum-huc"><b>ğŸ“ Test</b><span>' + s.testSay + '</span></div>';
-  h += '<div class="durum-huc"><b>ğŸ“š Soru</b><span>' + s.soruSay + '</span></div>';
-  h += '<div class="durum-huc"><b>ğŸ§© EÅŸleÅŸme</b><span>' + s.esleSay + '</span></div>';
-  h += '<div class="durum-huc"><b>â±ï¸ Odak</b><span>' + s.pomoSay + ' tur</span></div>';
+  h += '<div class="durum-huc"><b>⭐ XP</b><span>' + s.xp + '</span></div>';
+  h += '<div class="durum-huc"><b>🎖 Seviye</b><span>' + s.seviye + '</span></div>';
+  h += '<div class="durum-huc"><b>🔥 Seri</b><span>' + s.seri + ' gün</span></div>';
+  h += '<div class="durum-huc"><b>📝 Test</b><span>' + s.testSay + '</span></div>';
+  h += '<div class="durum-huc"><b>📚 Soru</b><span>' + s.soruSay + '</span></div>';
+  h += '<div class="durum-huc"><b>🧩 Eşleşme</b><span>' + s.esleSay + '</span></div>';
+  h += '<div class="durum-huc"><b>⏱️ Odak</b><span>' + s.pomoSay + ' tur</span></div>';
   h += '</div>';
-  h += '<div class="baslik"><h2>ğŸ–ï¸ Rozetlerim (' + acik.length + '/' + ROZETLER.length + ')</h2></div>';
+  h += '<div class="baslik"><h2>🎖️ Rozetlerim (' + acik.length + '/' + ROZETLER.length + ')</h2></div>';
   h += '<div class="rozetler">';
   ROZETLER.forEach(function(r) {
     var varMi = acik.indexOf(r.id) > -1;
     h += '<div class="rozet' + (varMi ? ' acik' : ' kapali') + '"><div class="rozet-ikon">' + r.ikon + '</div>' +
          '<div class="rozet-ad">' + r.ad + '</div><div class="rozet-ac">' + r.aciklama + '</div>' +
-         (varMi ? '' : '<div class="rozet-kilit">ğŸ”’</div>') + '</div>';
+         (varMi ? '' : '<div class="rozet-kilit">🔒</div>') + '</div>';
   });
   h += '</div>';
-  h += '<div style="text-align:center;margin-top:14px"><button class="btn btn-bitir" onclick="odulSil()">ğŸ”„ Rozetleri SÄ±fÄ±rla</button></div>';
+  h += '<div style="text-align:center;margin-top:14px"><button class="btn btn-bitir" onclick="odulSil()">🔄 Rozetleri Sıfırla</button></div>';
   ekran.innerHTML = h;
 }
 
@@ -2702,21 +2702,21 @@ function cizPomodoro() {
   if (!durum.pomo) durum.pomo = { mod: 'c', kalan: pomoDakika * 60, calis: false };
   var pm = durum.pomo;
   var dak = Math.floor(pm.kalan / 60), sn = pm.kalan % 60;
-  var etiket = pm.mod === 'c' ? 'ğŸ¯ Ã‡alÄ±ÅŸma' : 'ğŸ Mola';
+  var etiket = pm.mod === 'c' ? '🎯 Çalışma' : '🍎 Mola';
   var renk = pm.mod === 'c' ? '#e74c3c' : '#2ecc71';
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>â±ï¸ Pomodoro ZamanlayÄ±cÄ±</h1><p>25 dakika Ã§alÄ±ÅŸ, 5 dakika mola ver. Odaklan!</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>⏱️ Pomodoro Zamanlayıcı</h1><p>25 dakika çalış, 5 dakika mola ver. Odaklan!</p></div>';
   h += '<div class="pomo-kutu">';
   h += '<div class="pomo-mod" style="color:' + renk + '">' + etiket + '</div>';
   h += '<div class="pomo-saat" style="color:' + renk + '">' + ('0' + dak).slice(-2) + ':' + ('0' + sn).slice(-2) + '</div>';
   h += '<div class="pomo-butonlar">';
-  h += '<button class="btn btn-test" onclick="pomoBasla()">' + (pm.calis ? 'â¸ Duraklat' : 'â–¶ï¸ BaÅŸlat') + '</button>';
-  h += '<button class="btn btn-geri" onclick="pomoSifirla()">ğŸ”„ SÄ±fÄ±rla</button>';
+  h += '<button class="btn btn-test" onclick="pomoBasla()">' + (pm.calis ? '⏸ Duraklat' : '▶️ Başlat') + '</button>';
+  h += '<button class="btn btn-geri" onclick="pomoSifirla()">🔄 Sıfırla</button>';
   h += '</div>';
   var pomo = oku('pomo') || {};
   var gunSay = statlar().pomoGunSay;
-  h += '<div class="pomo-gun"><span>ğŸ”¢ Toplam: ' + (pomo.toplam || 0) + '</span><span>ğŸ”¥ BugÃ¼n: ' + gunSay + '/4</span></div>';
-  h += '<div class="kucuk-not">TamamladÄ±ÄŸÄ±n her Ã§alÄ±ÅŸma turu +3 XP kazandÄ±rÄ±r. Telefonunu kenara koy ve odaklan!</div>';
+  h += '<div class="pomo-gun"><span>🔢 Toplam: ' + (pomo.toplam || 0) + '</span><span>🔥 Bugün: ' + gunSay + '/4</span></div>';
+  h += '<div class="kucuk-not">Tamamladığın her çalışma turu +3 XP kazandırır. Telefonunu kenara koy ve odaklan!</div>';
   h += '</div>';
   ekran.innerHTML = h;
 }
@@ -2753,35 +2753,35 @@ function pomoTikTok() {
        gorevIlerle('pomo', 1);
        rozetKontrol();
        pm.mod = 'm'; pm.kalan = molaDakika * 60;
-      alert('ğŸ Mola zamanÄ±! 5 dakika kendine iyi bak.');
+      alert('🍎 Mola zamanı! 5 dakika kendine iyi bak.');
     } else {
       pm.mod = 'c'; pm.kalan = pomoDakika * 60;
-      alert('ğŸ’ª Ã‡alÄ±ÅŸma vakti geldi!');
+      alert('💪 Çalışma vakti geldi!');
     }
   }
   if (durum.tur === 'pomodoro') cizPomodoro();
 }
 
-/* ====== SINAV GERÄ° SAYIMI ====== */
+/* ====== SINAV GERİ SAYIMI ====== */
 function cizSaylar() {
   var list = oku('saylar') || [];
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ“… SÄ±nav Geri SayÄ±mÄ±</h1><p>SÄ±nav ve Ã¶nemli gÃ¼nleri ekle, kaÃ§ gÃ¼n kaldÄ±ÄŸÄ±nÄ± gÃ¶r.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>📅 Sınav Geri Sayımı</h1><p>Sınav ve önemli günleri ekle, kaç gün kaldığını gör.</p></div>';
   h += '<div class="sayac-ekle">';
-  h += '<input id="sayAd" type="text" placeholder="Ne? (Ã¶rn: Matematik YazÄ±lÄ±sÄ±)">';
+  h += '<input id="sayAd" type="text" placeholder="Ne? (örn: Matematik Yazılısı)">';
   h += '<input id="sayTarih" type="date">';
-  h += '<button class="btn btn-mor" onclick="sayacEkle()">â• Ekle</button>';
+  h += '<button class="btn btn-mor" onclick="sayacEkle()">➕ Ekle</button>';
   h += '</div>';
-  if (!list.length) h += '<div class="kucuk-not">HenÃ¼z geri sayÄ±m yok. YukarÄ±dan bir sÄ±nav tarihi ekleyebilirsin.</div>';
+  if (!list.length) h += '<div class="kucuk-not">Henüz geri sayım yok. Yukarıdan bir sınav tarihi ekleyebilirsin.</div>';
   h += '<div class="sayac-list">';
   list.slice().sort(function(a, b) { return new Date(a.t) - new Date(b.t); }).forEach(function(s, i) {
     var gun = gunKadar(s.t);
-    var simge = gun <= 0 ? 'ğŸ‰ BugÃ¼n!' : (gun <= 7 ? 'âš ï¸ Ã‡ok yakÄ±n!' : 'â³');
+    var simge = gun <= 0 ? '🎉 Bugün!' : (gun <= 7 ? '⚠️ Çok yakın!' : '⏳');
     var renk = gun <= 0 ? '#27ae60' : gun <= 7 ? '#e74c3c' : '#6a5cff';
     h += '<div class="sayac-kart" style="border-left:6px solid ' + renk + '">';
     h += '<div class="sayac-ad"><b>' + s.ad + '</b><br><small>' + s.t + '</small></div>';
-    h += '<div class="sayac-gun" style="color:' + renk + '">' + (gun <= 0 ? 'BugÃ¼n!' : gun + ' gÃ¼n') + '<div class="kucuk-not">' + simge + '</div></div>';
-    h += '<button class="sayac-sil" onclick="sayacSil(' + i + ')">ğŸ—‘ï¸</button>';
+    h += '<div class="sayac-gun" style="color:' + renk + '">' + (gun <= 0 ? 'Bugün!' : gun + ' gün') + '<div class="kucuk-not">' + simge + '</div></div>';
+    h += '<button class="sayac-sil" onclick="sayacSil(' + i + ')">🗑️</button>';
     h += '</div>';
   });
   h += '</div>';
@@ -2797,7 +2797,7 @@ function gunKadar(t) {
 function sayacEkle() {
   var ad = document.getElementById('sayAd').value;
   var t = document.getElementById('sayTarih').value;
-  if (!ad || !t) { alert('Ad ve tarih yazmalÄ±sÄ±n.'); return; }
+  if (!ad || !t) { alert('Ad ve tarih yazmalısın.'); return; }
   var list = oku('saylar') || [];
   list.push({ ad: ad, t: t });
   kaydet('saylar', list);
@@ -2812,7 +2812,7 @@ function sayacSil(i) {
   cizSaylar();
 }
 
-/* ====== BÄ°LGÄ° KARTLARI (FSRS AralÄ±klÄ± Tekrar) ====== */
+/* ====== BİLGİ KARTLARI (FSRS Aralıklı Tekrar) ====== */
 
 function tarihFark(t1, t2) {
   var a = new Date(t1), b = new Date(t2);
@@ -2866,12 +2866,12 @@ function kartYeni(dersId, mod) {
   var list = kartKartlari(dersId).map(function(c) {
     return { s: c.s, c: c.c, d: c.d || 5, sf: c.sf || 2.5, r: c.r || 1, son: c.son || null, tekrar: c.tekrar || 0, sonPuan: c.sonPuan || 0 };
   });
-  if (!list.length) { alert('Bu ders iÃ§in yeterli kart yok.'); return; }
+  if (!list.length) { alert('Bu ders için yeterli kart yok.'); return; }
   var deck;
   if (mod === 'tekrar') {
     var bugun = gunKod(new Date());
     deck = list.filter(function(c) { return kartGecikmis(c, bugun); });
-    if (!deck.length) { alert('BugÃ¼n tekrar kartÄ±n yok, harika! ğŸ‰'); return; }
+    if (!deck.length) { alert('Bugün tekrar kartın yok, harika! 🎉'); return; }
   } else {
     deck = list.slice();
   }
@@ -2884,25 +2884,25 @@ function kartBaslat(dersId) { kartYeni(dersId, 'hepsi'); }
 function kartTekrarBaslat(dersId) { kartYeni(dersId, 'tekrar'); }
 
 function cizKartSec() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸƒ Bilgi KartlarÄ±</h1><p>DoÄŸru bildikÃ§e kartlar Ã¼st kutuya Ã§Ä±kar. AralÄ±klÄ± tekrarla kalÄ±cÄ± Ã¶ÄŸren!</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🃏 Bilgi Kartları</h1><p>Doğru bildikçe kartlar üst kutuya çıkar. Aralıklı tekrarla kalıcı öğren!</p></div>';
   h += '<div class="dersler">';
   for (var s in MUFREDAT) {
     MUFREDAT[s].dersler.forEach(function(d) {
       if (!esleVar(d.id)) return;
       var bugun = kartBugun(d.id);
       h += '<div class="ders-card kart-ders">';
-      h += '<span class="ikon">ğŸƒ</span>';
-      h += '<span class="kart-bilgi"><span class="ad">' + s + '. SÄ±nÄ±f Â· ' + d.ad + '</span><br>' +
-           '<span class="alt">ğŸ—‚ï¸ ' + kartKartlari(d.id).length + ' kart Â· ğŸ” BugÃ¼n: ' + bugun + ' tekrar</span></span>';
+      h += '<span class="ikon">🃏</span>';
+      h += '<span class="kart-bilgi"><span class="ad">' + s + '. Sınıf · ' + d.ad + '</span><br>' +
+           '<span class="alt">🗂️ ' + kartKartlari(d.id).length + ' kart · 🔁 Bugün: ' + bugun + ' tekrar</span></span>';
       h += '<span class="kart-btnler">';
-      h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="kartTekrarBaslat(\'' + d.id + '\')">ğŸ¯ Tekrar</button>';
-      h += '<button class="kucuk-buton" style="background:#9b59b6" onclick="kartBaslat(\'' + d.id + '\')">ğŸ“š TÃ¼mÃ¼</button>';
+      h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="kartTekrarBaslat(\'' + d.id + '\')">🎯 Tekrar</button>';
+      h += '<button class="kucuk-buton" style="background:#9b59b6" onclick="kartBaslat(\'' + d.id + '\')">📚 Tümü</button>';
       h += '</span></div>';
     });
   }
   h += '</div>';
-  h += '<div class="kucuk-not">ğŸ’¡ FSRS: KiÅŸisel hatÄ±rlama hÄ±zÄ±na gÃ¶re akÄ±llÄ± tekrar. 4 derece: Tekrar(âœ—)/Zor(â–³)/Ä°yi(â—‹)/Kolay(â˜…) â€” handleError.jpg</div>';
+  h += '<div class="kucuk-not">💡 FSRS: Kişisel hatırlama hızına göre akıllı tekrar. 4 derece: Tekrar(✗)/Zor(△)/İyi(○)/Kolay(★) — handleError.jpg</div>';
   ekran.innerHTML = h;
 }
 
@@ -2912,21 +2912,21 @@ function cizKart() {
   var c = k.deck[0];
   var yapilan = k.basla - k.deck.length;
   var durumFSRS = FSRS.kartDurumu(c);
-  var durumSimge = { 'yeni': 'ğŸ†•', 'hazir': 'âœ…', 'gecikmis': 'â°', 'unutuluyor': 'âš ï¸', 'aklimda': 'ğŸ§ ' }[durumFSRS] || '';
-  var h = '<button class="geri" onclick="git(\'kartSec\')">â¬… Kartlara DÃ¶n</button>';
-  h += '<div class="baslik"><h1>' + (k.tekrar ? 'ğŸ¯ BugÃ¼nkÃ¼ Tekrarlar' : 'ğŸƒ ' + dersAdi(k.d)) + '</h1><p>Kart ' + (yapilan + 1) + '/' + k.basla + ' Â· ' + durumSimge + ' ' + durumFSRS + ' Â· âš¡ Zorluk: ' + (c.d || 5) + '/10</p></div>';
+  var durumSimge = { 'yeni': '🆕', 'hazir': '✅', 'gecikmis': '⏰', 'unutuluyor': '⚠️', 'aklimda': '🧠' }[durumFSRS] || '';
+  var h = '<button class="geri" onclick="git(\'kartSec\')">⬅ Kartlara Dön</button>';
+  h += '<div class="baslik"><h1>' + (k.tekrar ? '🎯 Bugünkü Tekrarlar' : '🃏 ' + dersAdi(k.d)) + '</h1><p>Kart ' + (yapilan + 1) + '/' + k.basla + ' · ' + durumSimge + ' ' + durumFSRS + ' · ⚡ Zorluk: ' + (c.d || 5) + '/10</p></div>';
   h += '<div class="kart-alan">';
   h += '<div class="kart">';
   h += '<div class="kart-on">' + c.s + '</div>';
   if (k.goster) h += '<div class="kart-arka">' + c.c + '</div>';
   h += '</div>';
   h += '<div class="kart-butonlar">';
-  if (!k.goster) h += '<button class="btn btn-mor" onclick="kartGoster()">ğŸ’¡ CevabÄ± GÃ¶ster</button>';
+  if (!k.goster) h += '<button class="btn btn-mor" onclick="kartGoster()">💡 Cevabı Göster</button>';
   else {
-    h += '<button class="btn btn-bitir" onclick="kartCevap(1)">âœ— Tekrar</button>';
-    h += '<button class="btn" style="background:#f39c12;color:#fff" onclick="kartCevap(2)">â–³ Zor</button>';
-    h += '<button class="btn btn-test" onclick="kartCevap(3)">â—‹ Ä°yi</button>';
-    h += '<button class="btn btn-neo" onclick="kartCevap(4)">â˜… Kolay</button>';
+    h += '<button class="btn btn-bitir" onclick="kartCevap(1)">✗ Tekrar</button>';
+    h += '<button class="btn" style="background:#f39c12;color:#fff" onclick="kartCevap(2)">△ Zor</button>';
+    h += '<button class="btn btn-test" onclick="kartCevap(3)">○ İyi</button>';
+    h += '<button class="btn btn-neo" onclick="kartCevap(4)">★ Kolay</button>';
   }
   h += '</div>';
   h += '</div>';
@@ -2960,44 +2960,44 @@ function kartBitti() {
   var yz = toplam ? Math.round(k.bilen / toplam * 100) : 0;
   xpEkle(k.bilen * 2 + 4);
   var ist = k.istatistik || {};
-  var h = '<div class="quiz-kutu"><div class="sonuc"><div class="buyuk">' + (yz >= 70 ? 'ğŸ†' : 'ğŸ™‚') + '</div>' +
-          '<div class="puan">' + k.bilen + ' / ' + toplam + ' kartÄ± biliyordum</div>' +
-          '<p style="color:#5c6b85">%' + yz + ' baÅŸarÄ±</p>' +
+  var h = '<div class="quiz-kutu"><div class="sonuc"><div class="buyuk">' + (yz >= 70 ? '🏆' : '🙂') + '</div>' +
+          '<div class="puan">' + k.bilen + ' / ' + toplam + ' kartı biliyordum</div>' +
+          '<p style="color:#5c6b85">%' + yz + ' başarı</p>' +
           '<div style="display:flex;gap:8px;justify-content:center;margin:10px 0;flex-wrap:wrap">' +
-          '<span style="color:#e74c3c">âœ— Tekrar: ' + (ist.again || 0) + '</span>' +
-          '<span style="color:#f39c12">â–³ Zor: ' + (ist.hard || 0) + '</span>' +
-          '<span style="color:#3498db">â—‹ Ä°yi: ' + (ist.good || 0) + '</span>' +
-          '<span style="color:#2ecc71">â˜… Kolay: ' + (ist.easy || 0) + '</span>' +
+          '<span style="color:#e74c3c">✗ Tekrar: ' + (ist.again || 0) + '</span>' +
+          '<span style="color:#f39c12">△ Zor: ' + (ist.hard || 0) + '</span>' +
+          '<span style="color:#3498db">○ İyi: ' + (ist.good || 0) + '</span>' +
+          '<span style="color:#2ecc71">★ Kolay: ' + (ist.easy || 0) + '</span>' +
           '</div>' +
-          '<p style="font-size:13px;color:#8b97ad">FSRS: Tekrar edilen kartlar kiÅŸisel hÄ±zÄ±na gÃ¶re zamanlanacak.</p>' +
-          '<button class="btn btn-mor" onclick="git(\'menu\')">ğŸ  Anasayfa</button> ' +
-          '<button class="btn btn-neo" onclick="kartBaslat(\'' + k.d + '\')">ğŸ” Tekrar</button></div></div>';
+          '<p style="font-size:13px;color:#8b97ad">FSRS: Tekrar edilen kartlar kişisel hızına göre zamanlanacak.</p>' +
+          '<button class="btn btn-mor" onclick="git(\'menu\')">🏠 Anasayfa</button> ' +
+          '<button class="btn btn-neo" onclick="kartBaslat(\'' + k.d + '\')">🔁 Tekrar</button></div></div>';
   durum.tur = 'kartSon';
   ekran.innerHTML = h;
 }
 function cizKartSon() { kartBitti(); }
 
-/* ====== KONU HAKÄ°MÄ°YET HARÄ°TASI ====== */
+/* ====== KONU HAKİMİYET HARİTASI ====== */
 function cizHarita() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ—ºï¸ Konu Hakimiyet HaritasÄ±</h1><p>Renkler, o konuyu ne kadar iyi Ã¶ÄŸrendiÄŸini gÃ¶sterir.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🗺️ Konu Hakimiyet Haritası</h1><p>Renkler, o konuyu ne kadar iyi öğrendiğini gösterir.</p></div>';
   h += '<div class="lejant">';
-  h += '<span class="l-lej bo">â– </span> hiÃ§ test yok <span class="l-lej zayif">â– </span> %0-49 <span class="l-lej orta">â– </span> %50-79 <span class="l-lej guclu">â– </span> %80+';
+  h += '<span class="l-lej bo">■</span> hiç test yok <span class="l-lej zayif">■</span> %0-49 <span class="l-lej orta">■</span> %50-79 <span class="l-lej guclu">■</span> %80+';
   h += '</div>';
   for (var s in MUFREDAT) {
-    h += '<div class="harita-sinif"><h2>' + s + '. SÄ±nÄ±f</h2><div class="harita-dersler">';
+    h += '<div class="harita-sinif"><h2>' + s + '. Sınıf</h2><div class="harita-dersler">';
     MUFREDAT[s].dersler.forEach(function(d) {
       h += '<div class="harita-ders"><h3>' + DERS_IKON(d.id) + ' ' + d.ad + '</h3><div class="harita-hucrel">';
       d.birimler.forEach(function(b, i) {
         var hak = hakimiyet(d.id, i);
         var cls = hak === null ? 'bo' : hak < 50 ? 'zayif' : hak < 80 ? 'orta' : 'guclu';
-        h += '<button class="harita-huc ' + cls + '" onclick="secDers(' + s + ',\'' + d.id + '\')" title="' + (hak === null ? 'HenÃ¼z test yok' : '%' + hak) + '">' + (i + 1) + '</button>';
+        h += '<button class="harita-huc ' + cls + '" onclick="secDers(' + s + ',\'' + d.id + '\')" title="' + (hak === null ? 'Henüz test yok' : '%' + hak) + '">' + (i + 1) + '</button>';
       });
       h += '</div></div>';
     });
     h += '</div></div>';
   }
-   h += '<div class="kucuk-not">Bir hÃ¼creye tÄ±klayarak o derse gidebilirsin. Hakimiyet, o konudaki en iyi test sonucuna gÃ¶re hesaplanÄ±r.</div>';
+   h += '<div class="kucuk-not">Bir hücreye tıklayarak o derse gidebilirsin. Hakimiyet, o konudaki en iyi test sonucuna göre hesaplanır.</div>';
    ekran.innerHTML = h;
  }
 
@@ -3011,7 +3011,7 @@ function cizHarita() {
    cizKonuRapor();
  }
  function konuRaporSifirla() {
-   if (!confirm('Bu dersin tÃ¼m "tamamladÄ±m" iÅŸaretleri silinsin mi?')) return;
+   if (!confirm('Bu dersin tüm "tamamladım" işaretleri silinsin mi?')) return;
    var s = seciliSinif();
    var d = dersBul(s, durum.ders);
    if (!d) return;
@@ -3021,24 +3021,24 @@ function cizHarita() {
    cizKonuRapor();
  }
  function cizKonuRapor() {
-   var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+   var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
    var s = seciliSinif();
    var bilgi = s ? MUFREDAT[s] : null;
    if (!bilgi) {
-     h += '<div class="baslik"><h1>ğŸ“Š Konu Raporu</h1><p>Ã–nce <b>Profilim</b>â€™den sÄ±nÄ±fÄ±nÄ± seÃ§.</p></div>';
+     h += '<div class="baslik"><h1>📊 Konu Raporu</h1><p>Önce <b>Profilim</b>’den sınıfını seç.</p></div>';
      ekran.innerHTML = h; return;
    }
-   h += '<div class="baslik"><h1>ğŸ“Š Konu Tamamlanma Raporu</h1><p>' + s + '. sÄ±nÄ±f Â· konu bazlÄ± yÃ¼zdelik hakimiyet (Morpa stili)</p></div>';
+   h += '<div class="baslik"><h1>📊 Konu Tamamlanma Raporu</h1><p>' + s + '. sınıf · konu bazlı yüzdelik hakimiyet (Morpa stili)</p></div>';
    var d = durum.ders ? dersBul(s, durum.ders) : null;
    if (!d) {
      h += '<div class="harita-dersler">';
      bilgi.dersler.forEach(function (dr) {
        h += '<button class="grade-card renk' + dr.id + '" onclick="durum.ders=\'' + dr.id + '\';cizKonuRapor()">' + DERS_IKON(dr.id) + ' ' + dr.ad + '</button>';
      });
-     h += '</div><div class="kucuk-not">Bir dersinizi seÃ§in; tÃ¼m konu Ã§ubuklarÄ±nÄ±zÄ± ve %tamamlanmayÄ± gÃ¶rÃ¼rsÃ¼nÃ¼z.</div>';
+     h += '</div><div class="kucuk-not">Bir dersinizi seçin; tüm konu çubuklarınızı ve %tamamlanmayı görürsünüz.</div>';
      ekran.innerHTML = h; return;
    }
-   h += '<div class="filtre-ust"><button class="geri" style="float:left" onclick="durum.ders=\'\';cizKonuRapor()">â¬… ' + s + '. SÄ±nÄ±f</button><button class="kucuk-buton" style="background:#e74c3c" onclick="konuRaporSifirla()">ğŸ”„ TÃ¼mÃ¼nÃ¼ SÄ±fÄ±rla</button></div>';
+   h += '<div class="filtre-ust"><button class="geri" style="float:left" onclick="durum.ders=\'\';cizKonuRapor()">⬅ ' + s + '. Sınıf</button><button class="kucuk-buton" style="background:#e74c3c" onclick="konuRaporSifirla()">🔄 Tümünü Sıfırla</button></div>';
    h += '<div class="konu-raporu">';
    h += '<div class="konu-satir konu-header"><div class="konu-ad">Konu</div><div class="konu-say">Hakimiyet</div><div class="konu-cubuk">Tamam</div></div>';
    d.birimler.forEach(function (b, i) {
@@ -3050,17 +3050,17 @@ function cizHarita() {
      h += '<div class="konu-ad"><span class="num" style="background:' + (b.renk || '#6a5cff') + '">' + (i + 1) + '</span> ' + b.ad + '</div>';
      h += '<div class="konu-say">' + (hak === null ? 'test yok' : ('%' + hak)) + '</div>';
      h += '<div class="konu-cubuk"><div class="cubuk"><div class="cubuk-dolgu" style="width:' + yuz + '%;background:' + renk + '"></div></div>';
-      h += '<button class="kucuk-buton" onclick="konuTik(\'' + d.id + '\',' + i + ')" style="margin-left:6px">' + (tam ? 'âœ…' : 'â¬œ') + '</button>';
-      h += '<button class="kucuk-not" style="margin-left:6px;background:#6a5cff" onclick="takipToggle(\'' + d.id + '\',' + i + ')" title="Takibime ekle/Ã§Ä±kar">' + (takipVar(d.id, i) ? 'ğŸ“Œ' : 'ğŸ“') + '</button>';
-      if (videoUrl(d.id, i)) h += '<button class="kucuk-not" style="margin-left:6px;background:#1f8a70" onclick="acKapaVideo(\'' + d.id + '\',' + i + ')" title="Video ders">ğŸ¬</button>';
+      h += '<button class="kucuk-buton" onclick="konuTik(\'' + d.id + '\',' + i + ')" style="margin-left:6px">' + (tam ? '✅' : '⬜') + '</button>';
+      h += '<button class="kucuk-not" style="margin-left:6px;background:#6a5cff" onclick="takipToggle(\'' + d.id + '\',' + i + ')" title="Takibime ekle/çıkar">' + (takipVar(d.id, i) ? '📌' : '📍') + '</button>';
+      if (videoUrl(d.id, i)) h += '<button class="kucuk-not" style="margin-left:6px;background:#1f8a70" onclick="acKapaVideo(\'' + d.id + '\',' + i + ')" title="Video ders">🎬</button>';
       h += '</div></div>';
    });
    h += '</div>';
-   h += '<div class="kucuk-not">ğŸ’¡ Morpa stili: yÃ¼zde hakimiyet test sonuÃ§larÄ±ndan, âœ“ butonu konuyu "tamamlandÄ±" iÅŸaretler (+5 XP).</div>';
+   h += '<div class="kucuk-not">💡 Morpa stili: yüzde hakimiyet test sonuçlarından, ✓ butonu konuyu "tamamlandı" işaretler (+5 XP).</div>';
    ekran.innerHTML = h;
  }
 
- /* ====== TAKÄ°BÄ°MDEKÄ°LER (Morpa/MEBÄ° izleme listesi) ====== */
+ /* ====== TAKİBİMDEKİLER (Morpa/MEBİ izleme listesi) ====== */
  function takipVar(dersId, i) { return !!(oku('takip') || {})[dersId + '-' + i]; }
  function takipToggle(dersId, i) {
    var t = oku('takip') || {};
@@ -3071,15 +3071,15 @@ function cizHarita() {
    if (durum.tur === 'konurapor') cizKonuRapor();
  }
  function cizTakip() {
-   var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
+   var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
    var s = seciliSinif();
    var bilgi = s ? MUFREDAT[s] : null;
-   h += '<div class="baslik"><h1>ğŸ“Œ Takibimdekiler</h1><p>Ä°zlediÄŸin konular burada toplantÄ±. âœ”ï¸ Tamamla, ğŸ§ª Ã‡Ã¶z veya âœ• kaldÄ±r.</p></div>';
-   if (!bilgi) { h += '<div class="kucuk-not">Ã–nce <b>Profilim</b>â€™den sÄ±nÄ±fÄ±nÄ± seÃ§.</div>'; ekran.innerHTML = h; return; }
+   h += '<div class="baslik"><h1>📌 Takibimdekiler</h1><p>İzlediğin konular burada toplantı. ✔️ Tamamla, 🧪 Çöz veya ✕ kaldır.</p></div>';
+   if (!bilgi) { h += '<div class="kucuk-not">Önce <b>Profilim</b>’den sınıfını seç.</div>'; ekran.innerHTML = h; return; }
    var t = oku('takip') || {};
   var keys = Object.keys(t);
   h += '<div class="konu-raporu">';
-   h += '<div class="konu-satir konu-header"><div class="konu-ad">Konu</div><div class="konu-say">Hakimiyet</div><div class="konu-cubuk">Ä°ÅŸlem</div></div>';
+   h += '<div class="konu-satir konu-header"><div class="konu-ad">Konu</div><div class="konu-say">Hakimiyet</div><div class="konu-cubuk">İşlem</div></div>';
    var any = false;
    bilgi.dersler.forEach(function (d) {
      d.birimler.forEach(function (b, i) {
@@ -3090,24 +3090,24 @@ function cizHarita() {
        var yuz = (hak === null) ? 0 : hak;
        var renk = hak === null ? '#9aa6c2' : hak < 50 ? '#e74c3c' : hak < 80 ? '#f39c12' : '#2ecc71';
        h += '<div class="konu-satir">';
-       h += '<div class="konu-ad"><span class="num" style="background:' + (b.renk || '#6a5cff') + '">' + DERS_IKON(d.id) + ' ' + (i + 1) + '</span> ' + d.ad + ' Â· ' + b.ad + '</div>';
+       h += '<div class="konu-ad"><span class="num" style="background:' + (b.renk || '#6a5cff') + '">' + DERS_IKON(d.id) + ' ' + (i + 1) + '</span> ' + d.ad + ' · ' + b.ad + '</div>';
        h += '<div class="konu-say">' + (hak === null ? 'test yok' : ('%' + hak)) + '</div>';
        h += '<div class="konu-cubuk"><div class="cubuk"><div class="cubuk-dolgu" style="width:' + yuz + '%;background:' + renk + '"></div></div>';
-       if (birimTest(d.id, i).length) h += '<button class="kucuk-buton" onclick="testBaslat(\'' + d.id + '\',\'' + i + '\')">ğŸ§ª Ã‡Ã¶z</button>';
-       h += '<button class="kucuk-not" style="background:#6a5cff" onclick="takipToggle(\'' + d.id + '\',' + i + ')">ğŸ“Œ</button>';
-       h += '<button class="kucuk-not" style="background:#e74c3c" onclick="takipToggle(\'' + d.id + '\',' + i + ')">âœ•</button></div></div>';
+       if (birimTest(d.id, i).length) h += '<button class="kucuk-buton" onclick="testBaslat(\'' + d.id + '\',\'' + i + '\')">🧪 Çöz</button>';
+       h += '<button class="kucuk-not" style="background:#6a5cff" onclick="takipToggle(\'' + d.id + '\',' + i + ')">📌</button>';
+       h += '<button class="kucuk-not" style="background:#e74c3c" onclick="takipToggle(\'' + d.id + '\',' + i + ')">✕</button></div></div>';
      });
    });
    h += '</div>';
-   if (!any) h += '<div class="kucuk-not">SeÃ§tiÄŸin sÄ±nÄ±f dÄ±ÅŸÄ±ndaki takip eklediysen, sÄ±nÄ±fÄ± deÄŸiÅŸtir. Konu raporundaki ğŸ“Œ butonundan konu ekleyebilirsin.</div>';
-   h += '<div class="kucuk-not">ğŸ’¡ BoÅŸ liste? Konu Raporuâ€™ndan bir konunun yanÄ±ndaki ğŸ“Œâ€™ye tÄ±kla.</div>';
+   if (!any) h += '<div class="kucuk-not">Seçtiğin sınıf dışındaki takip eklediysen, sınıfı değiştir. Konu raporundaki 📌 butonundan konu ekleyebilirsin.</div>';
+   h += '<div class="kucuk-not">💡 Boş liste? Konu Raporu’ndan bir konunun yanındaki 📌’ye tıkla.</div>';
    ekran.innerHTML = h;
  }
- function sesliOkuKonu(i) {
-  if (!window.speechSynthesis) { alert('TarayÄ±cÄ± sesli okumayÄ± desteklemiyor.'); return; }
+function sesliOkuKonu(i) {
+   if (!window.speechSynthesis) { alert('Tarayıcı sesli okumayı desteklemiyor.'); return; }
   var d = dersBul(durum.sinif, durum.ders);
   var b = d && d.birimler[i];
-  var metin = b ? (b.ad + '. ' + (b.ozet || '') + '. Konu baÅŸlÄ±klarÄ±: ' + (b.konular || []).join(', ')) : '';
+  var metin = b ? (b.ad + '. ' + (b.ozet || '') + '. Konu başlıkları: ' + (b.konular || []).join(', ')) : '';
   if (!metin) return;
   if (durum.ses === metin) { window.speechSynthesis.cancel(); durum.ses = null; return; }
   window.speechSynthesis.cancel();
@@ -3119,14 +3119,14 @@ function cizHarita() {
   durum.ses = metin;
 }
 
-/* ====== GÃœNLÃœK GÃ–REVLER ====== */
+/* ====== GÜNLÜK GÖREVLER ====== */
 var GOREVLER = [
-  { id: 'test', ikon: 'ğŸ“', ad: '1 test Ã§Ã¶z', hedef: 1, xp: 10 },
-  { id: 'esle', ikon: 'ğŸ§©', ad: '1 eÅŸleÅŸtirme tamamla', hedef: 1, xp: 10 },
-  { id: 'kart', ikon: 'ğŸƒ', ad: '10 bilgi kartÄ± Ã§alÄ±ÅŸ', hedef: 10, xp: 10 },
-  { id: 'pomo', ikon: 'â±ï¸', ad: '1 odak turu bitir', hedef: 1, xp: 8 },
-  { id: 'konu', ikon: 'âœ…', ad: '1 konu tamamla', hedef: 1, xp: 8 },
-  { id: 'xp', ikon: 'â­', ad: '30 XP kazan', hedef: 30, xp: 10 }
+  { id: 'test', ikon: '📝', ad: '1 test çöz', hedef: 1, xp: 10 },
+  { id: 'esle', ikon: '🧩', ad: '1 eşleştirme tamamla', hedef: 1, xp: 10 },
+  { id: 'kart', ikon: '🃏', ad: '10 bilgi kartı çalış', hedef: 10, xp: 10 },
+  { id: 'pomo', ikon: '⏱️', ad: '1 odak turu bitir', hedef: 1, xp: 8 },
+  { id: 'konu', ikon: '✅', ad: '1 konu tamamla', hedef: 1, xp: 8 },
+  { id: 'xp', ikon: '⭐', ad: '30 XP kazan', hedef: 30, xp: 10 }
 ];
 
 function gorevVeri() {
@@ -3153,8 +3153,8 @@ function gorevIlerle(id, miktar) {
 
 function cizGorevler() {
   var g = gorevVeri();
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ“‹ GÃ¼nlÃ¼k GÃ¶revler</h1><p>BugÃ¼nkÃ¼ hedefleri tamamla, XP kazan! GÃ¶revler her gece sÄ±fÄ±rlanÄ±r.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>📋 Günlük Görevler</h1><p>Bugünkü hedefleri tamamla, XP kazan! Görevler her gece sıfırlanır.</p></div>';
   var yapilanSay = 0;
   GOREVLER.forEach(function(def) {
     var il = g.ilerleme[def.id] || 0;
@@ -3165,24 +3165,24 @@ function cizGorevler() {
     h += '<div class="gorev-ust"><span class="gorev-ikon">' + def.ikon + '</span>';
     h += '<span class="gorev-ad">' + def.ad + '</span>';
     h += '<span class="gorev-xp">+' + def.xp + ' XP</span>';
-    h += '<span class="gorev-ok">' + (tamam ? 'âœ…' : '') + '</span></div>';
+    h += '<span class="gorev-ok">' + (tamam ? '✅' : '') + '</span></div>';
     h += '<div class="cubuk"><div class="cubuk-dolgu" style="width:' + yuzde + '%' + (tamam ? ';background:#9b59b6' : '') + '"></div></div>';
-    h += '<div class="gorev-ilerleme">' + Math.min(il, def.hedef) + '/' + def.hedef + (tamam ? ' Â· TamamlandÄ±!' : '') + '</div>';
+    h += '<div class="gorev-ilerleme">' + Math.min(il, def.hedef) + '/' + def.hedef + (tamam ? ' · Tamamlandı!' : '') + '</div>';
     h += '</div>';
   });
-  h += '<div class="kucuk-not">BugÃ¼n ' + yapilanSay + '/' + GOREVLER.length + ' gÃ¶rev tamamladÄ±n. Devam! ğŸ’ª</div>';
-  h += '<div style="text-align:center;margin:12px 0"><button class="kucuk-buton" style="background:#1f8a70" onclick="takvimIndir()">ğŸ“… TÃ¼mÃ¼nÃ¼ Takvime Aktar (.ics)</button></div>';
+  h += '<div class="kucuk-not">Bugün ' + yapilanSay + '/' + GOREVLER.length + ' görev tamamladın. Devam! 💪</div>';
+  h += '<div style="text-align:center;margin:12px 0"><button class="kucuk-buton" style="background:#1f8a70" onclick="takvimIndir()">📅 Tümünü Takvime Aktar (.ics)</button></div>';
   h += '<div class="skor-liste">';
   GOREVLER.forEach(function(def) {
     var tamam = !!g.yapildi[def.id];
     h += '<div class="skor-satir"><span>' + def.ikon + ' ' + def.ad + '</span>' +
-         '<span><button class="kucuk-buton" style="background:' + (tamam ? '#94a3b8' : '#2ecc71') + '" onclick="gorevToggle(\'' + def.id + '\')">' + (tamam ? 'â†© Geri Al' : 'âœ“ Ä°ÅŸaretle') + '</button></span></div>';
+         '<span><button class="kucuk-buton" style="background:' + (tamam ? '#94a3b8' : '#2ecc71') + '" onclick="gorevToggle(\'' + def.id + '\')">' + (tamam ? '↩ Geri Al' : '✓ İşaretle') + '</button></span></div>';
   });
   h += '</div>';
   ekran.innerHTML = h;
 }
 
-/* ====== YANLIÅLARIM ====== */
+/* ====== YANLIŞLARIM ====== */
 function yanlisEkle(q, secim) {
   var havuz = oku('yanlis') || [];
   var ana = q.s + '||' + (q.o || []).join('|');
@@ -3222,7 +3222,7 @@ function yanlisHavuzGuncelle(dogru) {
 
 function yanlisQuiz() {
   var havuz = oku('yanlis') || [];
-  if (!havuz.length) { alert('YanlÄ±ÅŸ havuzun boÅŸ, harika! ğŸ‰'); return; }
+  if (!havuz.length) { alert('Yanlış havuzun boş, harika! 🎉'); return; }
   var bugun = gunKod(new Date());
   var gecikmis = havuz.filter(function(e) { return !e.son || tarihFark(e.son, bugun) >= (e.sf || 1) * 0.9; });
   var diger = havuz.filter(function(e) { return e.son && tarihFark(e.son, bugun) < (e.sf || 1) * 0.9; });
@@ -3260,34 +3260,34 @@ function cizYanlis() {
   var havuz = oku('yanlis') || [];
   var bugun = gunKod(new Date());
   var gecikmisSay = havuz.filter(function(e) { return !e.son || tarihFark(e.son, bugun) >= (e.sf || 1) * 0.9; }).length;
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ” YanlÄ±ÅŸlarÄ±m</h1><p>FSRS ile zamanlanmÄ±ÅŸ akÄ±llÄ± tekrar. GecikmiÅŸler Ã¶nce gelir.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🔁 Yanlışlarım</h1><p>FSRS ile zamanlanmış akıllı tekrar. Gecikmişler önce gelir.</p></div>';
   if (!havuz.length) {
-    h += '<div class="quiz-kutu"><div class="sonuc"><div class="buyuk">ğŸ‰</div>' +
-         '<div class="puan">HiÃ§ yanlÄ±ÅŸÄ±n yok!</div>' +
-         '<p style="color:#5c6b85">Test Ã§Ã¶zdÃ¼kÃ§e yanlÄ±ÅŸlarÄ±n buraya eklenir.</p>' +
-         '<button class="btn btn-mor" onclick="git(\'menu\')">ğŸ  Anasayfa</button></div></div>';
+    h += '<div class="quiz-kutu"><div class="sonuc"><div class="buyuk">🎉</div>' +
+         '<div class="puan">Hiç yanlışın yok!</div>' +
+         '<p style="color:#5c6b85">Test çözdükçe yanlışların buraya eklenir.</p>' +
+         '<button class="btn btn-mor" onclick="git(\'menu\')">🏠 Anasayfa</button></div></div>';
     ekran.innerHTML = h;
     return;
   }
   h += '<div style="text-align:center;margin-bottom:14px">';
-  h += '<button class="btn btn-test" onclick="yanlisQuiz()">ğŸ§ª Tekrar Ã‡Ã¶z (' + havuz.length + ')' + (gecikmisSay ? ' Â· â° ' + gecikmisSay + ' gecikmiÅŸ' : '') + '</button>';
+  h += '<button class="btn btn-test" onclick="yanlisQuiz()">🧪 Tekrar Çöz (' + havuz.length + ')' + (gecikmisSay ? ' · ⏰ ' + gecikmisSay + ' gecikmiş' : '') + '</button>';
   h += '</div>';
   havuz.forEach(function(e, i) {
     var durumFSRS = e.son ? FSRS.aralikMetin(Math.max(0, (e.sf || 1) * 0.9 - tarihFark(e.son, bugun))) : 'Yeni';
     var gecikti = !e.son || tarihFark(e.son, bugun) >= (e.sf || 1) * 0.9;
     h += '<div class="yanlis-kart" style="' + (gecikti ? 'border-left:4px solid #e74c3c' : 'border-left:4px solid #3498db') + '">';
-    h += '<div class="yanlis-ust"><span>âŒ ' + dersAdi(e.ders) + '</span><small>' + e.t + (gecikti ? ' Â· â° GECÄ°KMÄ°Å' : ' Â· ' + durumFSRS) + '</small></div>';
+    h += '<div class="yanlis-ust"><span>❌ ' + dersAdi(e.ders) + '</span><small>' + e.t + (gecikti ? ' · ⏰ GECİKMİŞ' : ' · ' + durumFSRS) + '</small></div>';
     h += '<div class="yanlis-soru">' + e.s + '</div>';
     (e.o || []).forEach(function(o, j) {
       var cls = j === e.dogru ? 'yanlis-dogru' : j === e.sec ? 'yanlis-secim' : 'yanlis-duz';
-      var is = j === e.dogru ? 'âœ” ' : j === e.sec ? 'âœ˜ ' : '';
+      var is = j === e.dogru ? '✔ ' : j === e.sec ? '✘ ' : '';
       h += '<div class="yanlis-sec ' + cls + '">' + is + String.fromCharCode(65 + j) + ') ' + o + '</div>';
     });
     h += '<div class="yanlis-btnler">';
-    h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="yanlisCozuldu(' + i + ')">âœ“ Ã‡Ã¶zdÃ¼m</button>';
-    h += '<button class="kucuk-buton" style="background:#9b59b6" onclick="tekrarCozTek(' + i + ')">ğŸ” Åunu Ã‡Ã¶z</button>';
-    h += '<label class="kucuk-buton" style="background:#6a5cff;cursor:pointer">ğŸ“· Foto' + (e.foto ? 'âœ“' : '') + '<input type="file" accept="image/*" style="display:none" onchange="yanlisFotoEkle(' + i + ', event)"></label>';
+    h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="yanlisCozuldu(' + i + ')">✓ Çözdüm</button>';
+    h += '<button class="kucuk-buton" style="background:#9b59b6" onclick="tekrarCozTek(' + i + ')">🔁 Şunu Çöz</button>';
+    h += '<label class="kucuk-buton" style="background:#6a5cff;cursor:pointer">📷 Foto' + (e.foto ? '✓' : '') + '<input type="file" accept="image/*" style="display:none" onchange="yanlisFotoEkle(' + i + ', event)"></label>';
     h += '</div>';
     if (e.foto) h += '<div style="margin-top:8px"><img src="' + e.foto + '" style="max-width:100%;border-radius:10px"></div>';
     h += '</div>';
@@ -3295,15 +3295,15 @@ function cizYanlis() {
   ekran.innerHTML = h;
 }
 
-/* ====== Ã‡ALIÅMA TAKVÄ°MÄ° ====== */
+/* ====== ÇALIŞMA TAKVİMİ ====== */
 function cizTakvim() {
   var a = oku('aktivite') || {};
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ”¥ Ã‡alÄ±ÅŸma Takvimim</h1><p>Son 30 gÃ¼n: hangi gÃ¼nler Ã§alÄ±ÅŸtÄ±n?</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🔥 Çalışma Takvimim</h1><p>Son 30 gün: hangi günler çalıştın?</p></div>';
   h += '<div class="durum-karti">';
-  h += '<div class="durum-huc"><b>ğŸ“… Aktif GÃ¼n</b><span>' + Object.keys(a).length + '</span></div>';
-  h += '<div class="durum-huc"><b>ğŸ“† Son 7 GÃ¼n</b><span>' + son7Aktif(a) + ' gÃ¼n</span></div>';
-  h += '<div class="durum-huc"><b>ğŸ”¥ GÃ¼ncel Seri</b><span>' + seriHesapla(a) + ' gÃ¼n</span></div>';
+  h += '<div class="durum-huc"><b>📅 Aktif Gün</b><span>' + Object.keys(a).length + '</span></div>';
+  h += '<div class="durum-huc"><b>📆 Son 7 Gün</b><span>' + son7Aktif(a) + ' gün</span></div>';
+  h += '<div class="durum-huc"><b>🔥 Güncel Seri</b><span>' + seriHesapla(a) + ' gün</span></div>';
   h += '</div>';
   h += '<div class="takvim">';
   for (var i = 29; i >= 0; i--) {
@@ -3312,11 +3312,11 @@ function cizTakvim() {
     var n = a[kod] || 0;
     var cls = n === 0 ? 'sifir' : n <= 2 ? 'az' : n <= 4 ? 'orta' : 'cok';
     var bugun = (i === 0) ? ' bugun' : '';
-    h += '<button class="takvim-huc ' + cls + bugun + '" title="' + kod + (n ? ' Â· ' + n + ' aktivite' : ' Â· boÅŸ gÃ¼n') + '">' + d.getDate() + '</button>';
+    h += '<button class="takvim-huc ' + cls + bugun + '" title="' + kod + (n ? ' · ' + n + ' aktivite' : ' · boş gün') + '">' + d.getDate() + '</button>';
   }
   h += '</div>';
-  h += '<div class="takvim-not"><span>â– </span> boÅŸ <span class="l-lej az">â– </span> 1-2 <span class="l-lej orta">â– </span> 3-4 <span class="l-lej guclu">â– </span> 5+ aktivite</div>';
-  h += '<div class="kucuk-not">Her test, kart, odak turu ve XP kazancÄ± takvimine iÅŸlenir.</div>';
+  h += '<div class="takvim-not"><span>■</span> boş <span class="l-lej az">■</span> 1-2 <span class="l-lej orta">■</span> 3-4 <span class="l-lej guclu">■</span> 5+ aktivite</div>';
+  h += '<div class="kucuk-not">Her test, kart, odak turu ve XP kazancı takvimine işlenir.</div>';
   ekran.innerHTML = h;
 }
 
@@ -3334,18 +3334,18 @@ function seriHesapla(a) {
   return seri;
 }
 
-/* ====== PROFÄ°L ====== */
-var AVATARLAR = ['ğŸ§‘ğŸ“', 'ğŸ‘©ğŸ“', 'ğŸ¦Š', 'ğŸ¼', 'ğŸ¯', 'ğŸ¸', 'ğŸ™', 'ğŸš€', 'ğŸŒŸ', 'ğŸ¦„', 'ğŸ±', 'ğŸ¶'];
+/* ====== PROFİL ====== */
+var AVATARLAR = ['🧑🎓', '👩🎓', '🦊', '🐼', '🐯', '🐸', '🐙', '🚀', '🌟', '🦄', '🐱', '🐶'];
 
 function profilOku() {
   var v = oku('profil');
-  var p = { ad: '', soyad: '', okul: '', sinif: '', sube: '', avatar: 'ğŸ§‘ğŸ“', gece: false, foto: '' };
+  var p = { ad: '', soyad: '', okul: '', sinif: '', sube: '', avatar: '🧑🎓', gece: false, foto: '' };
   if (v && typeof v === 'object') {
     for (var k in v) { p[k] = v[k]; }
   }
   if (p.gece !== 'system' && p.gece !== true && p.gece !== false) p.gece = false;
   p.foto = p.foto || '';
-  p.avatar = p.avatar || 'ğŸ§‘ğŸ“';
+  p.avatar = p.avatar || '🧑🎓';
   p.sinif = (p.sinif || '');
   p.sube = (p.sube || '');
   return p;
@@ -3357,7 +3357,7 @@ function profilUygula() {
     ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
     : !!p.gece;
   if (document.body) document.body.classList.toggle('gece', !!gece);
-  var g = $('geceBtn'); if (g) g.textContent = gece ? 'â˜€ï¸' : 'ğŸŒ™';
+  var g = $('geceBtn'); if (g) g.textContent = gece ? '☀️' : '🌙';
   var a = $('profilBtn'); if (a) {
     if (p.foto) { a.innerHTML = '<img src="' + esc(p.foto) + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover">'; }
     else { a.textContent = p.avatar + (p.ad ? ' ' + p.ad : ''); }
@@ -3371,10 +3371,10 @@ function veriImportJson(obj) {
   });
 }
 function veriImportSifreli(parola, jsonStr, cb) {
-  if (!(window.crypto && window.crypto.subtle)) { cb('ERR: TarayÄ±cÄ± ÅŸifrelemeyi desteklemiyor.'); return; }
+  if (!(window.crypto && window.crypto.subtle)) { cb('ERR: Tarayıcı şifrelemeyi desteklemiyor.'); return; }
   var obj;
   try { obj = JSON.parse(jsonStr); } catch (e) { cb('ERR: Dosya bozuk.'); return; }
-  if (!obj || obj.v !== 1) { cb('ERR: GeÃ§ersiz yedek formatÄ±.'); return; }
+  if (!obj || obj.v !== 1) { cb('ERR: Geçersiz yedek formatı.'); return; }
   var enc = new TextEncoder();
   var salt = new Uint8Array(obj.salt);
   var iv = new Uint8Array(obj.iv);
@@ -3383,13 +3383,13 @@ function veriImportSifreli(parola, jsonStr, cb) {
     window.crypto.subtle.deriveKey({name:'PBKDF2', salt:salt, iterations:100000, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['decrypt']).then(function(key){
       window.crypto.subtle.decrypt({name:'AES-GCM', iv:iv}, key, data).then(function(buf){
         try { var json = new TextDecoder().decode(buf); veriImportJson(JSON.parse(json)); cb(null); }
-        catch (e) { cb('ERR: Åifre yanlÄ±ÅŸ veya dosya bozuk.'); }
-      }).catch(function(e){ cb('ERR: Åifre yanlÄ±ÅŸ veya dosya bozuk.'); });
+        catch (e) { cb('ERR: Şifre yanlış veya dosya bozuk.'); }
+      }).catch(function(e){ cb('ERR: Şifre yanlış veya dosya bozuk.'); });
     }).catch(function(e){ cb('ERR:' + e.message); });
   }).catch(function(e){ cb('ERR:' + e.message); });
 }
 function veriExportSifreliIndir() {
-  var pw = prompt('YedeÄŸi ÅŸifrelemek iÃ§in parola girin:');
+  var pw = prompt('Yedeği şifrelemek için parola girin:');
   if (!pw) return;
   veriExportSifreli(pw, function(err, data){
     if (err) { alert(err); return; }
@@ -3398,7 +3398,7 @@ function veriExportSifreliIndir() {
     a.href = URL.createObjectURL(blob);
     a.download = 'eymentakip-sifreli-' + new Date().toISOString().slice(0,10) + '.json';
     a.click();
-    alert('Åifreli yedek indirildi.');
+    alert('Şifreli yedek indirildi.');
   });
 }
 function veriImportSifreliSec() {
@@ -3408,11 +3408,11 @@ function veriImportSifreliSec() {
     var f = inp.files[0]; if (!f) return;
     var r = new FileReader();
     r.onload = function(){
-      var pw = prompt('YedeÄŸin parolasÄ±nÄ± girin:');
+      var pw = prompt('Yedeğin parolasını girin:');
       if (!pw) return;
       veriImportSifreli(pw, String(r.result), function(err){
         if (err) { alert(err); return; }
-        alert('Yedek yÃ¼klendi. Uygulama yenileniyor...');
+        alert('Yedek yüklendi. Uygulama yenileniyor...');
         location.reload();
       });
     };
@@ -3423,103 +3423,103 @@ function veriImportSifreliSec() {
 function cizProfil() {
   if (profilKilitliMi()) { cizKilit(); return; }
   var p = profilOku();
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ‘¤ Profilim</h1><p>Bilgilerini gir, avatarÄ±nÄ± seÃ§, karanlÄ±k modu aÃ§.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>👤 Profilim</h1><p>Bilgilerini gir, avatarını seç, karanlık modu aç.</p></div>';
   h += '<div class="profil-kutu">';
-  h += '<label>AdÄ±m:</label><input id="profilAd" type="text" value="' + esc(p.ad) + '" placeholder="Ã–rn: Eymen">';
-  h += '<label>SoyadÄ±m:</label><input id="profilSoyad" type="text" value="' + esc(p.soyad) + '" placeholder="Ã–rn: BaytaroÄŸlu">';
-  h += '<label>Okulum:</label><input id="profilOkul" type="text" value="' + esc(p.okul) + '" placeholder="Okul adÄ±nÄ± yaz">';
-  h += '<label>SÄ±nÄ±fÄ±n (5-8):</label>';
+  h += '<label>Adım:</label><input id="profilAd" type="text" value="' + esc(p.ad) + '" placeholder="Örn: Eymen">';
+  h += '<label>Soyadım:</label><input id="profilSoyad" type="text" value="' + esc(p.soyad) + '" placeholder="Örn: Baytaroğlu">';
+  h += '<label>Okulum:</label><input id="profilOkul" type="text" value="' + esc(p.okul) + '" placeholder="Okul adını yaz">';
+  h += '<label>Sınıfın (5-8):</label>';
   h += '<select id="profilSinif" style="width:100%;padding:10px;border:2px solid #dfe5f0;border-radius:10px;font-size:15px;font-family:inherit;">';
   var SN = ['', '5', '6', '7', '8'];
   SN.forEach(function(v) {
-    h += '<option value="' + v + '"' + (p.sinif === v ? ' selected' : '') + '>' + (v ? (v + '. sÄ±nÄ±f') : 'SeÃ§â€¦') + '</option>';
+    h += '<option value="' + v + '"' + (p.sinif === v ? ' selected' : '') + '>' + (v ? (v + '. sınıf') : 'Seç…') + '</option>';
   });
   h += '</select>';
-  h += '<label>Åubem:</label><input id="profilSube" type="text" value="' + esc(p.sube) + '" placeholder="Ã–rn: A">';
-  h += '<label>AvatarÄ±m:</label><div class="avatar-grid">';
+  h += '<label>Şubem:</label><input id="profilSube" type="text" value="' + esc(p.sube) + '" placeholder="Örn: A">';
+  h += '<label>Avatarım:</label><div class="avatar-grid">';
   AVATARLAR.forEach(function(a) {
     h += '<button class="avatar-btn' + (p.avatar === a ? ' secili' : '') + '" onclick="avatarSec(\'' + a + '\')">' + a + '</button>';
   });
   h += '</div>';
-  h += '<div class="gece-satir"><span>ğŸŒ“ Tema</span><button class="gece-btn" onclick="geceAcKapa()">' + (p.gece === 'system' ? 'Sistem' : (p.gece ? 'Kapat' : 'AÃ§')) + '</button></div>';
+  h += '<div class="gece-satir"><span>🌓 Tema</span><button class="gece-btn" onclick="geceAcKapa()">' + (p.gece === 'system' ? 'Sistem' : (p.gece ? 'Kapat' : 'Aç')) + '</button></div>';
   h += '<hr style="border:none;border-top:1px solid #dfe5f0;margin:14px 0">';
-  h += '<div class="baslik"><h2 style="font-size:18px">ğŸ“¦ Veri Yedek</h2><p style="font-size:13px">Hepsini tek dosyada sakla, baÅŸka cihazda geri yÃ¼kle.</p></div>';
+  h += '<div class="baslik"><h2 style="font-size:18px">📦 Veri Yedek</h2><p style="font-size:13px">Hepsini tek dosyada sakla, başka cihazda geri yükle.</p></div>';
   h += '<div class="unit-butonlar" style="margin-bottom:10px">';
-  h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="veriExport()">ğŸ“¥ DÄ±ÅŸa Aktar (JSON)</button>';
+  h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="veriExport()">📥 Dışa Aktar (JSON)</button>';
   h += '<label class="kucuk-not" style="display:inline-block;cursor:pointer;background:#6a5cff;border-radius:10px;padding:8px 14px;color:#fff;font-weight:700">';
-  h += 'ğŸ”¼ Yedek YÃ¼kle<input type="file" accept="application/json" style="display:none" onchange="veriImport(event)">';
+  h += '🔼 Yedek Yükle<input type="file" accept="application/json" style="display:none" onchange="veriImport(event)">';
   h += '</label>';
   h += '</div>';
-  h += '<div style="text-align:center;margin-top:10px"><button class="btn btn-mor" onclick="profilKaydet()">ğŸ’¾ Kaydet</button></div>';
+  h += '<div style="text-align:center;margin-top:10px"><button class="btn btn-mor" onclick="profilKaydet()">💾 Kaydet</button></div>';
   h += '<hr style="border:none;border-top:1px solid #dfe5f0;margin:14px 0">';
   var saatSel = '<select class="saat-sel" onchange="bildirimSaatDegistir(this.value)">';
   for (var _h = 7; _h <= 22; _h++) saatSel += '<option value="' + _h + '"' + (_h === (p.bildirimSaat || 16) ? ' selected' : '') + '>' + _h + ':00</option>';
   saatSel += '</select>';
-  h += '<div class="gece-satir"><span>ğŸ”” GÃ¼nlÃ¼k HatÄ±rlatma ' + saatSel + '</span><button class="gece-btn" onclick="bildirimAcKapa()">' + (p.bildirim ? 'Kapat' : 'AÃ§') + '</button></div>';
+  h += '<div class="gece-satir"><span>🔔 Günlük Hatırlatma ' + saatSel + '</span><button class="gece-btn" onclick="bildirimAcKapa()">' + (p.bildirim ? 'Kapat' : 'Aç') + '</button></div>';
   h += '</div>';
   h += '<hr style="border:none;border-top:1px solid #dfe5f0;margin:14px 0">';
-  h += '<div class="baslik"><h2 style="font-size:18px">ğŸ‘¥ Profillerim</h2><p style="font-size:13px">Birden fazla Ã¶ÄŸrenci iÃ§in ayrÄ± ilerleme kaydÄ± tut.</p></div>';
+  h += '<div class="baslik"><h2 style="font-size:18px">👥 Profillerim</h2><p style="font-size:13px">Birden fazla öğrenci için ayrı ilerleme kaydı tut.</p></div>';
   var pl = profilListesi();
   var apid = aktifProfilId();
   h += '<div style="display:flex;flex-direction:column;gap:8px">';
   pl.forEach(function(pr) {
     var aktif = pr.id === apid;
     h += '<div style="display:flex;align-items:center;gap:10px;border:2px solid ' + (aktif ? '#1f8a70' : '#dfe5f0') + ';border-radius:12px;padding:8px 12px">';
-    h += '<div style="font-size:24px">' + (pr.foto ? '<img src="' + esc(pr.foto) + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover">' : (pr.avatar || 'ğŸ§‘ğŸ“')) + '</div>';
-    h += '<div style="flex:1"><div style="font-weight:700">' + esc(pr.ad || 'Ã–ÄŸrenci') + ' ' + esc(pr.soyad || '') + '</div><div style="font-size:12px;color:#7a869a">' + (pr.sinif ? (pr.sinif + '. sÄ±nÄ±f') : '') + ' ' + esc(pr.sube || '') + (aktif ? ' Â· aktif' : '') + '</div></div>';
+    h += '<div style="font-size:24px">' + (pr.foto ? '<img src="' + esc(pr.foto) + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover">' : (pr.avatar || '🧑🎓')) + '</div>';
+    h += '<div style="flex:1"><div style="font-weight:700">' + esc(pr.ad || 'Öğrenci') + ' ' + esc(pr.soyad || '') + '</div><div style="font-size:12px;color:#7a869a">' + (pr.sinif ? (pr.sinif + '. sınıf') : '') + ' ' + esc(pr.sube || '') + (aktif ? ' · aktif' : '') + '</div></div>';
     if (!aktif) {
-      h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="profilSec(\'' + pr.id + '\')">SeÃ§</button>';
+      h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="profilSec(\'' + pr.id + '\')">Seç</button>';
       h += '<button class="kucuk-buton" style="background:#e05656" onclick="profilSil(\'' + pr.id + '\')">Sil</button>';
     } else {
-      h += '<span style="font-size:12px;color:#1f8a70;font-weight:700">âœ“ Aktif</span>';
+      h += '<span style="font-size:12px;color:#1f8a70;font-weight:700">✓ Aktif</span>';
     }
     h += '</div>';
   });
   h += '</div>';
-  h += '<div style="text-align:center;margin-top:10px"><button class="btn btn-mor" onclick="profilEkle()">â• Yeni Profil Ekle</button></div>';
+  h += '<div style="text-align:center;margin-top:10px"><button class="btn btn-mor" onclick="profilEkle()">➕ Yeni Profil Ekle</button></div>';
   h += '<hr style="border:none;border-top:1px solid #dfe5f0;margin:14px 0">';
-  h += '<div class="baslik"><h2 style="font-size:18px">ğŸ” Profil Kilidi (PIN)</h2><p style="font-size:13px">Bu profili PIN ile koru. BoÅŸ bÄ±rakÄ±p Kaydet deyince kilit kalkar.</p></div>';
+  h += '<div class="baslik"><h2 style="font-size:18px">🔐 Profil Kilidi (PIN)</h2><p style="font-size:13px">Bu profili PIN ile koru. Boş bırakıp Kaydet deyince kilit kalkar.</p></div>';
   var aktifP = (oku('profiller') || []).filter(function(x){ return x.id === aktifProfilId(); })[0] || {};
-  h += '<input id="pinInput" type="password" inputmode="numeric" maxlength="8" placeholder="PIN (Ã¶rn: 1234)" value="' + (aktifP.pin ? aktifP.pin : '') + '" style="width:100%;padding:10px;border:2px solid #dfe5f0;border-radius:10px;font-size:15px;font-family:inherit">';
-  h += '<div style="text-align:center;margin-top:8px"><button class="btn btn-mor" onclick="pinKaydet()">ğŸ’¾ PIN Kaydet</button></div>';
+  h += '<input id="pinInput" type="password" inputmode="numeric" maxlength="8" placeholder="PIN (örn: 1234)" value="' + (aktifP.pin ? aktifP.pin : '') + '" style="width:100%;padding:10px;border:2px solid #dfe5f0;border-radius:10px;font-size:15px;font-family:inherit">';
+  h += '<div style="text-align:center;margin-top:8px"><button class="btn btn-mor" onclick="pinKaydet()">💾 PIN Kaydet</button></div>';
   h += '<hr style="border:none;border-top:1px solid #dfe5f0;margin:14px 0">';
-  h += '<div class="baslik"><h2 style="font-size:18px">ğŸ“¤ DÄ±ÅŸa / PaylaÅŸ</h2></div>';
+  h += '<div class="baslik"><h2 style="font-size:18px">📤 Dışa / Paylaş</h2></div>';
   h += '<div class="unit-butonlar" style="margin-bottom:10px">';
-  h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="takvimIndir()">ğŸ“… Takvimi Ä°ndir (.ics)</button> ';
-  h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="veriPaylas()">ğŸ”— Veriyi PaylaÅŸ</button>';
+  h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="takvimIndir()">📅 Takvimi İndir (.ics)</button> ';
+  h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="veriPaylas()">🔗 Veriyi Paylaş</button>';
   h += '</div>';
-  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">ğŸ¤ Sesli Okuma Sesi</h2></div>';
+  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">🎤 Sesli Okuma Sesi</h2></div>';
   h += '<div class="unit-butonlar"><select id="ttsSec" onchange="ttsSesKaydet(this.value)" style="padding:8px;border-radius:8px;border:2px solid #dfe5f0">' + ttsSecenekleriHTML() + '</select></div>';
   var cp = profilOku();
   var curLang = cp.dil || 'tr';
   var dilOpts = '';
   Object.keys(DIL_SOZLUK).forEach(function(k){ dilOpts += '<option value="' + k + '"' + (k === curLang ? ' selected' : '') + '>' + k.toUpperCase() + '</option>'; });
-  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">â™¿ EriÅŸilebilirlik</h2></div>';
+  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">♿ Erişilebilirlik</h2></div>';
   h += '<div class="unit-butonlar">';
-  h += '<button class="kucuk-buton" style="background:' + (cp.buyukYazi ? '#2ecc71' : '#7f8c8d') + '" onclick="buyukYaziAcKapa()">ğŸ”  BÃ¼yÃ¼k YazÄ±: ' + (cp.buyukYazi ? 'AÃ§Ä±k' : 'KapalÄ±') + '</button> ';
-  h += '<button class="kucuk-buton" style="background:' + (cp.kontrast ? '#2ecc71' : '#7f8c8d') + '" onclick="kontrastAcKapa()">ğŸŒ— YÃ¼ksek Kontrast: ' + (cp.kontrast ? 'AÃ§Ä±k' : 'KapalÄ±') + '</button>';
+  h += '<button class="kucuk-buton" style="background:' + (cp.buyukYazi ? '#2ecc71' : '#7f8c8d') + '" onclick="buyukYaziAcKapa()">🔠 Büyük Yazı: ' + (cp.buyukYazi ? 'Açık' : 'Kapalı') + '</button> ';
+  h += '<button class="kucuk-buton" style="background:' + (cp.kontrast ? '#2ecc71' : '#7f8c8d') + '" onclick="kontrastAcKapa()">🌗 Yüksek Kontrast: ' + (cp.kontrast ? 'Açık' : 'Kapalı') + '</button>';
   h += '</div>';
-  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">ğŸŒ Dil</h2></div>';
-  h += '<div class="unit-butonlar"><select id="dilSec" onchange="dilDegistir(this.value)" style="padding:8px;border-radius:8px;border:2px solid #dfe5f0">' + dilOpts + '</select> <span class="kucuk-not">ArayÃ¼z dili</span></div>';
-  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">ğŸ”’ Åifreli Yedek (AES)</h2></div>';
+  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">🌍 Dil</h2></div>';
+  h += '<div class="unit-butonlar"><select id="dilSec" onchange="dilDegistir(this.value)" style="padding:8px;border-radius:8px;border:2px solid #dfe5f0">' + dilOpts + '</select> <span class="kucuk-not">Arayüz dili</span></div>';
+  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">🔒 Şifreli Yedek (AES)</h2></div>';
   h += '<div class="unit-butonlar">';
-  h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="veriExportSifreliIndir()">ğŸ’¾ Åifreli Yedek Al</button> ';
-  h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="veriImportSifreliSec()">ğŸ“¥ Åifreli YedeÄŸi YÃ¼kle</button>';
+  h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="veriExportSifreliIndir()">💾 Şifreli Yedek Al</button> ';
+  h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="veriImportSifreliSec()">📥 Şifreli Yedeği Yükle</button>';
   h += '</div>';
-  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">ğŸ‘¨â€ğŸ‘©â€ğŸ‘§ Veli Kodu</h2></div>';
-  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#e67e22" onclick="veliKodAyarla()">ğŸ”‘ Veli Kodunu Ayarla</button> <span class="kucuk-not">' + (oku('veliKod') ? 'Kod: ' + oku('veliKod') : 'Kod yok') + '</span></div>';
-  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">ğŸ‘©â€ğŸ« Ã–ÄŸretmen Åifresi</h2></div>';
-  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#6a5cff" onclick="ogretmenKodAyarla()">ğŸ”‘ Ã–ÄŸretmen Åifresini Ayarla</button> <span class="kucuk-not">' + (oku('ogretmenKod') ? 'Åifre ayarlÄ±' : 'Åifre yok') + '</span></div>';
-  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">ğŸ‘¥ Rol SeÃ§imi</h2></div>';
-  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#1f8a70" onclick="git(\'rolSec\')">ğŸ”„ Rol DeÄŸiÅŸtir (' + (aktifRol()==='ogrenci'?'Ã–ÄŸrenci':(aktifRol()==='veli'?'Veli':'Ã–ÄŸretmen')) + ')</button></div>';
+  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">👨‍👩‍👧 Veli Kodu</h2></div>';
+  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#e67e22" onclick="veliKodAyarla()">🔑 Veli Kodunu Ayarla</button> <span class="kucuk-not">' + (oku('veliKod') ? 'Kod: ' + oku('veliKod') : 'Kod yok') + '</span></div>';
+  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">👩‍🏫 Öğretmen Şifresi</h2></div>';
+  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#6a5cff" onclick="ogretmenKodAyarla()">🔑 Öğretmen Şifresini Ayarla</button> <span class="kucuk-not">' + (oku('ogretmenKod') ? 'Şifre ayarlı' : 'Şifre yok') + '</span></div>';
+  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:18px">👥 Rol Seçimi</h2></div>';
+  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#1f8a70" onclick="git(\'rolSec\')">🔄 Rol Değiştir (' + (aktifRol()==='ogrenci'?'Öğrenci':(aktifRol()==='veli'?'Veli':'Öğretmen')) + ')</button></div>';
   ekran.innerHTML = h;
 }
 
 function ttsSecenekleriHTML() {
   var id = oku('ttsSes') || '';
   var sesler = ttsSesListesi();
-  var hh = '<option value="">Otomatik (TÃ¼rkÃ§e)</option>';
+  var hh = '<option value="">Otomatik (Türkçe)</option>';
   for (var i = 0; i < sesler.length; i++) {
     hh += '<option value="' + esc(sesler[i].voiceURI || sesler[i].name) + '"' + (id && id === (sesler[i].voiceURI || sesler[i].name) ? ' selected' : '') + '>' + esc(sesler[i].name + (sesler[i].lang ? (' (' + sesler[i].lang + ')') : '')) + '</option>';
   }
@@ -3529,7 +3529,7 @@ function ttsSecenekleriHTML() {
 function pinKaydet() {
   var v = $('pinInput') ? $('pinInput').value : '';
   profilPinAyarla(v);
-  alert(v ? 'PIN ayarlandÄ±.' : 'PIN kaldÄ±rÄ±ldÄ±.');
+  alert(v ? 'PIN ayarlandı.' : 'PIN kaldırıldı.');
   cizProfil();
 }
 
@@ -3540,8 +3540,8 @@ function avatarSec(a) {
 function fotoSec(ev) {
   var f = ev && ev.target && ev.target.files && ev.target.files[0];
   if (!f) return;
-  if (!/^image\//.test(f.type)) { alert('LÃ¼tfen bir resim seÃ§in.'); return; }
-  if (f.size > 2 * 1024 * 1024) { alert('FotoÄŸraf 2 MB\'dan kÃ¼Ã§Ã¼k olmalÄ±.'); return; }
+  if (!/^image\//.test(f.type)) { alert('Lütfen bir resim seçin.'); return; }
+  if (f.size > 2 * 1024 * 1024) { alert('Fotoğraf 2 MB\'dan küçük olmalı.'); return; }
   var fr = new FileReader();
   fr.onload = function(e) {
     var p = profilOku(); p.foto = e.target.result; p.avatar = ''; kaydet('profil', p);
@@ -3551,7 +3551,7 @@ function fotoSec(ev) {
 }
 
 function fotoSil() {
-  if (!confirm('FotoÄŸraf silinsin mi?')) return;
+  if (!confirm('Fotoğraf silinsin mi?')) return;
   var p = profilOku(); p.foto = ''; kaydet('profil', p);
   profilUygula(); cizProfil();
 }
@@ -3612,7 +3612,7 @@ function profilListesi() {
   var liste = oku('profiller');
   if (!liste) {
     var m = profilOku();
-    liste = [{ id: 'p1', ad: m.ad || 'Ã–ÄŸrenci', soyad: m.soyad || '', okul: m.okul || '', sinif: m.sinif || '', sube: m.sube || '', avatar: m.avatar || 'ğŸ§‘ğŸ“', gece: m.gece || false, foto: m.foto || '', veri: {} }];
+    liste = [{ id: 'p1', ad: m.ad || 'Öğrenci', soyad: m.soyad || '', okul: m.okul || '', sinif: m.sinif || '', sube: m.sube || '', avatar: m.avatar || '🧑🎓', gece: m.gece || false, foto: m.foto || '', veri: {} }];
     kaydet('profiller', liste);
     kaydet('aktifProfil', 'p1');
   }
@@ -3637,13 +3637,13 @@ function profilGuncelleAktif() {
 }
 
 function profilEkle() {
-  var ad = prompt('Yeni Ã¶ÄŸrenci adÄ±?', 'Yeni Ã–ÄŸrenci');
+  var ad = prompt('Yeni öğrenci adı?', 'Yeni Öğrenci');
   if (!ad) return;
   profilGuncelleAktif();
   profilSnap(aktifProfilId());
   var liste = profilListesi();
   var id = 'p' + (liste.length + 1) + '_' + Date.now();
-  var yeni = { id: id, ad: ad, soyad: '', okul: '', sinif: '', sube: '', avatar: 'ğŸ§‘ğŸ“', gece: false, foto: '', veri: {} };
+  var yeni = { id: id, ad: ad, soyad: '', okul: '', sinif: '', sube: '', avatar: '🧑🎓', gece: false, foto: '', veri: {} };
   liste.push(yeni);
   kaydet('profiller', liste);
   profilYukle(id);
@@ -3668,9 +3668,9 @@ function profilSec(id) {
 }
 
 function profilSil(id) {
-  if (!confirm('Bu profil silinsin mi? Bu Ã¶ÄŸrencinin tÃ¼m verileri silinir.')) return;
+  if (!confirm('Bu profil silinsin mi? Bu öğrencinin tüm verileri silinir.')) return;
   var liste = profilListesi();
-  if (liste.length <= 1) { alert('En az bir profil olmalÄ±.'); return; }
+  if (liste.length <= 1) { alert('En az bir profil olmalı.'); return; }
   var aktif = aktifProfilId();
   if (aktif !== id) { profilGuncelleAktif(); profilSnap(aktif); }
   liste = profilListesi().filter(function(x){ return x.id !== id; });
@@ -3694,7 +3694,7 @@ function geceAcKapa() {
   if (durum.tur === 'profil') cizProfil();
 }
 
-/* ====== YEDNEK: VERÄ° DÄ°KKATI ====== */
+/* ====== YEDNEK: VERİ DİKKATI ====== */
 var YEDEK_A = [
   'profil','biti','devam','puan','istatistik','sorugun','plan','sunum',
   'xp','aktivite','xpgun','odul','pomo','saylar','kartlar','gorevler','yanlis'
@@ -3717,7 +3717,7 @@ function veriUygula(paket) {
 }
 
 function veriExport() {
-  if (typeof Blob === 'undefined' || typeof URL === 'undefined') { alert('TarayÄ±cÄ± desteklemiyor.'); return; }
+  if (typeof Blob === 'undefined' || typeof URL === 'undefined') { alert('Tarayıcı desteklemiyor.'); return; }
   var j = JSON.stringify(veriExportJson(), null, 2);
   var blob = new Blob([j], { type: 'application/json' });
   var url = URL.createObjectURL(blob);
@@ -3734,22 +3734,22 @@ function veriExport() {
 function veriImport(ev) {
   var f = ev && ev.target && ev.target.files && ev.target.files[0];
   if (!f) return;
-  if (!confirm('Yedek yÃ¼klensin mi? Mevcut verilerinizin Ã¼zerine yazÄ±lÄ±r.')) { ev.target.value = ''; return; }
+  if (!confirm('Yedek yüklensin mi? Mevcut verilerinizin üzerine yazılır.')) { ev.target.value = ''; return; }
   var fr = new FileReader();
   fr.onload = function(e) {
     try {
       var j = JSON.parse(e.target.result);
       var n = veriUygula(j);
-      alert('âœ… ' + n + ' kayÄ±t geri yÃ¼klendi. SayfayÄ± yenileyin.');
+      alert('✅ ' + n + ' kayıt geri yüklendi. Sayfayı yenileyin.');
     } catch (err) {
-      alert('âŒ GeÃ§ersiz yedek dosyasÄ±.');
+      alert('❌ Geçersiz yedek dosyası.');
     }
     ev.target.value = '';
   };
   fr.readAsText(f);
 }
 
-/* ====== SÃœRELÄ° DENEME / REKOR ====== */
+/* ====== SÜRELİ DENEME / REKOR ====== */
 function sureYaz(sn) {
   var dk = Math.floor(sn / 60), s = sn % 60;
   return ('0' + dk).slice(-2) + ':' + ('0' + s).slice(-2);
@@ -3763,7 +3763,7 @@ function sureTik() {
   if (durum.tur !== 'test' || !durum.sure) { sureDurdur(); return; }
   durum.sure.kalan--;
   var el = document.getElementById('sureGoster');
-  if (el) el.textContent = 'â±ï¸ ' + sureYaz(durum.sure.kalan);
+  if (el) el.textContent = '⏱️ ' + sureYaz(durum.sure.kalan);
   if (durum.sure.kalan <= 0) {
     sureDurdur();
     durum.sure = null;
@@ -3819,7 +3819,7 @@ function testDevam() {
   durum.tur = 'test'; tabGuncelle(); render();
 }
 
-/* ====== ZAYIF KONULAR / YÃ–NLdirim ====== */
+/* ====== ZAYIF KONULAR / YÖNLdirim ====== */
 function zayifKonular() {
   var z = [];
   for (var s in MUFREDAT) {
@@ -3834,7 +3834,7 @@ function zayifKonular() {
   return z;
 }
 
-/* ====== ZAYIF KONULARI TEKRAR Ã‡Ã–Z ====== */
+/* ====== ZAYIF KONULARI TEKRAR ÇÖZ ====== */
 function zayifTest() {
   var list = [];
   for (var s in MUFREDAT) {
@@ -3848,7 +3848,7 @@ function zayifTest() {
       });
     });
   }
-  if (!list.length) { alert('ZayÄ±f konusun yok! TÃ¼m konularda baÅŸarÄ±lÄ±sÄ±n. ğŸ‰'); return; }
+  if (!list.length) { alert('Zayıf konusun yok! Tüm konularda başarılısın. 🎉'); return; }
   karistir(list);
   sureDurdur();
   durum.quiz = 'zayif';
@@ -3860,14 +3860,14 @@ function zayifTest() {
   durum.tur = 'test'; tabGuncelle(); render();
 }
 
-/* ====== TEKRAR DEFTERÄ° ====== */
+/* ====== TEKRAR DEFTERİ ====== */
 function tekrarPlanOlsutur() {
   var p = profilOku();
   var s = p.sinif || '6';
   var bilgi = MUFREDAT[s];
-  if (!bilgi) { alert('Ã–nce Profil > SÄ±nÄ±fÄ±nÄ± seÃ§.'); return; }
+  if (!bilgi) { alert('Önce Profil > Sınıfını seç.'); return; }
   var zk = zayifKonular().filter(function(z) { return String(z.s) === String(s); });
-  if (!zk.length) { alert('ZayÄ±f konun yok! TÃ¼m konularÄ±n iyi durumda. ğŸ‰'); return; }
+  if (!zk.length) { alert('Zayıf konun yok! Tüm konuların iyi durumda. 🎉'); return; }
   var prog = oku('prog') || {};
   var eklendi = 0, dolu = 0;
   zk.slice(0, 15).forEach(function(z) {
@@ -3884,8 +3884,8 @@ function tekrarPlanOlsutur() {
     eklendi++;
   });
   kaydet('prog', prog);
-  var msg = 'ğŸ“’ Tekrar Defteri: ' + eklendi + ' zayÄ±f konu haftalÄ±k programa eklendi.';
-  if (dolu) msg += '\n' + dolu + ' konu iÃ§in boÅŸ saat bulunamadÄ±.';
+  var msg = '📒 Tekrar Defteri: ' + eklendi + ' zayıf konu haftalık programa eklendi.';
+  if (dolu) msg += '\n' + dolu + ' konu için boş saat bulunamadı.';
   alert(msg);
   cizTekrar();
 }
@@ -3913,18 +3913,18 @@ function cizTekrar() {
   var bilgi = MUFREDAT[s];
   var tr = oku('tekrar') || {};
   var zk = zayifKonular().filter(function(z) { return String(z.s) === String(s); });
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ“’ Tekrar Defterim</h1><p>' + (s + '. sÄ±nÄ±f') + ' zayÄ±f konularÄ±nÄ± tekrar et, kutusunu iÅŸaretle (5 XP).</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>📒 Tekrar Defterim</h1><p>' + (s + '. sınıf') + ' zayıf konularını tekrar et, kutusunu işaretle (5 XP).</p></div>';
   h += '<div style="text-align:center;margin-bottom:14px">';
-  h += '<button class="btn btn-mor" onclick="tekrarPlanOlsutur()">ğŸ¤– ZayÄ±f KonularÄ± HaftalÄ±k Plana Ekle</button>';
-  h += ' <button class="btn btn-test" onclick="zayifTest()">ğŸ“ ZayÄ±f KonularÄ± Tekrar Ã‡Ã¶z</button>';
+  h += '<button class="btn btn-mor" onclick="tekrarPlanOlsutur()">🤖 Zayıf Konuları Haftalık Plana Ekle</button>';
+  h += ' <button class="btn btn-test" onclick="zayifTest()">📝 Zayıf Konuları Tekrar Çöz</button>';
   h += '</div>';
   if (!bilgi) {
-    h += '<div class="skor-liste">Ã–nce <b>Profilim</b>â€™den sÄ±nÄ±fÄ±nÄ± seÃ§.</div>';
+    h += '<div class="skor-liste">Önce <b>Profilim</b>’den sınıfını seç.</div>';
     ekran.innerHTML = h; return;
   }
   if (!zk.length) {
-    h += '<div class="skor-liste">TÃ¼m konularÄ±n iyi durumda, tebrikler! ğŸ† Tekrar gerektiren konu yok.</div>';
+    h += '<div class="skor-liste">Tüm konuların iyi durumda, tebrikler! 🏆 Tekrar gerektiren konu yok.</div>';
     ekran.innerHTML = h; return;
   }
   var iyilesen = 0;
@@ -3938,23 +3938,23 @@ function cizTekrar() {
     var zaman = e && e.sira ? (e.sira <= Date.now()) : false;
     h += '<div class="skor-satir' + (zaman ? ' tekrar-vakti' : '') + '"><span>';
     if (kutu) h += '<span class="kutu-etiket" style="background:' + renk + '">K' + kutu + '</span> ';
-    h += DERS_IKON(z.d.id) + ' <b>' + z.b.ad + '</b> <small>(' + z.d.ad + ' Â· ' + (z.hak === null ? 'test yok' : '%' + z.hak) + ')</small></span>' +
+    h += DERS_IKON(z.d.id) + ' <b>' + z.b.ad + '</b> <small>(' + z.d.ad + ' · ' + (z.hak === null ? 'test yok' : '%' + z.hak) + ')</small></span>' +
          '<span>';
     if (e) {
       if (zaman) {
-        h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="tekrarKutuIlerle(\'' + z.d.id + '\',' + z.i + ')">âœ“ Bildim</button> ';
-        h += '<button class="kucuk-buton" style="background:#e74c3c" onclick="tekrarKutuSifirla(\'' + z.d.id + '\',' + z.i + ')">âœ— Yeniden</button> ';
+        h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="tekrarKutuIlerle(\'' + z.d.id + '\',' + z.i + ')">✓ Bildim</button> ';
+        h += '<button class="kucuk-buton" style="background:#e74c3c" onclick="tekrarKutuSifirla(\'' + z.d.id + '\',' + z.i + ')">✗ Yeniden</button> ';
       } else {
-        h += '<span class="kucuk-not">â³ ' + (e.sira ? Math.max(1, Math.ceil((e.sira - Date.now()) / 86400000)) : 1) + ' gÃ¼n</span> ';
+        h += '<span class="kucuk-not">⏳ ' + (e.sira ? Math.max(1, Math.ceil((e.sira - Date.now()) / 86400000)) : 1) + ' gün</span> ';
       }
       h += '<button class="kucuk-buton" style="background:#94a3b8" onclick="tekrarSil(\'' + z.d.id + '\',' + z.i + ')">Sil</button> ';
     } else {
-      h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="tekrarEkle(\'' + z.d.id + '\',' + z.i + ')">â• Ekle</button> ';
+      h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="tekrarEkle(\'' + z.d.id + '\',' + z.i + ')">➕ Ekle</button> ';
     }
-    h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="secDers(' + z.s + ',\'' + z.d.id + '\')">ğŸ“– Ã‡alÄ±ÅŸ</button></span></div>';
+    h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="secDers(' + z.s + ',\'' + z.d.id + '\')">📖 Çalış</button></span></div>';
   });
   h += '</div>';
-  if (iyilesen) h += '<div class="kucuk-not" style="margin-top:10px">ğŸ‰ ' + iyilesen + ' konu %70â€™in Ã¼zerine Ã§Ä±ktÄ±, listeden Ã§Ä±karabilirsin!</div>';
+  if (iyilesen) h += '<div class="kucuk-not" style="margin-top:10px">🎉 ' + iyilesen + ' konu %70’in üzerine çıktı, listeden çıkarabilirsin!</div>';
   h += '<div class="egri-kutu">' + unutmaEgridHTML() + '</div>';
   ekran.innerHTML = h;
 }
@@ -3967,21 +3967,21 @@ function karneIc() {
   var gSay = 0;
   GOREVLER.forEach(function(d) { if (gv.yapildi[d.id]) gSay++; });
   var h = '<div class="karne-kutu">';
-  h += '<div class="karne-ust"><span class="karne-avatar">' + (p.avatar || 'ğŸ§‘ğŸ“') + '</span>';
-  h += '<div><h2>' + esc(p.ad || 'Ã–ÄŸrenci') + (p.soyad ? ' ' + esc(p.soyad) : '') + '</h2>' +
-       '<p>' + (p.okul ? 'Okul: ' + esc(p.okul) + (p.sinif ? ' Â· ' : '') : '') + (p.sinif ? 'SÄ±nÄ±f: ' + esc(p.sinif) : '') + '</p></div>';
+  h += '<div class="karne-ust"><span class="karne-avatar">' + (p.avatar || '🧑🎓') + '</span>';
+  h += '<div><h2>' + esc(p.ad || 'Öğrenci') + (p.soyad ? ' ' + esc(p.soyad) : '') + '</h2>' +
+       '<p>' + (p.okul ? 'Okul: ' + esc(p.okul) + (p.sinif ? ' · ' : '') : '') + (p.sinif ? 'Sınıf: ' + esc(p.sinif) : '') + '</p></div>';
   h += '<div class="karne-tarih">' + bugun + '</div></div>';
-  h += '<div class="karne-baslik">ğŸ–ï¸ Genel Durum</div>';
-  h += '<div class="karne-satir"><b>â­ XP / Seviye</b><span>' + s.xp + ' XP Â· ' + s.seviye + '. seviye</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ”¥ GÃ¼nlÃ¼k Seri</b><span>' + s.seri + ' gÃ¼n</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ“ Ã‡Ã¶zÃ¼len Test</b><span>' + s.testSay + '</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ“š Ã‡Ã¶zÃ¼len Soru</b><span>' + s.soruSay + '</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ§© EÅŸleÅŸtirme</b><span>' + s.esleSay + '</span></div>';
-  h += '<div class="karne-satir"><b>â±ï¸ Odak Turu</b><span>' + s.pomoSay + '</span></div>';
-  h += '<div class="karne-satir"><b>âœ… Tamamlanan Konu</b><span>' + s.bYap + '/' + s.bTop + '</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ… Rozet</b><span>' + acik.length + '/' + ROZETLER.length + '</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ“‹ BugÃ¼nkÃ¼ GÃ¶rev</b><span>' + gSay + '/' + GOREVLER.length + '</span></div>';
-  h += '<div class="karne-baslik">ğŸ“– Ders Durumu</div>';
+  h += '<div class="karne-baslik">🎖️ Genel Durum</div>';
+  h += '<div class="karne-satir"><b>⭐ XP / Seviye</b><span>' + s.xp + ' XP · ' + s.seviye + '. seviye</span></div>';
+  h += '<div class="karne-satir"><b>🔥 Günlük Seri</b><span>' + s.seri + ' gün</span></div>';
+  h += '<div class="karne-satir"><b>📝 Çözülen Test</b><span>' + s.testSay + '</span></div>';
+  h += '<div class="karne-satir"><b>📚 Çözülen Soru</b><span>' + s.soruSay + '</span></div>';
+  h += '<div class="karne-satir"><b>🧩 Eşleştirme</b><span>' + s.esleSay + '</span></div>';
+  h += '<div class="karne-satir"><b>⏱️ Odak Turu</b><span>' + s.pomoSay + '</span></div>';
+  h += '<div class="karne-satir"><b>✅ Tamamlanan Konu</b><span>' + s.bYap + '/' + s.bTop + '</span></div>';
+  h += '<div class="karne-satir"><b>🏅 Rozet</b><span>' + acik.length + '/' + ROZETLER.length + '</span></div>';
+  h += '<div class="karne-satir"><b>📋 Bugünkü Görev</b><span>' + gSay + '/' + GOREVLER.length + '</span></div>';
+  h += '<div class="karne-baslik">📖 Ders Durumu</div>';
   for (var s2 in MUFREDAT) {
     MUFREDAT[s2].dersler.forEach(function(d) {
       var t = 0, b = 0, hakTop = 0, hakN = 0;
@@ -3992,37 +3992,37 @@ function karneIc() {
         if (hak !== null) { hakTop += hak; hakN++; }
       });
       var ort = hakN ? Math.round(hakTop / hakN) : null;
-      h += '<div class="karne-satir"><b>' + s2 + '. SÄ±nÄ±f Â· ' + DERS_IKON(d.id) + ' ' + d.ad + '</b>' +
-           '<span>' + b + '/' + t + ' konu' + (ort === null ? '' : ' Â· ort. %' + ort) + '</span></div>';
+      h += '<div class="karne-satir"><b>' + s2 + '. Sınıf · ' + DERS_IKON(d.id) + ' ' + d.ad + '</b>' +
+           '<span>' + b + '/' + t + ' konu' + (ort === null ? '' : ' · ort. %' + ort) + '</span></div>';
     });
   }
-  h += '<div class="karne-baslik">ğŸ“ Son Testler</div>';
+  h += '<div class="karne-baslik">📝 Son Testler</div>';
   var puan = oku('puan') || {};
   var kayitlar = [];
   Object.keys(puan).forEach(function(k) {
     (puan[k] || []).forEach(function(e) { kayitlar.push({ ad: dersAdi(k), d: e.d, n: e.n, t: e.t }); });
   });
   kayitlar.sort(function(a, b) { return (a.t > b.t) ? -1 : 1; });
-  if (!kayitlar.length) h += '<div class="karne-satir"><b>HenÃ¼z test Ã§Ã¶zÃ¼lmedi</b><span>â€”</span></div>';
+  if (!kayitlar.length) h += '<div class="karne-satir"><b>Henüz test çözülmedi</b><span>—</span></div>';
   else kayitlar.slice(0, 8).forEach(function(e) {
-    h += '<div class="karne-satir"><b>' + esc(e.ad) + '</b><span>' + e.d + '/' + e.n + ' Â· ' + e.t + '</span></div>';
+    h += '<div class="karne-satir"><b>' + esc(e.ad) + '</b><span>' + e.d + '/' + e.n + ' · ' + e.t + '</span></div>';
   });
-  h += '<div class="karne-imza"><span>Veli Ä°mzasÄ±</span><span>Ã–ÄŸretmen Ä°mzasÄ±</span></div>';
+  h += '<div class="karne-imza"><span>Veli İmzası</span><span>Öğretmen İmzası</span></div>';
   h += '</div>';
   return h;
 }
 
 function cizKarne() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ“„ Karnem</h1><p>Okul bilgilerin ve tÃ¼m istatistiklerin. YazdÄ±rÄ±p ailene gÃ¶sterebilirsin.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>📄 Karnem</h1><p>Okul bilgilerin ve tüm istatistiklerin. Yazdırıp ailene gösterebilirsin.</p></div>';
   h += karneIc();
-  h += '<div style="text-align:center;margin-top:14px"><button class="btn btn-test" onclick="karneYazdir()">ğŸ–¨ï¸ YazdÄ±r / PDF</button></div>';
+  h += '<div style="text-align:center;margin-top:14px"><button class="btn btn-test" onclick="karneYazdir()">🖨️ Yazdır / PDF</button></div>';
   ekran.innerHTML = h;
 }
 
 function karneYazdir() {
   var w = window.open('', '_blank');
-  if (!w) { alert('AÃ§Ä±lÄ±r pencere engellenmiÅŸ olabilir.'); return; }
+  if (!w) { alert('Açılır pencere engellenmiş olabilir.'); return; }
   w.document.write('<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Karnem</title><style>' +
     'body{font-family:Segoe UI,Arial,sans-serif;color:#243145;background:#fff;}' +
     '.karne-kutu{max-width:700px;margin:0 auto;padding:20px;}' +
@@ -4045,22 +4045,22 @@ function veliRaporIc() {
   var st = statlar();
   var bugun = new Date().toLocaleDateString('tr-TR');
   var h = '<div class="karne-kutu">';
-  h += '<div class="karne-ust"><span class="karne-avatar">' + (p.avatar || 'ğŸ§‘ğŸ“') + '</span>';
-  h += '<div><h2>ğŸ“‹ Veli DeÄŸerlendirme Raporu</h2>' +
-       '<p>' + esc(p.ad || 'Ã–ÄŸrenci') + (p.soyad ? ' ' + esc(p.soyad) : '') +
-       (p.okul ? ' Â· ' + esc(p.okul) : '') + (p.sinif ? ' Â· ' + p.sinif + '. sÄ±nÄ±f' : '') + (p.sube ? ' Â· ' + esc(p.sube) + ' Åubesi' : '') + '</p></div>';
+  h += '<div class="karne-ust"><span class="karne-avatar">' + (p.avatar || '🧑🎓') + '</span>';
+  h += '<div><h2>📋 Veli Değerlendirme Raporu</h2>' +
+       '<p>' + esc(p.ad || 'Öğrenci') + (p.soyad ? ' ' + esc(p.soyad) : '') +
+       (p.okul ? ' · ' + esc(p.okul) : '') + (p.sinif ? ' · ' + p.sinif + '. sınıf' : '') + (p.sube ? ' · ' + esc(p.sube) + ' Şubesi' : '') + '</p></div>';
   h += '<div class="karne-tarih">' + bugun + '</div></div>';
-  h += '<div class="karne-baslik">ğŸ“Œ Genel Ã–zet</div>';
-  h += '<div class="karne-satir"><b>â­ XP / Seviye</b><span>' + st.xp + ' XP Â· ' + st.seviye + '. seviye</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ”¥ Ã‡alÄ±ÅŸma Serisi</b><span>' + st.seri + ' gÃ¼n Ã¼st Ã¼ste</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ¯ BugÃ¼nkÃ¼ Hedef</b><span>' + st.xpgunToday + '/' + (st.hedefXP || 0) + ' XP</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ“ Test</b><span>' + st.testSay + ' test Â· ' + st.soruSay + ' soru</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ§© EÅŸleÅŸtirme</b><span>' + st.esleSay + '</span></div>';
-  h += '<div class="karne-satir"><b>â±ï¸ Odak / ğŸ§ª Deney / ğŸ¬ Belgesel / ğŸ’» Kod</b><span>' + st.pomoSay + ' / ' + st.deneySay + ' / ' + st.belgeselSay + ' / ' + st.kodlaSay + '</span></div>';
-  h += '<div class="karne-satir"><b>âœ… Tamamlanan Konu</b><span>' + st.bYap + '/' + st.bTop + '</span></div>';
-  h += '<div class="karne-satir"><b>ğŸ… Rozet</b><span>' + (oku('odul') || []).length + '/' + ROZETLER.length + '</span></div>';
+  h += '<div class="karne-baslik">📌 Genel Özet</div>';
+  h += '<div class="karne-satir"><b>⭐ XP / Seviye</b><span>' + st.xp + ' XP · ' + st.seviye + '. seviye</span></div>';
+  h += '<div class="karne-satir"><b>🔥 Çalışma Serisi</b><span>' + st.seri + ' gün üst üste</span></div>';
+  h += '<div class="karne-satir"><b>🎯 Bugünkü Hedef</b><span>' + st.xpgunToday + '/' + (st.hedefXP || 0) + ' XP</span></div>';
+  h += '<div class="karne-satir"><b>📝 Test</b><span>' + st.testSay + ' test · ' + st.soruSay + ' soru</span></div>';
+  h += '<div class="karne-satir"><b>🧩 Eşleştirme</b><span>' + st.esleSay + '</span></div>';
+  h += '<div class="karne-satir"><b>⏱️ Odak / 🧪 Deney / 🎬 Belgesel / 💻 Kod</b><span>' + st.pomoSay + ' / ' + st.deneySay + ' / ' + st.belgeselSay + ' / ' + st.kodlaSay + '</span></div>';
+  h += '<div class="karne-satir"><b>✅ Tamamlanan Konu</b><span>' + st.bYap + '/' + st.bTop + '</span></div>';
+  h += '<div class="karne-satir"><b>🏅 Rozet</b><span>' + (oku('odul') || []).length + '/' + ROZETLER.length + '</span></div>';
 
-  h += '<div class="karne-baslik">ğŸ“– Ders Durumu</div>';
+  h += '<div class="karne-baslik">📖 Ders Durumu</div>';
   for (var s2 in MUFREDAT) {
     MUFREDAT[s2].dersler.forEach(function(d) {
       var t = 0, b = 0, hakTop = 0, hakN = 0;
@@ -4071,52 +4071,52 @@ function veliRaporIc() {
         if (hak !== null) { hakTop += hak; hakN++; }
       });
       var ort = hakN ? Math.round(hakTop / hakN) : null;
-      h += '<div class="karne-satir"><b>' + s2 + '. SÄ±nÄ±f Â· ' + DERS_IKON(d.id) + ' ' + d.ad + '</b>' +
-           '<span>' + b + '/' + t + ' konu' + (ort === null ? ' Â· âš ï¸ test yok' : ' Â· ort. %' + ort) + '</span></div>';
+      h += '<div class="karne-satir"><b>' + s2 + '. Sınıf · ' + DERS_IKON(d.id) + ' ' + d.ad + '</b>' +
+           '<span>' + b + '/' + t + ' konu' + (ort === null ? ' · ⚠️ test yok' : ' · ort. %' + ort) + '</span></div>';
     });
   }
 
   var zk = zayifKonular();
-  h += '<div class="karne-baslik">âš ï¸ Desteklenmesi Gereken Konular</div>';
-  if (!zk.length) h += '<div class="karne-satir"><b>TÃ¼m konular iyi durumda</b><span>ğŸ‘</span></div>';
+  h += '<div class="karne-baslik">⚠️ Desteklenmesi Gereken Konular</div>';
+  if (!zk.length) h += '<div class="karne-satir"><b>Tüm konular iyi durumda</b><span>👏</span></div>';
   else zk.slice(0, 8).forEach(function(z) {
-    h += '<div class="karne-satir"><b>' + DERS_IKON(z.d.id) + ' ' + z.d.ad + ' Â· ' + z.b.ad + ' (' + z.s + '. sÄ±nÄ±f)</b>' +
-         '<span>' + (z.hak === null ? 'hiÃ§ test Ã§Ã¶zÃ¼lmedi' : '%' + z.hak) + '</span></div>';
+    h += '<div class="karne-satir"><b>' + DERS_IKON(z.d.id) + ' ' + z.d.ad + ' · ' + z.b.ad + ' (' + z.s + '. sınıf)</b>' +
+         '<span>' + (z.hak === null ? 'hiç test çözülmedi' : '%' + z.hak) + '</span></div>';
   });
 
-  h += '<div class="karne-baslik">ğŸ“Š Son 7 GÃ¼n Aktivitesi</div>';
+  h += '<div class="karne-baslik">📊 Son 7 Gün Aktivitesi</div>';
   var xg = oku('xpgun') || {}, sg = oku('sorugun') || {}, ak = oku('aktivite') || {};
-  var gunAdlari = ['Pazar', 'Pazartesi', 'SalÄ±', 'Ã‡arÅŸamba', 'PerÅŸembe', 'Cuma', 'Cumartesi'];
+  var gunAdlari = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
   var aktifGun = 0, hftXp = 0, hftSoru = 0;
   for (var i = 6; i >= 0; i--) {
     var d = new Date(); d.setDate(d.getDate() - i);
     var kod = gunKod(d);
     var x = xg[kod] || 0, q = sg[kod] || 0;
     hftXp += x; hftSoru += q; if (x || q) aktifGun++;
-    h += '<div class="karne-satir"><b>' + gunAdlari[d.getDay()] + ' Â· ' + d.toLocaleDateString('tr-TR') + '</b>' +
-         '<span>â­ ' + x + ' XP Â· ğŸ“š ' + q + ' soru</span></div>';
+    h += '<div class="karne-satir"><b>' + gunAdlari[d.getDay()] + ' · ' + d.toLocaleDateString('tr-TR') + '</b>' +
+         '<span>⭐ ' + x + ' XP · 📚 ' + q + ' soru</span></div>';
   }
-  h += '<div class="karne-satir" style="background:#f0f4ff"><b>HaftalÄ±k Toplam</b><span>' + hftXp + ' XP Â· ' + hftSoru + ' soru Â· ' + aktifGun + ' aktif gÃ¼n</span></div>';
+  h += '<div class="karne-satir" style="background:#f0f4ff"><b>Haftalık Toplam</b><span>' + hftXp + ' XP · ' + hftSoru + ' soru · ' + aktifGun + ' aktif gün</span></div>';
 
-  h += '<div class="karne-baslik">ğŸ“ Son Testler</div>';
+  h += '<div class="karne-baslik">📝 Son Testler</div>';
   var puan = oku('puan') || {};
   var kayitlar = [];
   Object.keys(puan).forEach(function(k) {
     (puan[k] || []).forEach(function(e) { kayitlar.push({ ad: dersAdi(k), d: e.d, n: e.n, t: e.t }); });
   });
   kayitlar.sort(function(a, b) { return (a.t > b.t) ? -1 : 1; });
-  if (!kayitlar.length) h += '<div class="karne-satir"><b>HenÃ¼z test Ã§Ã¶zÃ¼lmedi</b><span>â€”</span></div>';
+  if (!kayitlar.length) h += '<div class="karne-satir"><b>Henüz test çözülmedi</b><span>—</span></div>';
   else kayitlar.slice(0, 6).forEach(function(e) {
-    h += '<div class="karne-satir"><b>' + esc(e.ad) + '</b><span>' + e.d + '/' + e.n + ' Â· ' + e.t + '</span></div>';
+    h += '<div class="karne-satir"><b>' + esc(e.ad) + '</b><span>' + e.d + '/' + e.n + ' · ' + e.t + '</span></div>';
   });
-  h += '<div class="karne-imza"><span>Veli Ä°mzasÄ±</span><span>Ã–ÄŸretmen Ä°mzasÄ±</span></div>';
+  h += '<div class="karne-imza"><span>Veli İmzası</span><span>Öğretmen İmzası</span></div>';
   h += '</div>';
   return h;
 }
 
 function veliRaporYazdir() {
   var w = window.open('', '_blank');
-  if (!w) { alert('AÃ§Ä±lÄ±r pencere engellenmiÅŸ olabilir.'); return; }
+  if (!w) { alert('Açılır pencere engellenmiş olabilir.'); return; }
   w.document.write('<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Veli Raporu</title><style>' +
     'body{font-family:Segoe UI,Arial,sans-serif;color:#243145;background:#fff;}' +
     '.karne-kutu{max-width:700px;margin:0 auto;padding:20px;}' +
@@ -4134,7 +4134,7 @@ function veliRaporYazdir() {
   setTimeout(function() { w.print(); }, 400);
 }
 
-/* ====== MÄ°NÄ° OYUNLAR ====== */
+/* ====== MİNİ OYUNLAR ====== */
 function oyunSoru() {
   var dersler = [];
   for (var k in SORULAR) dersler.push(k);
@@ -4152,11 +4152,11 @@ function oyunSoru() {
 }
 
 function cizOyun() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ® Mini Oyunlar</h1><p>Oynayarak Ã¶ÄŸren, XP kazan!</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🎮 Mini Oyunlar</h1><p>Oynayarak öğren, XP kazan!</p></div>';
   h += '<div class="oyunlar">';
-  h += '<button class="oyun-kart" onclick="kimBaslat()"><span class="oyun-ikon">ğŸ¤</span>Kim Milyoner<small>8 soru, doÄŸru 100 puan. YanlÄ±ÅŸta biter.</small></button>';
-  h += '<button class="oyun-kart" onclick="hizBaslat()"><span class="oyun-ikon">âš¡</span>HÄ±z YarÄ±ÅŸÄ±<small>100 sn\'de en Ã§ok doÄŸru!</small></button>';
+  h += '<button class="oyun-kart" onclick="kimBaslat()"><span class="oyun-ikon">🎤</span>Kim Milyoner<small>8 soru, doğru 100 puan. Yanlışta biter.</small></button>';
+  h += '<button class="oyun-kart" onclick="hizBaslat()"><span class="oyun-ikon">⚡</span>Hız Yarışı<small>100 sn\'de en çok doğru!</small></button>';
   h += '</div>';
   ekran.innerHTML = h;
 }
@@ -4175,9 +4175,9 @@ function kimBaslat() {
 function cizKim() {
   var o = durum.oyun;
   var q = o.q || (o.q = oyunSoru());
-  if (!q) { alert('Soru bulunamadÄ±.'); return; }
-  var h = '<button class="geri" onclick="git(\'oyun\')">â¬… Oyunlara DÃ¶n</button>';
-  h += '<div class="baslik"><h1>ğŸ¤ Kim Milyoner Olmak Ä°ster?</h1><p>Soru ' + o.seviye + '/8 Â· KazanÄ±lan: ' + o.toplam + ' puan</p></div>';
+  if (!q) { alert('Soru bulunamadı.'); return; }
+  var h = '<button class="geri" onclick="git(\'oyun\')">⬅ Oyunlara Dön</button>';
+  h += '<div class="baslik"><h1>🎤 Kim Milyoner Olmak İster?</h1><p>Soru ' + o.seviye + '/8 · Kazanılan: ' + o.toplam + ' puan</p></div>';
   h += '<div class="quiz-kutu"><div class="quiz-soru">' + q.s + '</div>';
   q.o.forEach(function(o2, i) {
     h += '<button class="secenek" onclick="kimCevap(' + i + ')">' + String.fromCharCode(65 + i) + ') ' + o2 + '</button>';
@@ -4203,9 +4203,9 @@ function kimCevap(i) {
 function kimBitti(kazandi) {
   var o = durum.oyun;
   xpEkle(Math.max(2, o.seviye * 2));
-  if (kazandi) cizOyunSon('ğŸ†', 'MÄ°LYONER OLDUN! 1000 puan kazandÄ±n!', '1000 puan', 'kimBaslat');
-  else if (o.dg) cizOyunSon('ğŸ‰', 'GÃ¼zel oynadÄ±n, devam et!', o.toplam + ' puan', 'kimBaslat');
-  else cizOyunSon('ğŸ’ª', 'Bu sefer olmadÄ±, tekrar dene!', '0 puan', 'kimBaslat');
+  if (kazandi) cizOyunSon('🏆', 'MİLYONER OLDUN! 1000 puan kazandın!', '1000 puan', 'kimBaslat');
+  else if (o.dg) cizOyunSon('🎉', 'Güzel oynadın, devam et!', o.toplam + ' puan', 'kimBaslat');
+  else cizOyunSon('💪', 'Bu sefer olmadı, tekrar dene!', '0 puan', 'kimBaslat');
 }
 
 function hizBaslat() {
@@ -4219,12 +4219,12 @@ function hizBaslat() {
 function cizHiz() {
   var o = durum.oyun;
   var q = o.q || (o.q = oyunSoru());
-  if (!q) { alert('Soru bulunamadÄ±.'); return; }
-  var h = '<button class="geri" onclick="git(\'oyun\')">â¬… Oyunlara DÃ¶n</button>';
-  h += '<div class="baslik"><h1>âš¡ HÄ±z YarÄ±ÅŸÄ±</h1><p>100 saniyede en Ã§ok doÄŸruyu bul!</p></div>';
+  if (!q) { alert('Soru bulunamadı.'); return; }
+  var h = '<button class="geri" onclick="git(\'oyun\')">⬅ Oyunlara Dön</button>';
+  h += '<div class="baslik"><h1>⚡ Hız Yarışı</h1><p>100 saniyede en çok doğruyu bul!</p></div>';
   h += '<div class="quiz-kutu"><div class="quiz-baslik">' +
-       '<div><b>DoÄŸru: ' + o.dg + ' Â· Toplam: ' + o.toplam + '</b></div>' +
-       '<div class="oyun-sure" id="hizSure">â±ï¸ ' + o.kalan + ' sn</div></div>';
+       '<div><b>Doğru: ' + o.dg + ' · Toplam: ' + o.toplam + '</b></div>' +
+       '<div class="oyun-sure" id="hizSure">⏱️ ' + o.kalan + ' sn</div></div>';
   h += '<div class="quiz-soru">' + q.s + '</div>';
   q.o.forEach(function(o2, i) {
     h += '<button class="secenek" onclick="hizCevap(' + i + ')">' + String.fromCharCode(65 + i) + ') ' + o2 + '</button>';
@@ -4237,7 +4237,7 @@ function hizTik() {
   if (!durum.oyun || durum.oyun.tur !== 'hiz') { oyunDurdur(); return; }
   durum.oyun.kalan--;
   var el = document.getElementById('hizSure');
-  if (el) el.textContent = 'â±ï¸ ' + durum.oyun.kalan + ' sn';
+  if (el) el.textContent = '⏱️ ' + durum.oyun.kalan + ' sn';
   if (durum.oyun.kalan <= 0) { oyunDurdur(); hizBitti(); }
 }
 
@@ -4253,8 +4253,8 @@ function hizCevap(i) {
 function hizBitti() {
   var o = durum.oyun;
   xpEkle(Math.min(20, o.dg));
-  var ikon = o.dg >= 10 ? 'ğŸ†' : o.dg >= 5 ? 'ğŸ‰' : 'ğŸ’ª';
-  cizOyunSon(ikon, o.dg + ' doÄŸru cevap!', o.toplam + ' soruda ' + o.dg + ' doÄŸru', 'hizBaslat');
+  var ikon = o.dg >= 10 ? '🏆' : o.dg >= 5 ? '🎉' : '💪';
+  cizOyunSon(ikon, o.dg + ' doğru cevap!', o.toplam + ' soruda ' + o.dg + ' doğru', 'hizBaslat');
 }
 
 function cizOyunSon(ikon, baslik, puan, tekrarFn) {
@@ -4262,20 +4262,20 @@ function cizOyunSon(ikon, baslik, puan, tekrarFn) {
   var h = '<div class="quiz-kutu"><div class="sonuc"><div class="buyuk">' + ikon + '</div>' +
           '<div class="puan">' + puan + '</div>' +
           '<p style="margin:16px 0;font-size:17px;font-weight:700">' + baslik + '</p>' +
-          '<button class="btn btn-mor" onclick="git(\'oyun\')">ğŸ® Oyunlar</button> ' +
-          '<button class="btn btn-neo" onclick="' + tekrarFn + '()">ğŸ” Tekrar</button></div></div>';
+          '<button class="btn btn-mor" onclick="git(\'oyun\')">🎮 Oyunlar</button> ' +
+          '<button class="btn btn-neo" onclick="' + tekrarFn + '()">🔁 Tekrar</button></div></div>';
   durum.tur = 'oyunSon';
   ekran.innerHTML = h;
 }
 
-/* ====== HAFTALIK Ã–ZET ====== */
+/* ====== HAFTALIK ÖZET ====== */
 function cizHafta() {
   var a = oku('aktivite') || {};
   var xg = oku('xpgun') || {};
   var sg = oku('sorugun') || {};
-  var gunAdlari = ['Pazar', 'Pazartesi', 'SalÄ±', 'Ã‡arÅŸamba', 'PerÅŸembe', 'Cuma', 'Cumartesi'];
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ“Š HaftalÄ±k Ã–zetim</h1><p>Son 7 gÃ¼n: neler yaptÄ±n?</p></div>';
+  var gunAdlari = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>📊 Haftalık Özetim</h1><p>Son 7 gün: neler yaptın?</p></div>';
   var tXp = 0, tSoru = 0, tAktif = 0;
   for (var i = 6; i >= 0; i--) {
     var d = new Date(); d.setDate(d.getDate() - i);
@@ -4284,20 +4284,20 @@ function cizHafta() {
     tXp += x; tSoru += q; if (ak) tAktif++;
     h += '<div class="hafta-satir' + (i === 0 ? ' bugun' : '') + '">' +
          '<span>' + gunAdlari[d.getDay()] + '<small>' + d.toLocaleDateString('tr-TR') + '</small></span>' +
-         '<span>ğŸ”¥ ' + ak + '</span><span>â­ ' + x + ' XP</span><span>ğŸ“š ' + q + ' soru</span></div>';
+         '<span>🔥 ' + ak + '</span><span>⭐ ' + x + ' XP</span><span>📚 ' + q + ' soru</span></div>';
   }
-  h += '<div class="hafta-toplam">Bu hafta: â­ ' + tXp + ' XP Â· ğŸ“š ' + tSoru + ' soru Â· ğŸ”¥ ' + tAktif + ' aktif gÃ¼n</div>';
+  h += '<div class="hafta-toplam">Bu hafta: ⭐ ' + tXp + ' XP · 📚 ' + tSoru + ' soru · 🔥 ' + tAktif + ' aktif gün</div>';
   ekran.innerHTML = h;
 }
 
-/* ====== SESLÄ° SORU OKUMA ====== */
+/* ====== SESLİ SORU OKUMA ====== */
 function soruDinle() {
-  if (!window.speechSynthesis) { alert('TarayÄ±cÄ± sesli okumayÄ± desteklemiyor.'); return; }
+  if (!window.speechSynthesis) { alert('Tarayıcı sesli okumayı desteklemiyor.'); return; }
   var q = durum.qListe && durum.qListe[durum.qSira];
   if (!q) return;
   window.speechSynthesis.cancel();
   var sira = durum.qSira + 1, toplam = durum.qListe.length;
-  var metin = 'Soru ' + sira + ' / ' + toplam + '. ' + q.s + '. SeÃ§enekler: ' + (q.o || []).map(function(o, i) { return String.fromCharCode(65 + i) + ', ' + o; }).join('. ');
+  var metin = 'Soru ' + sira + ' / ' + toplam + '. ' + q.s + '. Seçenekler: ' + (q.o || []).map(function(o, i) { return String.fromCharCode(65 + i) + ', ' + o; }).join('. ');
   var u = new SpeechSynthesisUtterance(metin);
   u.lang = 'tr-TR';
   var sesler = window.speechSynthesis.getVoices();
@@ -4305,7 +4305,7 @@ function soruDinle() {
   window.speechSynthesis.speak(u);
 }
 function cozumleriDinle() {
-  if (!window.speechSynthesis) { alert('TarayÄ±cÄ± sesli okumayÄ± desteklemiyor.'); return; }
+  if (!window.speechSynthesis) { alert('Tarayıcı sesli okumayı desteklemiyor.'); return; }
   var L = durum.qListe || [];
   var metin = '';
   L.forEach(function(q, i) {
@@ -4319,44 +4319,44 @@ function cozumleriDinle() {
   window.speechSynthesis.speak(u);
 }
 
-/* ====== SINIF SEÃ‡Ä°MÄ° (Ä°LK Ã‡ALIÅTIRMA / SINIF DEÄÄ°ÅTÄ°R) ====== */
+/* ====== SINIF SEÇİMİ (İLK ÇALIŞTIRMA / SINIF DEĞİŞTİR) ====== */
 function seciliSinif() {
   var p = profilOku();
   if (p.sinif && /^[5-8]/.test(p.sinif)) return String(p.sinif).charAt(0);
   return null;
 }
 
-/* ====== LÄ°SANS SÄ°STEMÄ° ====== */
+/* ====== LİSANS SİSTEMİ ====== */
 function lisansBilgi() {
   var d = lisans_.durum();
-  if (d.tip === 'lisansli') return 'âœ… LisanslÄ± Â· ' + esc(d.ad) + ' Â· ' + esc(d.bitis) + ' kadar (' + lisans_.kalanGun() + ' gÃ¼n)';
-  if (d.tip === 'deneme') return 'ğŸ§ª Deneme Â· ' + d.kalanGun + ' gÃ¼n kaldÄ±';
-  return 'ğŸ”’ Lisans gerekli';
+  if (d.tip === 'lisansli') return '✅ Lisanslı · ' + esc(d.ad) + ' · ' + esc(d.bitis) + ' kadar (' + lisans_.kalanGun() + ' gün)';
+  if (d.tip === 'deneme') return '🧪 Deneme · ' + d.kalanGun + ' gün kaldı';
+  return '🔒 Lisans gerekli';
 }
 function cizLisans() {
   var d = lisans_.durum();
-  var h = '<div class="baslik"><h1>ğŸ”‘ Lisans</h1><p>UygulamayÄ± kullanmak iÃ§in lisans gerekir.</p></div>';
+  var h = '<div class="baslik"><h1>🔑 Lisans</h1><p>Uygulamayı kullanmak için lisans gerekir.</p></div>';
   if (d.tip === 'lisansli') {
-    h += '<div class="ozet-karti"><div class="durum-huc"><b>Durum</b><span>âœ… Aktif</span></div>'
+    h += '<div class="ozet-karti"><div class="durum-huc"><b>Durum</b><span>✅ Aktif</span></div>'
       + '<div class="durum-huc"><b>Lisans sahibi</b><span>' + esc(d.ad) + '</span></div>'
-      + '<div class="durum-huc"><b>BitiÅŸ</b><span>' + esc(d.bitis) + ' (' + lisans_.kalanGun() + ' gÃ¼n)</span></div>'
-      + '<div class="durum-huc"><b>KullanÄ±m</b><span>' + (d.cihaz > 1 ? (d.cihaz + ' cihaz') : 'Tek cihaz') + '</span></div></div>';
-    h += '<div style="text-align:center;margin-top:14px"><button class="btn btn-mor" onclick="git(\'menu\')">ğŸšª Devam Et</button></div>';
+      + '<div class="durum-huc"><b>Bitiş</b><span>' + esc(d.bitis) + ' (' + lisans_.kalanGun() + ' gün)</span></div>'
+      + '<div class="durum-huc"><b>Kullanım</b><span>' + (d.cihaz > 1 ? (d.cihaz + ' cihaz') : 'Tek cihaz') + '</span></div></div>';
+    h += '<div style="text-align:center;margin-top:14px"><button class="btn btn-mor" onclick="git(\'menu\')">🚪 Devam Et</button></div>';
     ekran.innerHTML = h;
     return;
   }
   if (d.tip === 'deneme') {
-    h += '<div class="ozet-karti"><b>ğŸ§ª Deneme sÃ¼rÃ¼mÃ¼</b><p>Kalan gÃ¼n: ' + d.kalanGun + ' gÃ¼n</p></div>';
+    h += '<div class="ozet-karti"><b>🧪 Deneme sürümü</b><p>Kalan gün: ' + d.kalanGun + ' gün</p></div>';
   } else {
-    h += '<div class="ozet-karti" style="border-color:#e05656"><b>ğŸ”’ Deneme sÃ¼reniz doldu</b><p>Devam etmek iÃ§in geÃ§erli bir lisans kodu girin.</p></div>';
+    h += '<div class="ozet-karti" style="border-color:#e05656"><b>🔒 Deneme süreniz doldu</b><p>Devam etmek için geçerli bir lisans kodu girin.</p></div>';
   }
   h += '<div style="margin-top:14px"><label>Lisans Kodunuz:</label>'
-    + '<textarea id="lisansKod" rows="4" placeholder="Lisans kodunu buraya yapÄ±ÅŸtÄ±rÄ±n" style="width:100%;padding:10px;border:2px solid #dfe5f0;border-radius:10px;font-size:14px;font-family:monospace;resize:vertical"></textarea></div>';
+    + '<textarea id="lisansKod" rows="4" placeholder="Lisans kodunu buraya yapıştırın" style="width:100%;padding:10px;border:2px solid #dfe5f0;border-radius:10px;font-size:14px;font-family:monospace;resize:vertical"></textarea></div>';
   h += '<div class="unit-butonlar" style="margin-top:10px">'
-    + '<button class="btn btn-mor" style="width:auto" onclick="lisansGir()">ğŸ’¾ LisansÄ± DoÄŸrula ve EtkinleÅŸtir</button></div>';
+    + '<button class="btn btn-mor" style="width:auto" onclick="lisansGir()">💾 Lisansı Doğrula ve Etkinleştir</button></div>';
   h += '<div id="lisansSonuc" style="margin-top:8px"></div>';
   if (d.tip === 'deneme') {
-    h += '<div style="text-align:center;margin-top:14px"><button class="kucuk-buton" style="background:#1f8a70" onclick="git(\'menu\')">ğŸšª Denemeye Devam Et</button></div>';
+    h += '<div style="text-align:center;margin-top:14px"><button class="kucuk-buton" style="background:#1f8a70" onclick="git(\'menu\')">🚪 Denemeye Devam Et</button></div>';
   }
   ekran.innerHTML = h;
 }
@@ -4364,32 +4364,32 @@ function lisansGir() {
   var kod = ($('lisansKod') ? $('lisansKod').value : '').trim();
   var sonuc = $('lisansSonuc');
   if (!kod) { if (sonuc) sonuc.innerHTML = '<small style="color:#e05656">Lisans kodunu girin.</small>'; return; }
-  if (sonuc) sonuc.innerHTML = '<small>DoÄŸrulanÄ±yor...</small>';
+  if (sonuc) sonuc.innerHTML = '<small>Doğrulanıyor...</small>';
   lisans_.kaydet(kod).then(function (s) {
     if (s.ok) {
-      if (sonuc) sonuc.innerHTML = '<small style="color:#2ecc71">âœ… Lisans etkinleÅŸtirildi' + (s.ad ? (' Â· ' + esc(s.ad)) : '') + ' (' + esc(s.bitis) + ')</small>';
+      if (sonuc) sonuc.innerHTML = '<small style="color:#2ecc71">✅ Lisans etkinleştirildi' + (s.ad ? (' · ' + esc(s.ad)) : '') + ' (' + esc(s.bitis) + ')</small>';
       setTimeout(function () { git('menu'); }, 900);
     } else {
-      var mesaj = s.neden === 'imza' ? 'GeÃ§ersiz lisans kodu (imza doÄŸrulanamadÄ±).'
-        : s.neden === 'suresi dolmus' ? 'Bu lisansÄ±n sÃ¼resi dolmuÅŸ.'
-        : s.neden === 'cihaz-doldu' ? 'Bu lisans zaten izin verilen cihaz sayÄ±sÄ±nda kullanÄ±lÄ±yor.'
-        : 'GeÃ§ersiz lisans kodu.';
+      var mesaj = s.neden === 'imza' ? 'Geçersiz lisans kodu (imza doğrulanamadı).'
+        : s.neden === 'suresi dolmus' ? 'Bu lisansın süresi dolmuş.'
+        : s.neden === 'cihaz-doldu' ? 'Bu lisans zaten izin verilen cihaz sayısında kullanılıyor.'
+        : 'Geçersiz lisans kodu.';
       if (sonuc) sonuc.innerHTML = '<small style="color:#e05656">' + mesaj + '</small>';
     }
   });
 }
 
 function cizSinifSec() {
-  var h = '<div class="baslik"><h1>ğŸ‘‹ HoÅŸ Geldin!</h1><p>Ã–nce sÄ±nÄ±fÄ±nÄ± seÃ§elim, sana sadece o sÄ±nÄ±fÄ±n derslerini Ã¶nereyim.</p></div>';
+  var h = '<div class="baslik"><h1>👋 Hoş Geldin!</h1><p>Önce sınıfını seçelim, sana sadece o sınıfın derslerini önereyim.</p></div>';
   h += '<div class="grader">';
   for (var s in MUFREDAT) {
     h += '<button class="grade-card renk' + s + '" onclick="secSinif(' + s + ')">' +
-         '<span class="yildiz">' + s + '</span>' + s + '. SÄ±nÄ±f<br>' +
+         '<span class="yildiz">' + s + '</span>' + s + '. Sınıf<br>' +
          '<span style="font-size:13px;font-weight:600">' + MUFREDAT[s].dersler.length + ' ders</span></button>';
   }
   h += '</div>';
-  if (profilOku().ad) h += '<div class="kucuk-not">Ä°stersek Profilimâ€™den sÄ±nÄ±fÄ±nÄ± dilediÄŸin zaman deÄŸiÅŸtirebilirsin. ğŸ“„</div>';
-  h += '<div style="text-align:center"><button class="kucuk-not" style="color:#9b59b6;cursor:pointer" onclick="git(\'menu\')">â† Geri (tÃ¼m sÄ±nÄ±flarÄ± gÃ¶ster)</button></div>';
+  if (profilOku().ad) h += '<div class="kucuk-not">İstersek Profilim’den sınıfını dilediğin zaman değiştirebilirsin. 📄</div>';
+  h += '<div style="text-align:center"><button class="kucuk-not" style="color:#9b59b6;cursor:pointer" onclick="git(\'menu\')">← Geri (tüm sınıfları göster)</button></div>';
   ekran.innerHTML = h;
 }
 
@@ -4404,7 +4404,7 @@ function secSinif(s) {
 
 /* ====== DERS PROGRAMI (HAFTALIK) ====== */
 var PROGRAM_SAATLER = [15, 16, 17, 18, 19, 20, 21];
-var GUN_SIRA = ['Pazar', 'Pazartesi', 'SalÄ±', 'Ã‡arÅŸamba', 'PerÅŸembe', 'Cuma', 'Cumartesi'];
+var GUN_SIRA = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
 
 function programGosterici(dersId, bilgi) {
   var d = (bilgi && bilgi.dersler || []).filter(function(x){ return x.id === dersId; })[0];
@@ -4445,7 +4445,7 @@ function akilliPlan() {
   var p = profilOku();
   var s = p.sinif || '6';
   var bilgi = MUFREDAT[s];
-  if (!bilgi) { alert('Ã–nce Profil > SÄ±nÄ±fÄ±nÄ± seÃ§.'); return; }
+  if (!bilgi) { alert('Önce Profil > Sınıfını seç.'); return; }
   var prog = oku('prog') || {};
   var hedefGun = 3;
   var gunCount = {};
@@ -4473,25 +4473,25 @@ function akilliPlan() {
     gunCount[gg] = (gunCount[gg] || 0) + 1;
     added++;
   }
-  if (!added) { alert('AkÄ±llÄ± plan: tÃ¼m hafta iÃ§i saatleriniz dolu. Ã–nce bazÄ± slotlarÄ± boÅŸaltÄ±n.'); return; }
+  if (!added) { alert('Akıllı plan: tüm hafta içi saatleriniz dolu. Önce bazı slotları boşaltın.'); return; }
   kaydet('prog', prog);
   rozetKontrol();
   cizProgram();
-  alert('ğŸ¤– AkÄ±llÄ± plan: ' + added + ' zayÄ±f kazanÄ±m haftalÄ±k programa eklendi. ğŸ“…');
+  alert('🤖 Akıllı plan: ' + added + ' zayıf kazanım haftalık programa eklendi. 📅');
 }
 
 function cizProgram() {
   var s = seciliSinif();
   var bilgi = s ? MUFREDAT[s] : null;
   var prog = oku('prog') || {};
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ“… Ders ProgramÄ±m</h1><p>HaftalÄ±k Ã§alÄ±ÅŸma saatlerini ata. BoÅŸ saate tÄ±kla, dersini seÃ§.</p>';
-  if (!durum.programEdit) h += '<div style="margin-top:8px"><button class="btn btn-mor" onclick="akilliPlan()">ğŸ¤– AkÄ±llÄ± PlanÄ± Doldur</button> <span class="kucuk-not">ZayÄ±f konularÄ±na gÃ¶re otomatik doldurur (gÃ¼nde 3 saat).</span></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>📅 Ders Programım</h1><p>Haftalık çalışma saatlerini ata. Boş saate tıkla, dersini seç.</p>';
+  if (!durum.programEdit) h += '<div style="margin-top:8px"><button class="btn btn-mor" onclick="akilliPlan()">🤖 Akıllı Planı Doldur</button> <span class="kucuk-not">Zayıf konularına göre otomatik doldurur (günde 3 saat).</span></div>';
   h += '</div>';
   if (!s || !bilgi) {
-    h += '<div class="skor-liste">Ã–nce <b>Profilim</b>â€™den sÄ±nÄ±fÄ±nÄ± seÃ§, ya da ğŸ‘‡</div>';
-    h += '<div style="text-align:center"><button class="btn btn-mor" onclick="secSinif(6)">ğŸ“š 6. SÄ±nÄ±f Etkinliklerini GÃ¶ster</button></div>';
-    h += '<div class="kucuk-not">SÄ±nÄ±f seÃ§ince tÃ¼m gÃ¼n/saat kutucuklarÄ± derslerine gÃ¶re doldurulabilir.</div>';
+    h += '<div class="skor-liste">Önce <b>Profilim</b>’den sınıfını seç, ya da 👇</div>';
+    h += '<div style="text-align:center"><button class="btn btn-mor" onclick="secSinif(6)">📚 6. Sınıf Etkinliklerini Göster</button></div>';
+    h += '<div class="kucuk-not">Sınıf seçince tüm gün/saat kutucukları derslerine göre doldurulabilir.</div>';
     ekran.innerHTML = h; return;
   }
   var ed = durum.programEdit;
@@ -4513,26 +4513,26 @@ function cizProgram() {
         });
         h += '</select>';
         h += '<input id="pK" placeholder="konu" value="' + (durum.programSelK || '') + '" style="flex:2;padding:4px;font-size:12px">';
-        h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="programKaydet(' + gi + ',' + saat + ')">âœ“</button>';
-        h += '<button class="kucuk-buton" style="background:#94a3b8" onclick="programIptal()">âœ—</button>';
+        h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="programKaydet(' + gi + ',' + saat + ')">✓</button>';
+        h += '<button class="kucuk-buton" style="background:#94a3b8" onclick="programIptal()">✗</button>';
         h += '</div>';
       } else if (at) {
         h += '<div class="program-elm program-bos"><span class="ikon" style="font-size:18px">' + DERS_IKON(at.d) + '</span> ' +
              '<span class="ad">' + programGosterici(at.d, bilgi) + '</span>' +
              (at.k ? '<div class="alt">' + at.k + '</div>' : '') +
-             '<button class="program-sil" onclick="programSil(' + gi + ',' + saat + ')">âœ•</button></div>';
+             '<button class="program-sil" onclick="programSil(' + gi + ',' + saat + ')">✕</button></div>';
       } else {
-        h += '<div class="program-elm program-bos" onclick="programDuzenle(' + gi + ',' + saat + ')">â•</div>';
+        h += '<div class="program-elm program-bos" onclick="programDuzenle(' + gi + ',' + saat + ')">➕</div>';
       }
     }
     h += '</div>';
   });
   h += '</div>';
-  h += '<div class="kucuk-not" style="margin-top:10px">ğŸ’¡ PlanladÄ±ÄŸÄ±n saatlerde bildirim hatÄ±rlatmasÄ± alabilirsin (Profil â†’ Bildirim).</div>';
+  h += '<div class="kucuk-not" style="margin-top:10px">💡 Planladığın saatlerde bildirim hatırlatması alabilirsin (Profil → Bildirim).</div>';
   ekran.innerHTML = h;
 }
 
-/* ====== BÄ°LDÄ°RÄ°M HATIRLATMA ====== */
+/* ====== BİLDİRİM HATIRLATMA ====== */
 function bildirimIzin() {
   if (typeof Notification === 'undefined') return 'desteklenmiyor';
   return Notification.requestPermission();
@@ -4549,7 +4549,7 @@ function bildirimKur() {
   var ms = hedefTarih.getTime() - simd.getTime();
   if (durum.notifTimer) clearTimeout(durum.notifTimer);
   durum.notifTimer = setTimeout(function() {
-    if (Notification.permission === 'granted') new Notification('ğŸ“š Ã‡alÄ±ÅŸma zamanÄ±!', { body: (bugunOzet() || 'PlanladÄ±ÄŸÄ±n saate gÃ¶re derslerine zaman ayÄ±r.'), icon: 'https://dummyimage.com/48/6a5cff/ffffff.png&text=OK' });
+    if (Notification.permission === 'granted') new Notification('📚 Çalışma zamanı!', { body: (bugunOzet() || 'Planladığın saate göre derslerine zaman ayır.'), icon: 'https://dummyimage.com/48/6a5cff/ffffff.png&text=OK' });
     bildirimKur();
   }, Math.max(60000, ms));
 }
@@ -4569,9 +4569,9 @@ function bildirimSaatDegistir(s) {
   bildirimKur();
 }
 
-/* ====== YENÄ° Ã–ZELLÄ°KLER: streak, rozet duvarÄ±, pomo grafik, leitner, ics, arama, flash, pin, foto, paylaÅŸ ====== */
+/* ====== YENİ ÖZELLİKLER: streak, rozet duvarı, pomo grafik, leitner, ics, arama, flash, pin, foto, paylaş ====== */
 
-/* Pomodoro gÃ¼nlÃ¼k harita (haftalÄ±k grafik + Leitner iÃ§in) */
+/* Pomodoro günlük harita (haftalık grafik + Leitner için) */
 function pomoGunKaydet() {
   var pg = oku('pomogun') || {};
   var k = gunKod(new Date());
@@ -4591,13 +4591,13 @@ function pomoGunHarita() {
 function rozetDuvarHTML() {
   var s = statlar();
   var acik = oku('odul') || [];
-  var h = '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>ğŸ† Rozet DuvarÄ±m</h2></div>';
+  var h = '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>🏆 Rozet Duvarım</h2></div>';
   h += '<div class="rozet-grid">';
   ROZETLER.forEach(function(r) {
     var kazandi = acik.indexOf(r.id) >= 0 || r.kontrol(s);
     if ((r.gizli || r.mevsim) && !kazandi) return;
     h += '<div class="rozet-kart' + (kazandi ? ' kazandi' : '') + '">';
-    h += '<div class="rozet-ikon">' + (kazandi ? r.ikon : 'ğŸ”’') + '</div>';
+    h += '<div class="rozet-ikon">' + (kazandi ? r.ikon : '🔒') + '</div>';
     h += '<div class="rozet-ad">' + r.ad + '</div>';
     h += '<div class="rozet-acik">' + r.aciklama + '</div>';
     h += '</div>';
@@ -4609,8 +4609,8 @@ function pomoGrafikHTML() {
   var map = pomoGunHarita();
   var max = 1;
   map.forEach(function(x){ if (x.n > max) max = x.n; });
-  var gunAd = ['Pz','Pt','Sa','Ã‡a','Pe','Cu','Ct'];
-  var h = '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>â±ï¸ HaftalÄ±k Odak GrafiÄŸi</h2></div>';
+  var gunAd = ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'];
+  var h = '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>⏱️ Haftalık Odak Grafiği</h2></div>';
   h += '<div class="pomo-grafik">';
   map.forEach(function(x){
     var y = Math.round(x.n / max * 100);
@@ -4629,10 +4629,10 @@ function xpGrafikHTML() {
   }
   var max = 1;
   out.forEach(function(x){ if (x.n > max) max = x.n; });
-  var gunAd = ['Pz','Pt','Sa','Ã‡a','Pe','Cu','Ct'];
+  var gunAd = ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'];
   var toplam = 0; out.forEach(function(x){ toplam += x.n; });
-  var h = '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>â±ï¸ Son 14 GÃ¼nlÃ¼k GeliÅŸim (XP)</h2></div>';
-  h += '<div class="kucuk-not" style="text-align:left;margin-bottom:8px">Son 14 gÃ¼nde toplam â­ ' + toplam + ' XP kazandÄ±n.</div>';
+  var h = '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>⏱️ Son 14 Günlük Gelişim (XP)</h2></div>';
+  h += '<div class="kucuk-not" style="text-align:left;margin-bottom:8px">Son 14 günde toplam ⭐ ' + toplam + ' XP kazandın.</div>';
   h += '<div class="pomo-grafik">';
   out.forEach(function(x){
     var y = Math.round(x.n / max * 100);
@@ -4642,7 +4642,7 @@ function xpGrafikHTML() {
   return h;
 }
 
-/* Leitner aralÄ±klÄ± tekrar (1-3-7-16-30 gÃ¼n) */
+/* Leitner aralıklı tekrar (1-3-7-16-30 gün) */
 function leitnerGun(kutu) { var g = [1,3,7,16,30]; return g[Math.max(0, Math.min(4, (kutu||1)-1))]; }
 function tekrarSil(dersId, bi) { var tr = oku('tekrar') || {}; delete tr[dersId + '-' + bi]; kaydet('tekrar', tr); cizTekrar(); }
 function tekrarKutuIlerle(dersId, bi) {
@@ -4663,16 +4663,16 @@ function tekrarEkle(dersId, bi) {
   kaydet('tekrar', tr); cizTekrar();
 }
 
-/* Takvim (.ics) dÄ±ÅŸa aktarma */
+/* Takvim (.ics) dışa aktarma */
 function takvimIcs() {
   var satirlar = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//OkulDersUygulamam//TR','CALSCALE:GREGORIAN'];
   (oku('saylar') || []).forEach(function(s) {
-    satirlar.push('BEGIN:VEVENT','SUMMARY:' + (s.ad || 'SÄ±nav'), 'DTSTART;VALUE=DATE:' + icsTarih(s.t), 'END:VEVENT');
+    satirlar.push('BEGIN:VEVENT','SUMMARY:' + (s.ad || 'Sınav'), 'DTSTART;VALUE=DATE:' + icsTarih(s.t), 'END:VEVENT');
   });
   var gv = gorevVeri();
   if (gv && gv.yapildi) Object.keys(gv.yapildi).forEach(function(id) {
     var def = null; for (var i=0;i<GOREVLER.length;i++) if (GOREVLER[i].id===id){def=GOREVLER[i];break;}
-    satirlar.push('BEGIN:VEVENT','SUMMARY:' + (def?def.ad:'GÃ¶rev') + ' (bugÃ¼n)','DTSTART;VALUE=DATE:' + icsTarih(new Date()), 'END:VEVENT');
+    satirlar.push('BEGIN:VEVENT','SUMMARY:' + (def?def.ad:'Görev') + ' (bugün)','DTSTART;VALUE=DATE:' + icsTarih(new Date()), 'END:VEVENT');
   });
   satirlar.push('END:VCALENDAR');
   return satirlar.join('\r\n');
@@ -4683,7 +4683,7 @@ function icsTarih(t) {
   return '' + y + (m<10?'0':'') + m + (g<10?'0':'') + g;
 }
 function takvimIndir() {
-  if (typeof Blob === 'undefined' || typeof URL === 'undefined') { alert('TarayÄ±cÄ± desteklemiyor.'); return; }
+  if (typeof Blob === 'undefined' || typeof URL === 'undefined') { alert('Tarayıcı desteklemiyor.'); return; }
   var j = takvimIcs();
   var blob = new Blob([j], { type: 'text/calendar;charset=utf-8' });
   var a = document.createElement('a');
@@ -4694,7 +4694,7 @@ function takvimIndir() {
   if (URL.revokeObjectURL) URL.revokeObjectURL(a.href);
 }
 
-/* GÃ¶rev iÅŸaretleme (manuel tamamla) + hatÄ±rlatma */
+/* Görev işaretleme (manuel tamamla) + hatırlatma */
 function gorevToggle(id) {
   var g = gorevVeri();
   if (g.yapildi[id]) { delete g.yapildi[id]; if (g.ilerleme[id]) g.ilerleme[id] = 0; }
@@ -4706,9 +4706,9 @@ function gorevToggle(id) {
 
 /* Konu arama */
 function cizAra() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ” Konu Ara</h1><p>TÃ¼m derslerde anahtar kelime ara, doÄŸrudan konuya git.</p></div>';
-  h += '<div class="ara-kutu"><input id="araGirdi" type="text" placeholder="Ã–rn: kesir, osmanlÄ±, fotosentez..." oninput="araCalistir(this.value)">';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🔍 Konu Ara</h1><p>Tüm derslerde anahtar kelime ara, doğrudan konuya git.</p></div>';
+  h += '<div class="ara-kutu"><input id="araGirdi" type="text" placeholder="Örn: kesir, osmanlı, fotosentez..." oninput="araCalistir(this.value)">';
   h += '<div id="araSonuc" class="ara-sonuc"></div></div>';
   ekran.innerHTML = h;
   var el = $('araGirdi'); if (el && el.focus) el.focus();
@@ -4716,7 +4716,7 @@ function cizAra() {
 function araCalistir(q) {
   q = (q || '').toLocaleLowerCase('tr-TR').trim();
   var box = $('araSonuc'); if (!box) return;
-  if (!q) { box.innerHTML = '<div class="kucuk-not">Aramak iÃ§in bir kelime yaz.</div>'; return; }
+  if (!q) { box.innerHTML = '<div class="kucuk-not">Aramak için bir kelime yaz.</div>'; return; }
   var son = [];
   for (var s in MUFREDAT) {
     MUFREDAT[s].dersler.forEach(function(d) {
@@ -4726,11 +4726,11 @@ function araCalistir(q) {
       });
     });
   }
-  if (!son.length) { box.innerHTML = '<div class="skor-liste">SonuÃ§ bulunamadÄ±.</div>'; return; }
+  if (!son.length) { box.innerHTML = '<div class="skor-liste">Sonuç bulunamadı.</div>'; return; }
   var hh = '<div class="skor-liste">';
   son.slice(0, 40).forEach(function(x) {
-    hh += '<div class="skor-satir"><span>' + DERS_IKON(x.d.id) + ' <b>' + x.b.ad + '</b> <small>(' + x.s + '. sÄ±nÄ±f Â· ' + x.d.ad + ')</small></span>' +
-          '<span><button class="kucuk-buton" style="background:#9b59b6" onclick="araGit(' + x.s + ',\'' + x.d.id + '\',' + x.i + ')">ğŸ“– AÃ§</button></span></div>';
+    hh += '<div class="skor-satir"><span>' + DERS_IKON(x.d.id) + ' <b>' + x.b.ad + '</b> <small>(' + x.s + '. sınıf · ' + x.d.ad + ')</small></span>' +
+          '<span><button class="kucuk-buton" style="background:#9b59b6" onclick="araGit(' + x.s + ',\'' + x.d.id + '\',' + x.i + ')">📖 Aç</button></span></div>';
   });
   hh += '</div>';
   box.innerHTML = hh;
@@ -4741,7 +4741,7 @@ function araGit(s, dId, i) {
   secDers(s, dId);
 }
 
-/* Ä°ngilizce kelime flashcards */
+/* İngilizce kelime flashcards */
 function flashListesi() {
   var s = seciliSinif() || '6';
   var havuz = [];
@@ -4760,11 +4760,11 @@ function flashListesi() {
 }
 function cizFlash() {
   var havuz = flashListesi();
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸŒ Kelime KartlarÄ±</h1><p>Ä°ngilizce kelimeleri Ã¶ÄŸren, kartÄ± Ã§evir.</p></div>';
-  if (!havuz.length) { h += '<div class="kucuk-not">Bu sÄ±nÄ±f iÃ§in kelime kartÄ± bulunamadÄ±.</div>'; ekran.innerHTML = h; return; }
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🌐 Kelime Kartları</h1><p>İngilizce kelimeleri öğren, kartı çevir.</p></div>';
+  if (!havuz.length) { h += '<div class="kucuk-not">Bu sınıf için kelime kartı bulunamadı.</div>'; ekran.innerHTML = h; return; }
   durum.flash = karistir(havuz); durum.flashI = 0;
-  h += '<div style="text-align:center;margin-bottom:10px"><button class="btn btn-mor" onclick="flashKaristir()">ğŸ”€ KarÄ±ÅŸtÄ±r</button> <span class="kucuk-not">' + havuz.length + ' kart</span></div>';
+  h += '<div style="text-align:center;margin-bottom:10px"><button class="btn btn-mor" onclick="flashKaristir()">🔀 Karıştır</button> <span class="kucuk-not">' + havuz.length + ' kart</span></div>';
   h += '<div id="flashAlan"></div>';
   ekran.innerHTML = h;
   flashGoster();
@@ -4777,24 +4777,24 @@ function flashGoster() {
   if (!k) return;
   alan.innerHTML = '<div class="flash-kart" onclick="flashCevir()"><div class="flash-ust">' + (durum.flashI+1) + '/' + list.length + '</div>' +
     '<div class="flash-soru">' + esc(k.soru) + '</div>' +
-    '<div class="flash-cevap' + (durum.flashAcik ? ' acik' : '') + '">' + (durum.flashAcik ? esc(k.cevap) : 'ğŸ‚  CevabÄ± gÃ¶r') + '</div></div>' +
-    '<div class="flash-nav"><button class="btn btn-geri" onclick="flashOnceki()">â€¹</button>' +
-    '<button class="btn btn-test" onclick="flashBildim()">âœ“ Bildim</button>' +
-    '<button class="btn btn-mor" onclick="flashSonraki()">â€º</button></div>';
+    '<div class="flash-cevap' + (durum.flashAcik ? ' acik' : '') + '">' + (durum.flashAcik ? esc(k.cevap) : '🂠 Cevabı gör') + '</div></div>' +
+    '<div class="flash-nav"><button class="btn btn-geri" onclick="flashOnceki()">‹</button>' +
+    '<button class="btn btn-test" onclick="flashBildim()">✓ Bildim</button>' +
+    '<button class="btn btn-mor" onclick="flashSonraki()">›</button></div>';
 }
 function flashCevir() { durum.flashAcik = !durum.flashAcik; flashGoster(); }
 function flashBildim() { xpEkle(1); durum.flashAcik = false; flashSonraki(); }
 function flashSonraki() { durum.flashAcik = false; if (!durum.flash) return; durum.flashI = (durum.flashI + 1) % durum.flash.length; flashGoster(); }
 function flashOnceki() { durum.flashAcik = false; if (!durum.flash) return; durum.flashI = (durum.flashI - 1 + durum.flash.length) % durum.flash.length; flashGoster(); }
 
-/* TTS iyileÅŸtirme: ses seÃ§imi + gÃ¼venli fallback */
+/* TTS iyileştirme: ses seçimi + güvenli fallback */
 function ttsSesListesi() {
   if (!window.speechSynthesis) return [];
   try { return window.speechSynthesis.getVoices() || []; } catch(e) { return []; }
 }
 function ttsSesKaydet(id) { kaydet('ttsSes', id); }
 function cozumleriDinle() {
-  if (!window.speechSynthesis) { alert('TarayÄ±cÄ± sesli okumayÄ± desteklemiyor.'); return; }
+  if (!window.speechSynthesis) { alert('Tarayıcı sesli okumayı desteklemiyor.'); return; }
   var L = durum.qListe || [];
   var metin = '';
   L.forEach(function(q, i) { metin += 'Soru ' + (i + 1) + ': ' + q.s + '. ' + cozumBul(durum.quiz, durum.qBirim, q) + '. '; });
@@ -4808,7 +4808,7 @@ function cozumleriDinle() {
   window.speechSynthesis.speak(u);
 }
 
-/* Profil PIN korumasÄ± */
+/* Profil PIN koruması */
 function profilKilitliMi() {
   var liste = oku('profiller');
   if (!liste) return false;
@@ -4823,15 +4823,15 @@ function profilKilitAc(pin) {
   return false;
 }
 function cizKilit() {
-  ekran.innerHTML = '<div class="kilit-ekran"><div class="kilit-kutu"><div style="font-size:46px">ğŸ”</div><h2>Profil Kilitli</h2>' +
+  ekran.innerHTML = '<div class="kilit-ekran"><div class="kilit-kutu"><div style="font-size:46px">🔐</div><h2>Profil Kilitli</h2>' +
     '<input id="pinGir" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" style="text-align:center;font-size:22px">' +
-    '<button class="btn btn-mor" onclick="kilitDeneme()">AÃ§</button></div></div>';
+    '<button class="btn btn-mor" onclick="kilitDeneme()">Aç</button></div></div>';
   var el = $('pinGir'); if (el && el.focus) el.focus();
 }
 function kilitDeneme() {
   var v = $('pinGir') ? $('pinGir').value : '';
   if (profilKilitAc(v)) { cizProfil(); }
-  else { alert('PIN yanlÄ±ÅŸ.'); }
+  else { alert('PIN yanlış.'); }
 }
 function profilPinAyarla(pin) {
   var liste = profilListesi();
@@ -4840,11 +4840,11 @@ function profilPinAyarla(pin) {
   kaydet('profiller', liste);
 }
 
-/* YanlÄ±ÅŸa fotoÄŸraf ekleme (OCR yerine gÃ¶rsel saklama) */
+/* Yanlışa fotoğraf ekleme (OCR yerine görsel saklama) */
 function yanlisFotoEkle(i, ev) {
   var f = ev && ev.target && ev.target.files && ev.target.files[0];
   if (!f) return;
-  if (f.size > 1.5 * 1024 * 1024) { alert('GÃ¶rsel 1.5 MB\'dan kÃ¼Ã§Ã¼k olmalÄ±.'); return; }
+  if (f.size > 1.5 * 1024 * 1024) { alert('Görsel 1.5 MB\'dan küçük olmalı.'); return; }
   var fr = new FileReader();
   fr.onload = function(e) {
     var havuz = oku('yanlis') || [];
@@ -4853,7 +4853,7 @@ function yanlisFotoEkle(i, ev) {
   fr.readAsDataURL(f);
 }
 
-/* Veri paylaÅŸ (bulut yerine Web Share / dosya) */
+/* Veri paylaş (bulut yerine Web Share / dosya) */
 function veriPaylas() {
   var j = JSON.stringify(veriExportJson());
   var paylas = { title: 'Okul Ders Uygulamam - Yedek', text: j };
@@ -4863,14 +4863,14 @@ function veriPaylas() {
     var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'okul-yedek.json';
     document.body.appendChild(a); a.click();
     try { document.body.removeChild(a); } catch(e){}
-  } else { alert('PaylaÅŸÄ±m desteklenmiyor.'); }
+  } else { alert('Paylaşım desteklenmiyor.'); }
 }
 
-/* ====== Ä°KÄ°NCÄ° YENÄ° Ã–ZELLÄ°KLER PAKETÄ° ====== */
+/* ====== İKİNCİ YENİ ÖZELLİKLER PAKETİ ====== */
 
-/* ğŸ¯ Adaptif test (zayÄ±f konulara aÄŸÄ±rlÄ±k) */
+/* 🎯 Adaptif test (zayıf konulara ağırlık) */
 function testListeKur(dersId, liste, bi, sureli) {
-  if (!liste || !liste.length) { alert('Soru bulunamadÄ±.'); return; }
+  if (!liste || !liste.length) { alert('Soru bulunamadı.'); return; }
   sureDurdur();
   durum.quiz = dersId; durum.qBirim = (bi === undefined || bi === null) ? '' : bi;
   durum.qListe = liste; durum.qSira = 0; durum.qDogru = 0; durum.qRekor = null; durum.qHavuz = false; durum.qSureDoldu = false;
@@ -4881,7 +4881,7 @@ function adaptifTestBaslat(dersId) {
   var d = dersBul(seciliSinif(), dersId);
   if (!d) return;
   var tum = tumSorular(dersId);
-  if (!tum.length) { alert('Bu ders iÃ§in soru yok.'); return; }
+  if (!tum.length) { alert('Bu ders için soru yok.'); return; }
   var zayif = [];
   d.birimler.forEach(function(b, i) { if (hakimiyet(dersId, i) < 70) zayif = zayif.concat(birimTest(dersId, i)); });
   var agirlik = []; zayif.forEach(function(s){ agirlik.push(s); agirlik.push(s); });
@@ -4890,44 +4890,44 @@ function adaptifTestBaslat(dersId) {
   testListeKur(dersId, liste, '', true);
 }
 
-/* ğŸ—ºï¸ Ã–ÄŸrenme yolu (roadmap) */
+/* 🗺️ Öğrenme yolu (roadmap) */
 function cizYol() {
   var s = seciliSinif() || '6';
   var bilgi = MUFREDAT[s];
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ—ºï¸ ' + t('Ã–ÄŸrenme Yolum') + '</h1>' + '<p>' + s + '. sÄ±nÄ±f derslerini sÄ±rayla tamamla.</p></div>';
-  if (!bilgi) { h += '<div class="kucuk-not">Ã–nce sÄ±nÄ±fÄ±nÄ± seÃ§.</div>'; ekran.innerHTML = h; return; }
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🗺️ ' + t('Öğrenme Yolum') + '</h1>' + '<p>' + s + '. sınıf derslerini sırayla tamamla.</p></div>';
+  if (!bilgi) { h += '<div class="kucuk-not">Önce sınıfını seç.</div>'; ekran.innerHTML = h; return; }
   bilgi.dersler.forEach(function(d) {
     h += '<div class="yol-ders"><div class="yol-ders-ad">' + DERS_IKON(d.id) + ' ' + d.ad + '</div>';
     d.birimler.forEach(function(b, i) {
       var tamam = biten(d.id + '-' + i);
       var yz = hakimiyet(d.id, i);
       var renk = tamam ? '#2ecc71' : (yz >= 70 ? '#3498db' : (yz > 0 ? '#f39c12' : '#e74c3c'));
-      h += '<div class="yol-adim" onclick="secDers(' + s + ',\'' + d.id + '\')"><span class="yol-nokta" style="background:' + renk + '"></span>' + b.ad + ' <small>' + (tamam ? 'âœ“' : (yz > 0 ? '%' + yz : 'baÅŸlanmadÄ±')) + '</small></div>';
+      h += '<div class="yol-adim" onclick="secDers(' + s + ',\'' + d.id + '\')"><span class="yol-nokta" style="background:' + renk + '"></span>' + b.ad + ' <small>' + (tamam ? '✓' : (yz > 0 ? '%' + yz : 'başlanmadı')) + '</small></div>';
     });
     h += '</div>';
   });
   ekran.innerHTML = h;
 }
 
-/* ğŸ“‰ Unutma eÄŸrisi grafiÄŸi (Leitner verisiyle) */
+/* 📉 Unutma eğrisi grafiği (Leitner verisiyle) */
 function unutmaEgridHTML() {
   var tr = oku('tekrar') || {};
   var keys = Object.keys(tr);
   if (!keys.length) return '';
-  var h = '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>ğŸ“‰ Unutma EÄŸrisi Takibi</h2></div>';
+  var h = '<div class="baslik" style="margin-top:20px;margin-bottom:12px"><h2>📉 Unutma Eğrisi Takibi</h2></div>';
   h += '<div class="egri-grafik">';
   keys.slice(0, 14).forEach(function(k) {
     var e = tr[k];
     var gun = e.sira ? Math.max(0, Math.round((e.sira - Date.now()) / 86400000)) : 0;
     var y = Math.max(5, 100 - Math.min(100, gun / 30 * 100));
-    h += '<div class="egri-nokta" style="height:' + y + '%" title="' + k + ': ' + gun + ' gÃ¼n sonra tekrar"></div>';
+    h += '<div class="egri-nokta" style="height:' + y + '%" title="' + k + ': ' + gun + ' gün sonra tekrar"></div>';
   });
   h += '</div>';
   return h;
 }
 
-/* ====== ROL SÄ°STEMÄ° (Ã–ÄŸrenci / Veli / Ã–ÄŸretmen) ====== */
+/* ====== ROL SİSTEMİ (Öğrenci / Veli / Öğretmen) ====== */
 function aktifRol() { return oku('aktifRol') || 'ogrenci'; }
 function rolAyarla(r) {
   kaydet('aktifRol', r);
@@ -4936,65 +4936,65 @@ function rolAyarla(r) {
   kaydet('profil', p);
 }
 function ogretmenKodAyarla() {
-  var kod = prompt('Ã–ÄŸretmen panosu iÃ§in ÅŸifre belirle (en az 4 karakter, boÅŸ = kapat):', oku('ogretmenKod') || '');
+  var kod = prompt('Öğretmen panosu için şifre belirle (en az 4 karakter, boş = kapat):', oku('ogretmenKod') || '');
   if (kod === null) return;
   kaydet('ogretmenKod', kod ? String(kod) : '');
-  alert(kod ? 'Ã–ÄŸretmen ÅŸifresi ayarlandÄ±.' : 'Ã–ÄŸretmen ÅŸifresi kaldÄ±rÄ±ldÄ±.');
+  alert(kod ? 'Öğretmen şifresi ayarlandı.' : 'Öğretmen şifresi kaldırıldı.');
 }
 
-/* Rol seÃ§im ekranÄ± */
+/* Rol seçim ekranı */
 function cizRolSec() {
-  var rivayet = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  rivayet += '<div class="baslik"><h1>ğŸ‘¥ ' + t('Rol SeÃ§imi') + '</h1><p>' + t('Hangi rol olarak devam etmek istiyorsun?') + '</p></div>';
+  var rivayet = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  rivayet += '<div class="baslik"><h1>👥 ' + t('Rol Seçimi') + '</h1><p>' + t('Hangi rol olarak devam etmek istiyorsun?') + '</p></div>';
   rivayet += '<div class="dersler" style="flex-direction:column;gap:12px">';
-  rivayet += '<button class="ders-card" style="align-items:center" onclick="rolGir(\'ogrenci\')"><span class="ikon">ğŸ“</span><span><span class="ad">' + t('Ã–ÄŸrenci') + '</span><br><span class="alt">' + t('Ders Ã§alÄ±ÅŸ, test Ã§Ã¶z, plan yap') + '</span></span>' + (aktifRol()==='ogrenci'?'<span class="durum-ikon">âœ“ Aktif</span>':'') + '</button>';
-  rivayet += '<button class="ders-card" style="align-items:center" onclick="rolGir(\'veli\')"><span class="ikon">ğŸ‘¨â€ğŸ‘©â€ğŸ‘§</span><span><span class="ad">' + t('Veli') + '</span><br><span class="alt">' + t('Ã–zet rapor ve karne (kod gerekir)') + '</span></span>' + (aktifRol()==='veli'?'<span class="durum-ikon">âœ“ Aktif</span>':'') + '</button>';
-  rivayet += '<button class="ders-card" style="align-items:center" onclick="rolGir(\'ogretmen\')"><span class="ikon">ğŸ‘©â€ğŸ«</span><span><span class="ad">' + t('Ã–ÄŸretmen') + '</span><br><span class="alt">' + t('Ã–ÄŸrenci performansÄ± (ÅŸifre gerekir)') + '</span></span>' + (aktifRol()==='ogretmen'?'<span class="durum-ikon">âœ“ Aktif</span>':'') + '</button>';
+  rivayet += '<button class="ders-card" style="align-items:center" onclick="rolGir(\'ogrenci\')"><span class="ikon">🎓</span><span><span class="ad">' + t('Öğrenci') + '</span><br><span class="alt">' + t('Ders çalış, test çöz, plan yap') + '</span></span>' + (aktifRol()==='ogrenci'?'<span class="durum-ikon">✓ Aktif</span>':'') + '</button>';
+  rivayet += '<button class="ders-card" style="align-items:center" onclick="rolGir(\'veli\')"><span class="ikon">👨‍👩‍👧</span><span><span class="ad">' + t('Veli') + '</span><br><span class="alt">' + t('Özet rapor ve karne (kod gerekir)') + '</span></span>' + (aktifRol()==='veli'?'<span class="durum-ikon">✓ Aktif</span>':'') + '</button>';
+  rivayet += '<button class="ders-card" style="align-items:center" onclick="rolGir(\'ogretmen\')"><span class="ikon">👩‍🏫</span><span><span class="ad">' + t('Öğretmen') + '</span><br><span class="alt">' + t('Öğrenci performansı (şifre gerekir)') + '</span></span>' + (aktifRol()==='ogretmen'?'<span class="durum-ikon">✓ Aktif</span>':'') + '</button>';
   rivayet += '</div>';
   ekran.innerHTML = rivayet;
 }
 function rolGir(r) {
-  if (r === 'ogrenci') { rolAyarla('ogrenci'); alert('Ã–ÄŸrenci moduna geÃ§ildi. ğŸ“'); git('menu'); return; }
+  if (r === 'ogrenci') { rolAyarla('ogrenci'); alert('Öğrenci moduna geçildi. 🎓'); git('menu'); return; }
   if (r === 'veli') {
     var kod = oku('veliKod');
     if (!kod) { rolAyarla('veli'); cizVeli(); return; }
     var gir = prompt('Veli panosu kodu?', '');
     if (gir === kod) { rolAyarla('veli'); cizVeli(); }
-    else alert('Kod yanlÄ±ÅŸ.');
+    else alert('Kod yanlış.');
     return;
   }
   if (r === 'ogretmen') {
     var sifre = oku('ogretmenKod');
-    if (!sifre) { alert('Ã–ÄŸretmen ÅŸifresi henÃ¼z ayarlanmadÄ±. Profilim sayfasÄ±ndan belirle.'); return; }
-    var gir2 = prompt('Ã–ÄŸretmen ÅŸifresi?', '');
+    if (!sifre) { alert('Öğretmen şifresi henüz ayarlanmadı. Profilim sayfasından belirle.'); return; }
+    var gir2 = prompt('Öğretmen şifresi?', '');
     if (gir2 === sifre) { rolAyarla('ogretmen'); cizOgretmen(); }
-    else alert('Åifre yanlÄ±ÅŸ.');
+    else alert('Şifre yanlış.');
     return;
   }
 }
 
-/* Ã–ÄŸretmen paneli (aynÄ± cihazdaki Ã¶ÄŸrenci performansÄ±) */
+/* Öğretmen paneli (aynı cihazdaki öğrenci performansı) */
 function cizOgretmen() {
   var s = statlar();
   var p = profilOku();
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ‘©â€ğŸ« ' + t('Ã–ÄŸretmen Paneli') + '</h1><p>' + esc(p.ad || 'Ã–ÄŸrenci') + ' iÃ§in geliÅŸim raporu ve Ã¶neriler.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>👩‍🏫 ' + t('Öğretmen Paneli') + '</h1><p>' + esc(p.ad || 'Öğrenci') + ' için gelişim raporu ve öneriler.</p></div>';
 
-  h += '<div class="baslik"><h2>ğŸ“Œ Ã–zet</h2></div><div class="ozet-karti">'
+  h += '<div class="baslik"><h2>📌 Özet</h2></div><div class="ozet-karti">'
     + '<div style="display:flex;flex-wrap:wrap;gap:10px">'
-    + '<div class="durum-huc"><b>ğŸ“ Ã–ÄŸrenci</b><span>' + esc(p.ad || 'â€”') + ' ' + esc(p.soyad || '') + '</span></div>'
-    + '<div class="durum-huc"><b>ğŸ“š SÄ±nÄ±f</b><span>' + (p.sinif ? (p.sinif + '. sÄ±nÄ±f') : String(seciliSinif() || '') + '. sÄ±nÄ±f') + '</span></div>'
-    + '<div class="durum-huc"><b>â­ XP</b><span>' + s.xp + '</span></div>'
-    + '<div class="durum-huc"><b>ğŸ”¥ Seri</b><span>' + s.seri + ' gÃ¼n</span></div>'
-    + '<div class="durum-huc"><b>ğŸ… Rozet</b><span>' + (oku('odul') || []).length + '/' + ROZETLER.length + '</span></div>'
-    + '<div class="durum-huc"><b>ğŸ“ Test</b><span>' + s.testSay + ' Ã§Ã¶zÃ¼ldÃ¼</span></div>'
-    + '<div class="durum-huc"><b>âœ… Tam doÄŸru</b><span>' + s.tamSay + '</span></div>'
+    + '<div class="durum-huc"><b>🎓 Öğrenci</b><span>' + esc(p.ad || '—') + ' ' + esc(p.soyad || '') + '</span></div>'
+    + '<div class="durum-huc"><b>📚 Sınıf</b><span>' + (p.sinif ? (p.sinif + '. sınıf') : String(seciliSinif() || '') + '. sınıf') + '</span></div>'
+    + '<div class="durum-huc"><b>⭐ XP</b><span>' + s.xp + '</span></div>'
+    + '<div class="durum-huc"><b>🔥 Seri</b><span>' + s.seri + ' gün</span></div>'
+    + '<div class="durum-huc"><b>🏅 Rozet</b><span>' + (oku('odul') || []).length + '/' + ROZETLER.length + '</span></div>'
+    + '<div class="durum-huc"><b>📝 Test</b><span>' + s.testSay + ' çözüldü</span></div>'
+    + '<div class="durum-huc"><b>✅ Tam doğru</b><span>' + s.tamSay + '</span></div>'
     + '</div></div>';
 
-  h += '<div class="baslik"><h2>ğŸ“ˆ GeliÅŸim Analizi</h2></div>';
+  h += '<div class="baslik"><h2>📈 Gelişim Analizi</h2></div>';
   h += '<div class="ozet-karti">' + haftalikRaporMetni().replace(/\n/g, '<br>') + '</div>';
 
-  h += '<div class="baslik"><h2>ğŸ¯ Ders BazlÄ± BaÅŸarÄ±</h2></div>';
+  h += '<div class="baslik"><h2>🎯 Ders Bazlı Başarı</h2></div>';
   var sk = seciliSinif();
   var puan = oku('puan') || {};
   h += '<div class="araclar">';
@@ -5012,51 +5012,51 @@ function cizOgretmen() {
   }
   h += '</div>';
 
-  h += '<div class="baslik"><h2>ğŸ–¨ï¸ Raporlar</h2></div>';
+  h += '<div class="baslik"><h2>🖨️ Raporlar</h2></div>';
   h += '<div class="unit-butonlar">';
-  h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="veliRaporYazdir()">ğŸ–¨ï¸ YazdÄ±rÄ±labilir Rapor</button>';
-  h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="git(\'karne\')">ğŸ“„ Karne</button>';
+  h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="veliRaporYazdir()">🖨️ Yazdırılabilir Rapor</button>';
+  h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="git(\'karne\')">📄 Karne</button>';
   h += '</div>';
-  h += '<div class="baslik" style="margin-top:18px"><h2>ğŸŸ¢ CanlÄ± SÄ±nÄ±f YÃ¶netimi</h2><p>SÄ±nÄ±f kodu ile Ã¶ÄŸrencilerini ekle, derslerini ve notlarÄ±nÄ± yaz, Ã§alÄ±ÅŸma verilerini gÃ¶r.</p></div>';
+  h += '<div class="baslik" style="margin-top:18px"><h2>🟢 Canlı Sınıf Yönetimi</h2><p>Sınıf kodu ile öğrencilerini ekle, derslerini ve notlarını yaz, çalışma verilerini gör.</p></div>';
   var _supaVar = (typeof kutuSUPA !== 'undefined' && kutuSUPA.hazirMi());
   if (_supaVar) {
     h += '<div class="unit-butonlar">';
-    h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="git(\'sinifYonet\')">ğŸŸ¢ SÄ±nÄ±fÄ±mÄ± YÃ¶net</button>';
-    h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="sinifGiris()">â• SÄ±nÄ±f AÃ§ / Kullan</button>';
+    h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="git(\'sinifYonet\')">🟢 Sınıfımı Yönet</button>';
+    h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="sinifGiris()">➕ Sınıf Aç / Kullan</button>';
     h += '</div>';
   } else {
-    h += '<div class="kucuk-not" style="color:#e05656;margin:8px 0">âš ï¸ CanlÄ± sÄ±nÄ±f yÃ¶netimi iÃ§in Supabase yapÄ±landÄ±rmasÄ± gerekli (supa-config.js doldurulmalÄ±).</div>';
+    h += '<div class="kucuk-not" style="color:#e05656;margin:8px 0">⚠️ Canlı sınıf yönetimi için Supabase yapılandırması gerekli (supa-config.js doldurulmalı).</div>';
   }
-  h += '<div style="text-align:center;margin-top:16px"><button class="kucuk-buton" style="background:#e05656" onclick="ogretmenCikis()">ğŸšª Ã–ÄŸrenci Moduna GeÃ§</button></div>';
+  h += '<div style="text-align:center;margin-top:16px"><button class="kucuk-buton" style="background:#e05656" onclick="ogretmenCikis()">🚪 Öğrenci Moduna Geç</button></div>';
   ekran.innerHTML = h;
 }
-function ogretmenCikis() { rolAyarla('ogrenci'); alert('Ã–ÄŸrenci moduna geÃ§ildi. ğŸ“'); git('menu'); }
+function ogretmenCikis() { rolAyarla('ogrenci'); alert('Öğrenci moduna geçildi. 🎓'); git('menu'); }
 
-/* ğŸ‘¨â€ğŸ‘©â€ğŸ‘§ Veli panosu (kod korumalÄ±) */
+/* 👨‍👩‍👧 Veli panosu (kod korumalı) */
 function veliKodAyarla() {
-  var kod = prompt('Veli panosu iÃ§in kod belirle (boÅŸ = kapat):', oku('veliKod') || '');
+  var kod = prompt('Veli panosu için kod belirle (boş = kapat):', oku('veliKod') || '');
   if (kod === null) return;
   kaydet('veliKod', kod ? String(kod) : '');
-  alert(kod ? 'Veli kodu ayarlandÄ±.' : 'Veli kodu kaldÄ±rÄ±ldÄ±.');
+  alert(kod ? 'Veli kodu ayarlandı.' : 'Veli kodu kaldırıldı.');
 }
 function cizVeliKap() {
   var kod = oku('veliKod');
   if (!kod) { cizVeli(); return; }
   var gir = prompt('Veli panosu kodu?', '');
-  if (gir === kod) cizVeli(); else alert('Kod yanlÄ±ÅŸ.');
+  if (gir === kod) cizVeli(); else alert('Kod yanlış.');
 }
 function cizVeli() {
   var s = statlar();
   var p = profilOku();
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ‘¨â€ğŸ‘©â€ğŸ‘§ ' + t('Veli Panosu') + '</h1>' + '<p>' + esc(p.ad || 'Ã–ÄŸrenci') + ' iÃ§in Ã¶zet rapor.</p></div>';
-  h += '<div class="ozet-karti"><h2>' + s.xp + ' XP Â· ğŸ”¥ ' + s.seri + ' gÃ¼n Â· ğŸ… ' + (oku('odul') || []).length + '/' + ROZETLER.length + '</h2></div>';
-  h += '<div style="text-align:center;margin:10px 0"><button class="kucuk-buton" style="background:#1f8a70" onclick="veliRaporYazdir()">ğŸ–¨ï¸ YazdÄ±rÄ±labilir Rapor</button></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>👨‍👩‍👧 ' + t('Veli Panosu') + '</h1>' + '<p>' + esc(p.ad || 'Öğrenci') + ' için özet rapor.</p></div>';
+  h += '<div class="ozet-karti"><h2>' + s.xp + ' XP · 🔥 ' + s.seri + ' gün · 🏅 ' + (oku('odul') || []).length + '/' + ROZETLER.length + '</h2></div>';
+  h += '<div style="text-align:center;margin:10px 0"><button class="kucuk-buton" style="background:#1f8a70" onclick="veliRaporYazdir()">🖨️ Yazdırılabilir Rapor</button></div>';
   h += haftalikRaporHTML();
   ekran.innerHTML = h;
 }
 
-/* ğŸ“ˆ HaftalÄ±k rapor (metin) */
+/* 📈 Haftalık rapor (metin) */
 function haftalikRaporMetni() {
   var s = statlar();
   var p = profilOku();
@@ -5066,19 +5066,19 @@ function haftalikRaporMetni() {
   var gunAktif = hafta.filter(function(k){ return a[k]; }).length;
   var xg = oku('xpgun') || {};
   var haftaXp = 0; hafta.forEach(function(k){ haftaXp += (xg[k] || 0); });
-  return (p.ad || 'Ã–ÄŸrenci') + ' iÃ§in HaftalÄ±k Rapor\n' +
+  return (p.ad || 'Öğrenci') + ' için Haftalık Rapor\n' +
     '- Toplam XP: ' + s.xp + '\n' +
-    '- Bu hafta Ã§alÄ±ÅŸÄ±lan gÃ¼n: ' + gunAktif + '/7\n' +
-    '- Bu hafta kazanÄ±lan XP: ' + haftaXp + '\n' +
-    '- Ã‡Ã¶zÃ¼len test: ' + s.testSay + ' Â· Tam doÄŸru test: ' + s.tamSay + '\n' +
+    '- Bu hafta çalışılan gün: ' + gunAktif + '/7\n' +
+    '- Bu hafta kazanılan XP: ' + haftaXp + '\n' +
+    '- Çözülen test: ' + s.testSay + ' · Tam doğru test: ' + s.tamSay + '\n' +
     '- Rozet: ' + (oku('odul') || []).length + '/' + ROZETLER.length + '\n' +
     '- Tamamlanan konu: ' + s.bYap + '/' + s.bTop;
 }
 function haftalikRaporHTML() {
-  return '<div class="baslik" style="margin-top:16px"><h2>ğŸ“ˆ ' + t('HaftalÄ±k Ã–zet') + '</h2>' + '</div><pre class="rapor-metni">' + esc(haftalikRaporMetni()) + '</pre>';
+  return '<div class="baslik" style="margin-top:16px"><h2>📈 ' + t('Haftalık Özet') + '</h2>' + '</div><pre class="rapor-metni">' + esc(haftalikRaporMetni()) + '</pre>';
 }
 
-/* ğŸ† Lider tablosu (profiller arasÄ± XP) */
+/* 🏆 Lider tablosu (profiller arası XP) */
 function profilXp(p) {
   var v = p.veri || {};
   var x = v.xp;
@@ -5090,24 +5090,24 @@ function cizLider() {
   var aktifId = aktifProfilId();
   var sat = liste.map(function(p){
     var xp = (p.id === aktifId) ? (xpBilgi().p || 0) : profilXp(p);
-    return { ad: p.ad || 'Ã–ÄŸrenci', xp: xp };
+    return { ad: p.ad || 'Öğrenci', xp: xp };
   }).sort(function(a, b){ return b.xp - a.xp; });
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ† ' + t('Lider Tablosu') + '</h1>' + '<p>Bu cihazdaki profillerin XP sÄ±ralamasÄ±.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🏆 ' + t('Lider Tablosu') + '</h1>' + '<p>Bu cihazdaki profillerin XP sıralaması.</p></div>';
   h += '<div class="skor-liste">';
   sat.forEach(function(x, i) {
-    h += '<div class="skor-satir"><span>' + (i === 0 ? 'ğŸ¥‡' : i === 1 ? 'ğŸ¥ˆ' : i === 2 ? 'ğŸ¥‰' : (i + 1 + '.')) + ' ' + esc(x.ad) + '</span><span>â­ ' + x.xp + ' XP</span></div>';
+    h += '<div class="skor-satir"><span>' + (i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1 + '.')) + ' ' + esc(x.ad) + '</span><span>⭐ ' + x.xp + ' XP</span></div>';
   });
   h += '</div>';
   ekran.innerHTML = h;
 }
 
-/* ğŸ® Mini oyunlar: HÄ±zlÄ± Matematik DÃ¼eli */
+/* 🎮 Mini oyunlar: Hızlı Matematik Düeli */
 function cizMatDueli() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>âš¡ ' + t('HÄ±zlÄ± Matematik DÃ¼eli') + '</h1>' + '<p>30 saniyede kaÃ§ doÄŸru yaparsÄ±n?</p></div>';
-  h += '<div id="matAlan" class="flash-kart"><div id="matSoru" class="flash-soru">BaÅŸlamak iÃ§in bas</div><div id="matSkor" class="flash-ust">Skor: 0</div></div>';
-  h += '<div class="flash-nav"><button class="btn btn-mor" onclick="matBasla()">â–¶ï¸ BaÅŸla</button> <button class="btn btn-test" onclick="matCevap()">âœï¸ Cevapla</button></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>⚡ ' + t('Hızlı Matematik Düeli') + '</h1>' + '<p>30 saniyede kaç doğru yaparsın?</p></div>';
+  h += '<div id="matAlan" class="flash-kart"><div id="matSoru" class="flash-soru">Başlamak için bas</div><div id="matSkor" class="flash-ust">Skor: 0</div></div>';
+  h += '<div class="flash-nav"><button class="btn btn-mor" onclick="matBasla()">▶️ Başla</button> <button class="btn btn-test" onclick="matCevap()">✏️ Cevapla</button></div>';
   ekran.innerHTML = h;
 }
 function matYeniSoru() {
@@ -5121,44 +5121,44 @@ function matBasla() {
   if (durum.matTimer) clearInterval(durum.matTimer);
   durum.matTimer = setInterval(function(){
     durum.matSure--;
-    var sk = $('matSkor'); if (sk) sk.textContent = 'Skor: ' + (durum.matSkor||0) + ' Â· ' + durum.matSure + 'sn';
+    var sk = $('matSkor'); if (sk) sk.textContent = 'Skor: ' + (durum.matSkor||0) + ' · ' + durum.matSure + 'sn';
     if (durum.matSure <= 0) { clearInterval(durum.matTimer); alert('Bitti! Skor: ' + (durum.matSkor||0)); }
   }, 1000);
 }
 function matCevap() {
-  var v = prompt('KaÃ§?', '');
+  var v = prompt('Kaç?', '');
   if (v !== null && parseInt(v, 10) === durum.matCev) { durum.matSkor = (durum.matSkor||0)+1; xpEkle(1); }
   matYeniSoru();
 }
 
-/* ğŸ”¤ Kelime Bulmaca (scramble) */
+/* 🔤 Kelime Bulmaca (scramble) */
 function cizKelimeBulmaca() {
   var havuz = flashListesi();
-  if (!havuz.length) { ekran.innerHTML = '<button class="geri" onclick="git(\'menu\')">â¬…</button><div class="kucuk-not">Kelime bulunamadÄ±.</div>'; return; }
+  if (!havuz.length) { ekran.innerHTML = '<button class="geri" onclick="git(\'menu\')">⬅</button><div class="kucuk-not">Kelime bulunamadı.</div>'; return; }
   var k = havuz[Math.floor(Math.random()*havuz.length)];
   var kelime = (k.cevap || '').toString().trim();
   if (!kelime) { cizKelimeBulmaca(); return; }
   var kar = kelime.split('').sort(function(){ return Math.random()-0.5; }).join('');
   durum.bulmacaCev = kelime;
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ”¤ ' + t('Kelime Bulmaca') + '</h1>' + '</div>';
-  h += '<div class="flash-kart"><div class="flash-ust">Ä°pucu: ' + esc(k.soru) + '</div><div class="flash-soru">' + kar + '</div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🔤 ' + t('Kelime Bulmaca') + '</h1>' + '</div>';
+  h += '<div class="flash-kart"><div class="flash-ust">İpucu: ' + esc(k.soru) + '</div><div class="flash-soru">' + kar + '</div>';
   h += '<input id="bulmacaGir" type="text" placeholder="Kelimeyi bul" style="margin-top:10px;padding:10px;border-radius:10px;border:2px solid #fff;width:80%"></div></div>';
   h += '<div class="flash-nav"><button class="btn btn-mor" onclick="bulmacaKontrol()">Kontrol Et</button> <button class="btn btn-geri" onclick="cizKelimeBulmaca()">Yeni</button></div>';
   ekran.innerHTML = h;
 }
 function bulmacaKontrol() {
   var v = $('bulmacaGir') ? $('bulmacaGir').value : '';
-  if ((v||'').trim().toLowerCase() === (durum.bulmacaCev||'').toLowerCase()) { alert('DoÄŸru! ğŸ‰'); xpEkle(2); cizKelimeBulmaca(); }
+  if ((v||'').trim().toLowerCase() === (durum.bulmacaCev||'').toLowerCase()) { alert('Doğru! 🎉'); xpEkle(2); cizKelimeBulmaca(); }
   else alert('Tekrar dene.');
 }
 
-/* ğŸ¥ KullanÄ±cÄ± videolarÄ± (medya notu) */
+/* 🎥 Kullanıcı videoları (medya notu) */
 function cizMedya() {
   var m = oku('medya') || [];
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ¥ ' + t('Benim VideolarÄ±m') + '</h1>' + '<p>Kendi anlatÄ±m videonu ekle (cihazda saklanÄ±r).</p></div>';
-  h += '<label class="kucuk-buton" style="background:#6a5cff;cursor:pointer;display:inline-block">ğŸ“¹ Video Ekle<input type="file" accept="video/*" style="display:none" onchange="medyaEkle(event)"></label>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🎥 ' + t('Benim Videolarım') + '</h1>' + '<p>Kendi anlatım videonu ekle (cihazda saklanır).</p></div>';
+  h += '<label class="kucuk-buton" style="background:#6a5cff;cursor:pointer;display:inline-block">📹 Video Ekle<input type="file" accept="video/*" style="display:none" onchange="medyaEkle(event)"></label>';
   h += '<div class="medya-list">';
   m.forEach(function(v, i){
     h += '<div class="medya-kart"><video src="' + v.src + '" controls style="width:100%;border-radius:10px"></video><button class="kucuk-buton" style="background:#e74c3c;margin-top:6px" onclick="medyaSil(' + i + ')">Sil</button></div>';
@@ -5169,14 +5169,14 @@ function cizMedya() {
 function medyaEkle(ev) {
   var f = ev && ev.target && ev.target.files && ev.target.files[0];
   if (!f) return;
-  if (f.size > 8*1024*1024) { alert('Video 8 MB\'dan kÃ¼Ã§Ã¼k olmalÄ±.'); return; }
+  if (f.size > 8*1024*1024) { alert('Video 8 MB\'dan küçük olmalı.'); return; }
   var fr = new FileReader();
   fr.onload = function(e){ var m = oku('medya')||[]; m.push({ src: e.target.result, t: new Date().toLocaleDateString('tr-TR') }); kaydet('medya', m); cizMedya(); };
   fr.readAsDataURL(f);
 }
 function medyaSil(i){ var m = oku('medya')||[]; m.splice(i,1); kaydet('medya', m); cizMedya(); }
 
-/* â™¿ EriÅŸilebilirlik */
+/* ♿ Erişilebilirlik */
 function erisilebilirlikUygula() {
   var p = profilOku();
   if (document.body) {
@@ -5187,9 +5187,9 @@ function erisilebilirlikUygula() {
 function kontrastAcKapa() { var p = profilOku(); p.kontrast = !p.kontrast; kaydet('profil', p); erisilebilirlikUygula(); if (durum.tur === 'profil') cizProfil(); }
 function buyukYaziAcKapa() { var p = profilOku(); p.buyukYazi = !p.buyukYazi; kaydet('profil', p); erisilebilirlikUygula(); if (durum.tur === 'profil') cizProfil(); }
 
-/* ğŸ” AES yedek ÅŸifreleme (Web Crypto PBKDF2 + AES-GCM) */
+/* 🔐 AES yedek şifreleme (Web Crypto PBKDF2 + AES-GCM) */
 function veriExportSifreli(parola, cb) {
-  if (!(window.crypto && window.crypto.subtle)) { cb('ERR: TarayÄ±cÄ± ÅŸifrelemeyi desteklemiyor.'); return; }
+  if (!(window.crypto && window.crypto.subtle)) { cb('ERR: Tarayıcı şifrelemeyi desteklemiyor.'); return; }
   var json = JSON.stringify(veriExportJson());
   var enc = new TextEncoder();
   var salt = window.crypto.getRandomValues(new Uint8Array(16));
@@ -5203,11 +5203,11 @@ function veriExportSifreli(parola, cb) {
   }).catch(function(e){ cb('ERR:' + e.message); });
 }
 function sifreliYedekIndir() {
-  var parola = prompt('YedeÄŸi ÅŸifrelemek iÃ§in parola gir:', '');
+  var parola = prompt('Yedeği şifrelemek için parola gir:', '');
   if (!parola) return;
   veriExportSifreli(parola, function(err, veri){
     if (err) { alert(err); return; }
-    if (typeof Blob === 'undefined' || typeof URL === 'undefined') { alert('TarayÄ±cÄ± desteklemiyor.'); return; }
+    if (typeof Blob === 'undefined' || typeof URL === 'undefined') { alert('Tarayıcı desteklemiyor.'); return; }
     var blob = new Blob([veri], { type: 'application/json' });
     var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'okul-yedek-sifreli.json';
     document.body.appendChild(a); a.click();
@@ -5215,17 +5215,17 @@ function sifreliYedekIndir() {
   });
 }
 
-/* Ã‡oklu dil (arayÃ¼z) - mekanizma + TR/EN/DE Ã§eviri sÃ¶zlÃ¼ÄŸÃ¼ */
+/* Çoklu dil (arayüz) - mekanizma + TR/EN/DE çeviri sözlüğü */
 var DIL_SOZLUK = {
   tr: {},
   en: {
-  'Ana Sayfa':'Home', 'AraÃ§larÄ±m':'Tools', 'GeliÅŸimim':'My Progress', 'Profilim':'My Profile', 'Veli Panosu':'Parent Board', 'Lider Tablosu':'Leaderboard', 'Ã–ÄŸrenme Yolum':'My Learning Path', 'Kelime Bulmaca':'Word Puzzle', 'HaftalÄ±k Ã–zet':'Weekly Summary',   'Anasayfa':'Home', 'Sunum':'Presentation', 'Ã‡alÄ±ÅŸma PlanÄ±':'Study Plan',
-  'BugÃ¼nÃ¼n PlanÄ±':'Today\'s Plan', 'AkÄ±llÄ± gÃ¼nlÃ¼k Ã¶neri':'Smart daily suggestion', 'NotlarÄ±m':'My Notes', 'Konu notlarÄ±n':'Your topic notes', 'Pratik':'Practice', 'HÄ±zlÄ± alÄ±ÅŸtÄ±rma':'Quick drill', 'Hakimiyetim':'My Mastery', 'Genel baÅŸarÄ± durumun':'Your overall progress',
-  'Matematik DÃ¼eli':'Math Duel', 'HÄ±zlÄ± Matematik DÃ¼eli':'Quick Math Duel', 'Benim VideolarÄ±m':'My Videos',
-  'Pomodoro':'Pomodoro', 'SÄ±nav Geri SayÄ±mÄ±':'Exam Countdown', 'Konu Hakimiyeti':'Topic Mastery', 'Bilgi KartlarÄ±':'Study Cards', 'BaÅŸarÄ±larÄ±m':'My Achievements', 'GÃ¼nlÃ¼k GÃ¶revler':'Daily Tasks', 'YanlÄ±ÅŸlarÄ±m':'My Mistakes', 'Tekrar Defterim':'Revision Notebook', 'Ã‡alÄ±ÅŸma Takvimi':'Study Calendar', 'Ders ProgramÄ±m':'My Schedule', 'Mini Oyunlar':'Mini Games', 'Karnem':'My Report Card', 'Takibimdekiler':'My Watchlist', 'KÃ¼tÃ¼phane':'Library', 'HaftalÄ±k YarÄ±ÅŸma':'Weekly Contest', 'Denematik':'Trial Exam', '3B Fen':'3D Science', 'CanlÄ± Dersler':'Live Lessons', 'Etkinlikler':'Activities', 'Fen Deneyleri':'Science Experiments', 'Ã‡Ã¶zÃ¼mlÃ¼ Sorular':'Solved Problems', 'Seviye Belirleme':'Level Assessment', 'Dinleme Metinleri':'Listening Texts', 'Belgeseller':'Documentaries', 'Kodlama AtÃ¶lyesi':'Coding Workshop', 'Konu VideolarÄ±':'Subject Videos', 'KazanÄ±m Listesi':'Learning Outcomes', 'Veri ve Yedek':'Data & Backup', 'Konu Ara':'Find Topic', 'Kelime KartlarÄ±':'Flashcards',
-  'Odaklanma zamanlayÄ±cÄ±sÄ±':'Focus timer', 'SÄ±navÄ±na kaÃ§ gÃ¼n kaldÄ±?':'Days until your exam', 'Neyi ne kadar Ã¶ÄŸrendim?':'What have I learned', 'KaÄŸÄ±t kart gibi Ã§alÄ±ÅŸ':'Study like paper cards', 'Rozetler ve istatistikler':'Badges and stats', 'BugÃ¼nÃ¼n hedefleri':"Today's goals", 'YanlÄ±ÅŸlarÄ± tekrar Ã§Ã¶z':'Redo your mistakes', 'ZayÄ±f konular iÃ§in plan':'Plan for weak topics', 'Son 30 gÃ¼nÃ¼n':'Last 30 days', 'Saate gÃ¶re planla':'Plan by hour', 'Kim Milyoner ve hÄ±z yarÄ±ÅŸÄ±':'Quiz and speed race', 'Son 7 gÃ¼nÃ¼n':'Last 7 days', 'YazdÄ±rÄ±labilir rapor':'Printable report', 'Ä°zlediÄŸin konular':'Topics you follow', 'Oku, bitir, takip et':'Read, finish, track', 'XP topla, Ã¶dÃ¼lÃ¼ kap':'Earn XP, win reward', 'AylÄ±k deneme sÄ±navÄ±':'Monthly mock exam', 'Animasyonlu konular':'Animated topics', 'HaftalÄ±k ders takvimi':'Weekly lesson calendar', 'YazdÄ±rÄ±labilir Ã§alÄ±ÅŸmalar':'Printable worksheets', 'AdÄ±m adÄ±m deneyler':'Step-by-step experiments', 'AdÄ±m adÄ±m Ã§Ã¶zÃ¼mler':'Step-by-step solutions', 'BaÅŸlangÄ±Ã§ testi':'Placement test', 'Dinle ve Ã¶ÄŸren':'Listen and learn', 'Konulu anlatÄ±mlar':'Themed explanations', 'Algoritma ve bloklar':'Algorithms and blocks', 'Ders videolarÄ± havuzu':'Lesson video pool', 'MEB kazanÄ±mlarÄ±':'MEB outcomes', 'Yedekle, geri yÃ¼kle, gÃ¼ncelle':'Backup, restore, update', 'Kelimeyle konu bul':'Find topic by word', 'Ä°ngilizce kelimeler':'English words'
+  'Ana Sayfa':'Home', 'Araçlarım':'Tools', 'Gelişimim':'My Progress', 'Profilim':'My Profile', 'Veli Panosu':'Parent Board', 'Lider Tablosu':'Leaderboard', 'Öğrenme Yolum':'My Learning Path', 'Kelime Bulmaca':'Word Puzzle', 'Haftalık Özet':'Weekly Summary',   'Anasayfa':'Home', 'Sunum':'Presentation', 'Çalışma Planı':'Study Plan',
+  'Bugünün Planı':'Today\'s Plan', 'Akıllı günlük öneri':'Smart daily suggestion', 'Notlarım':'My Notes', 'Konu notların':'Your topic notes', 'Pratik':'Practice', 'Hızlı alıştırma':'Quick drill', 'Hakimiyetim':'My Mastery', 'Genel başarı durumun':'Your overall progress',
+  'Matematik Düeli':'Math Duel', 'Hızlı Matematik Düeli':'Quick Math Duel', 'Benim Videolarım':'My Videos',
+  'Pomodoro':'Pomodoro', 'Sınav Geri Sayımı':'Exam Countdown', 'Konu Hakimiyeti':'Topic Mastery', 'Bilgi Kartları':'Study Cards', 'Başarılarım':'My Achievements', 'Günlük Görevler':'Daily Tasks', 'Yanlışlarım':'My Mistakes', 'Tekrar Defterim':'Revision Notebook', 'Çalışma Takvimi':'Study Calendar', 'Ders Programım':'My Schedule', 'Mini Oyunlar':'Mini Games', 'Karnem':'My Report Card', 'Takibimdekiler':'My Watchlist', 'Kütüphane':'Library', 'Haftalık Yarışma':'Weekly Contest', 'Denematik':'Trial Exam', '3B Fen':'3D Science', 'Canlı Dersler':'Live Lessons', 'Etkinlikler':'Activities', 'Fen Deneyleri':'Science Experiments', 'Çözümlü Sorular':'Solved Problems', 'Seviye Belirleme':'Level Assessment', 'Dinleme Metinleri':'Listening Texts', 'Belgeseller':'Documentaries', 'Kodlama Atölyesi':'Coding Workshop', 'Konu Videoları':'Subject Videos', 'Kazanım Listesi':'Learning Outcomes', 'Veri ve Yedek':'Data & Backup', 'Konu Ara':'Find Topic', 'Kelime Kartları':'Flashcards',
+  'Odaklanma zamanlayıcısı':'Focus timer', 'Sınavına kaç gün kaldı?':'Days until your exam', 'Neyi ne kadar öğrendim?':'What have I learned', 'Kağıt kart gibi çalış':'Study like paper cards', 'Rozetler ve istatistikler':'Badges and stats', 'Bugünün hedefleri':"Today's goals", 'Yanlışları tekrar çöz':'Redo your mistakes', 'Zayıf konular için plan':'Plan for weak topics', 'Son 30 günün':'Last 30 days', 'Saate göre planla':'Plan by hour', 'Kim Milyoner ve hız yarışı':'Quiz and speed race', 'Son 7 günün':'Last 7 days', 'Yazdırılabilir rapor':'Printable report', 'İzlediğin konular':'Topics you follow', 'Oku, bitir, takip et':'Read, finish, track', 'XP topla, ödülü kap':'Earn XP, win reward', 'Aylık deneme sınavı':'Monthly mock exam', 'Animasyonlu konular':'Animated topics', 'Haftalık ders takvimi':'Weekly lesson calendar', 'Yazdırılabilir çalışmalar':'Printable worksheets', 'Adım adım deneyler':'Step-by-step experiments', 'Adım adım çözümler':'Step-by-step solutions', 'Başlangıç testi':'Placement test', 'Dinle ve öğren':'Listen and learn', 'Konulu anlatımlar':'Themed explanations', 'Algoritma ve bloklar':'Algorithms and blocks', 'Ders videoları havuzu':'Lesson video pool', 'MEB kazanımları':'MEB outcomes', 'Yedekle, geri yükle, güncelle':'Backup, restore, update', 'Kelimeyle konu bul':'Find topic by word', 'İngilizce kelimeler':'English words'
 },
-  de: { 'Ana Sayfa':'Start', 'AraÃ§larÄ±m':'Werkzeuge', 'GeliÅŸimim':'Mein Fortschritt', 'Profilim':'Mein Profil', 'Veli Panosu':'Elternbereich', 'Lider Tablosu':'Rangliste', 'Ã–ÄŸrenme Yolum':'Lernweg', 'Kelime Bulmaca':'WortrÃ¤tsel', 'HaftalÄ±k Ã–zet':'WochenÃ¼bersicht' }
+  de: { 'Ana Sayfa':'Start', 'Araçlarım':'Werkzeuge', 'Gelişimim':'Mein Fortschritt', 'Profilim':'Mein Profil', 'Veli Panosu':'Elternbereich', 'Lider Tablosu':'Rangliste', 'Öğrenme Yolum':'Lernweg', 'Kelime Bulmaca':'Worträtsel', 'Haftalık Özet':'Wochenübersicht' }
 };
 function t(metin) {
   var d = (profilOku().dil || 'tr');
@@ -5234,12 +5234,12 @@ function t(metin) {
 }
 function dilDegistir(d) { var p = profilOku(); p.dil = d; kaydet('profil', p); if (durum.tur === 'profil') cizProfil(); if (durum.tur === 'menu') cizMenu(); }
 
-/* ====== YENÄ° Ã–ZELLÄ°KLER 3: Notlar, BugÃ¼nÃ¼n PlanÄ±, Pratik, Hakimiyet ====== */
+/* ====== YENİ ÖZELLİKLER 3: Notlar, Bugünün Planı, Pratik, Hakimiyet ====== */
 
 function notAnahtar(dersId, i) { return dersId + '-' + i; }
 function notListele(dersId, i) { var n = oku('notlar') || {}; return n[notAnahtar(dersId, i)] || []; }
 function notEkle(dersId, i) {
-  var metin = prompt('Bu konu iÃ§in notunu yaz:');
+  var metin = prompt('Bu konu için notunu yaz:');
   if (!metin) return;
   metin = metin.trim();
   if (!metin) return;
@@ -5260,19 +5260,19 @@ function notSil(dersId, i, nid) {
 }
 function cizNotlar() {
   var n = oku('notlar') || {};
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ“ NotlarÄ±m</h1><p>Konulara eklediÄŸin notlar burada listelenir.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>📝 Notlarım</h1><p>Konulara eklediğin notlar burada listelenir.</p></div>';
   var keys = Object.keys(n);
-  if (!keys.length) { h += '<div class="skor-liste">HenÃ¼z not eklemedin. Bir konunun yanÄ±ndaki ğŸ“ Not dÃ¼ÄŸmesini kullan.</div>'; ekran.innerHTML = h; return; }
+  if (!keys.length) { h += '<div class="skor-liste">Henüz not eklemedin. Bir konunun yanındaki 📝 Not düğmesini kullan.</div>'; ekran.innerHTML = h; return; }
   h += '<div class="skor-liste">';
   keys.forEach(function(k) {
     var par = k.split('-'); var dId = par[0]; var ii = par.slice(1).join('-');
     var d = dersBul(seciliSinif(), dId);
-    var baslik = (d ? d.ad : dId) + (d && d.birimler[ii] ? ' Â· ' + d.birimler[ii].ad : '');
+    var baslik = (d ? d.ad : dId) + (d && d.birimler[ii] ? ' · ' + d.birimler[ii].ad : '');
     n[k].forEach(function(x) {
       h += '<div class="not-kart"><div class="not-baslik">' + esc(baslik) + '</div>';
       h += '<div class="not-metin">' + esc(x.metin) + '</div>';
-      h += '<div class="not-alt"><span>' + new Date(x.t).toLocaleDateString('tr-TR') + '</span> <button class="kucuk-buton" style="background:#e74c3c" onclick="notSil(\'' + dId + '\',' + ii + ',' + x.id + ')">Sil</button> <button class="kucuk-buton" style="background:#6a5cff" onclick="konuCalis(\'' + dId + '\',' + ii + ')">ğŸ“– Ã‡alÄ±ÅŸ</button></div></div>';
+      h += '<div class="not-alt"><span>' + new Date(x.t).toLocaleDateString('tr-TR') + '</span> <button class="kucuk-buton" style="background:#e74c3c" onclick="notSil(\'' + dId + '\',' + ii + ',' + x.id + ')">Sil</button> <button class="kucuk-buton" style="background:#6a5cff" onclick="konuCalis(\'' + dId + '\',' + ii + ')">📖 Çalış</button></div></div>';
     });
   });
   h += '</div>';
@@ -5281,37 +5281,37 @@ function cizNotlar() {
 
 function cizBugun() {
   var sinif = seciliSinif() || '6';
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ“… BugÃ¼nÃ¼n PlanÄ±</h1><p>ZayÄ±f konularÄ±n ve tekrar zamanÄ± gelenler Ã¶ncelikli.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>📅 Bugünün Planı</h1><p>Zayıf konuların ve tekrar zamanı gelenler öncelikli.</p></div>';
   var zk = zayifKonular().filter(function(z) { return String(z.s) === String(sinif); });
   var plan = [];
-  zk.slice(0, 3).forEach(function(z) { plan.push({ d: z.d, i: z.i, tur: 'tekrar', metin: 'ZayÄ±f konu: ' + z.b.ad + ' (' + (z.hak === null ? 0 : z.hak) + '%)' }); });
+  zk.slice(0, 3).forEach(function(z) { plan.push({ d: z.d, i: z.i, tur: 'tekrar', metin: 'Zayıf konu: ' + z.b.ad + ' (' + (z.hak === null ? 0 : z.hak) + '%)' }); });
   var info = MUFREDAT[sinif];
   if (info) {
     var bit = oku('biti') || {};
     dis: for (var di = 0; di < info.dersler.length; di++) {
       var d = info.dersler[di];
       for (var bi = 0; bi < d.birimler.length; bi++) {
-        if (!bit[d.id + '-' + bi]) { plan.push({ d: d, i: bi, tur: 'yeni', metin: 'Yeni konu: ' + d.ad + ' Â· ' + d.birimler[bi].ad }); break dis; }
+        if (!bit[d.id + '-' + bi]) { plan.push({ d: d, i: bi, tur: 'yeni', metin: 'Yeni konu: ' + d.ad + ' · ' + d.birimler[bi].ad }); break dis; }
       }
     }
   }
-  if (!plan.length) { h += '<div class="skor-liste">Harika! Ã–ncelikli konun kalmadÄ±. ğŸ† Ä°stersen bir test Ã§Ã¶zebilirsin.</div>'; ekran.innerHTML = h; return; }
+  if (!plan.length) { h += '<div class="skor-liste">Harika! Öncelikli konun kalmadı. 🏆 İstersen bir test çözebilirsin.</div>'; ekran.innerHTML = h; return; }
   h += '<div class="plan-liste">';
   plan.forEach(function(p, idx) {
     h += '<div class="plan-kart"><div class="plan-no">' + (idx + 1) + '</div><div class="plan-ic"><div class="plan-metin">' + esc(p.metin) + '</div><div class="plan-btn">';
-    if (p.tur === 'tekrar') h += '<button class="kucuk-buton" style="background:#e67e22" onclick="konuCalis(\'' + p.d.id + '\',' + p.i + ')">ğŸ“– Ã‡alÄ±ÅŸ</button> <button class="kucuk-buton" style="background:#1f8a70" onclick="testBaslat(\'' + p.d.id + '\',\'' + p.i + '\')">ğŸ§ª Test</button>';
-    else h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="konuCalis(\'' + p.d.id + '\',' + p.i + ')">â–¶ï¸ BaÅŸla</button>';
+    if (p.tur === 'tekrar') h += '<button class="kucuk-buton" style="background:#e67e22" onclick="konuCalis(\'' + p.d.id + '\',' + p.i + ')">📖 Çalış</button> <button class="kucuk-buton" style="background:#1f8a70" onclick="testBaslat(\'' + p.d.id + '\',\'' + p.i + '\')">🧪 Test</button>';
+    else h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="konuCalis(\'' + p.d.id + '\',' + p.i + ')">▶️ Başla</button>';
     h += '</div></div></div>';
   });
   h += '</div>';
   var rb = profilOku().bildirim;
-  h += '<div class="baslik" style="margin-top:18px"><h2>ğŸ”” GÃ¼nlÃ¼k HatÄ±rlatÄ±cÄ±</h2></div>';
-  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:' + (rb ? '#2ecc71' : '#7f8c8d') + '" onclick="bugunHatirlatKur()">' + (rb ? 'ğŸ”” HatÄ±rlatÄ±cÄ± AÃ§Ä±k' : 'ğŸ”• HatÄ±rlatÄ±cÄ±yÄ± AÃ§') + '</button>';
+  h += '<div class="baslik" style="margin-top:18px"><h2>🔔 Günlük Hatırlatıcı</h2></div>';
+  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:' + (rb ? '#2ecc71' : '#7f8c8d') + '" onclick="bugunHatirlatKur()">' + (rb ? '🔔 Hatırlatıcı Açık' : '🔕 Hatırlatıcıyı Aç') + '</button>';
   var saat = profilOku().bildirimSaat || 16;
   h += '<label style="margin-left:8px;font-size:13px">Saat: <input type="number" id="bugunSaat" value="' + saat + '" min="0" max="23" style="width:54px;padding:4px;border-radius:8px;border:1px solid #ccc"></label>';
   h += '</div>';
-  h += '<div class="kucuk-not">AÃ§arsan her gÃ¼n belirlediÄŸin saatte bugÃ¼nÃ¼n planÄ±nÄ± hatÄ±rlatan bildirim gelir.</div>';
+  h += '<div class="kucuk-not">Açarsan her gün belirlediğin saatte bugünün planını hatırlatan bildirim gelir.</div>';
   ekran.innerHTML = h;
 }
 function bugunOzet() {
@@ -5320,10 +5320,10 @@ function bugunOzet() {
   zayifKonular().filter(function(z) { return String(z.s) === String(sinif); }).slice(0, 2).forEach(function(z) { parcalar.push(z.b.ad); });
   if (!parcalar.length) {
     var info = MUFREDAT[sinif]; var bit = oku('biti') || {};
-    if (info) { dis: for (var di = 0; di < info.dersler.length; di++) { var d = info.dersler[di]; for (var bi = 0; bi < d.birimler.length; bi++) { if (!bit[d.id + '-' + bi]) { parcalar.push(d.ad + ' Â· ' + d.birimler[bi].ad); break dis; } } } }
+    if (info) { dis: for (var di = 0; di < info.dersler.length; di++) { var d = info.dersler[di]; for (var bi = 0; bi < d.birimler.length; bi++) { if (!bit[d.id + '-' + bi]) { parcalar.push(d.ad + ' · ' + d.birimler[bi].ad); break dis; } } } }
   }
-  if (!parcalar.length) return 'BugÃ¼nÃ¼n planÄ± hazÄ±r! Bir konu Ã§alÄ±ÅŸ.';
-  return 'BugÃ¼nÃ¼n planÄ±: ' + parcalar.join(', ') + ' â€” hadi Ã§alÄ±ÅŸ!';
+  if (!parcalar.length) return 'Bugünün planı hazır! Bir konu çalış.';
+  return 'Bugünün planı: ' + parcalar.join(', ') + ' — hadi çalış!';
 }
 function bugunHatirlatKur() {
   var p = profilOku();
@@ -5345,20 +5345,20 @@ function cizPratik() {
   if (!durum.pratikAy) durum.pratikAy = { adet: 10, seviye: 'orta', zamanli: false };
   var sinif = seciliSinif() || '6';
   var info = MUFREDAT[sinif];
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ§® Pratik AlÄ±ÅŸtÄ±rma</h1><p>Konuna gÃ¶re soru Ã§Ã¶z ya da hÄ±zlÄ± aritmetik drill yap.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🧮 Pratik Alıştırma</h1><p>Konuna göre soru çöz ya da hızlı aritmetik drill yap.</p></div>';
   var ist = oku('pratikIstat') || { d: 0, y: 0, enIyi: 0 };
   var pg = oku('pratikGun') || {};
   var pseri = 0, pd = new Date();
   while (pg[gunKod(pd)]) { pseri++; pd.setDate(pd.getDate() - 1); }
-  h += '<div class="pratik-istat">ğŸ“ˆ Toplam: <b>' + ist.d + '</b> doÄŸru / <b>' + ist.y + '</b> yanlÄ±ÅŸ Â· ğŸ”¥ En iyi seri: <b>' + ist.enIyi + '</b> Â· ğŸ“… Pratik serisi: <b>' + pseri + '</b> gÃ¼n</div>';
-  h += '<div class="ayar-kutu"><span class="ayar-etiket">Soru sayÄ±sÄ±:</span> ';
+  h += '<div class="pratik-istat">📈 Toplam: <b>' + ist.d + '</b> doğru / <b>' + ist.y + '</b> yanlış · 🔥 En iyi seri: <b>' + ist.enIyi + '</b> · 📅 Pratik serisi: <b>' + pseri + '</b> gün</div>';
+  h += '<div class="ayar-kutu"><span class="ayar-etiket">Soru sayısı:</span> ';
   [5, 10, 15, 20].forEach(function(n) { h += '<button class="kucuk-buton" style="background:' + (durum.pratikAy.adet === n ? '#2ecc71' : '#95a5a6') + '" onclick="pratikAyar(\'adet\',' + n + ')">' + n + '</button> '; });
   h += '</div><div class="ayar-kutu"><span class="ayar-etiket">Seviye:</span> ';
   [['kolay', 'Kolay'], ['orta', 'Orta'], ['zor', 'Zor']].forEach(function(o) { h += '<button class="kucuk-buton" style="background:' + (durum.pratikAy.seviye === o[0] ? '#e67e22' : '#95a5a6') + '" onclick="pratikAyar(\'seviye\',\'' + o[0] + '\')">' + o[1] + '</button> '; });
-  h += '</div><div class="ayar-kutu"><span class="ayar-etiket">ZamanlÄ±:</span> ';
-  h += '<button class="kucuk-buton" style="background:' + (durum.pratikAy.zamanli ? '#e74c3c' : '#95a5a6') + '" onclick="pratikAyar(\'zamanli\', !durum.pratikAy.zamanli)">â±ï¸ ' + (durum.pratikAy.zamanli ? 'AÃ§Ä±k (20sn)' : 'KapalÄ±') + '</button></div>';
-  h += '<div class="baslik" style="margin-top:8px"><h2 style="font-size:16px">ğŸ“š Ders soru bankasÄ±</h2></div>';
+  h += '</div><div class="ayar-kutu"><span class="ayar-etiket">Zamanlı:</span> ';
+  h += '<button class="kucuk-buton" style="background:' + (durum.pratikAy.zamanli ? '#e74c3c' : '#95a5a6') + '" onclick="pratikAyar(\'zamanli\', !durum.pratikAy.zamanli)">⏱️ ' + (durum.pratikAy.zamanli ? 'Açık (20sn)' : 'Kapalı') + '</button></div>';
+  h += '<div class="baslik" style="margin-top:8px"><h2 style="font-size:16px">📚 Ders soru bankası</h2></div>';
   h += '<div class="unit-butonlar">';
   if (info) {
     info.dersler.forEach(function(d) {
@@ -5367,24 +5367,24 @@ function cizPratik() {
   }
   h += '</div>';
   var zsay = (zayifKonular().filter(function(z) { return String(z.s) === String(sinif); })).length;
-  if (zsay > 0) h += '<div class="unit-butonlar" style="margin-top:6px"><button class="kucuk-buton" style="background:#e74c3c" onclick="pratikZayif()">ğŸ¯ ZayÄ±f KonularÄ±m (' + zsay + ')</button></div>';
-  h += '<div class="unit-butonlar" style="margin-top:6px"><button class="kucuk-buton" style="background:#c0392b" onclick="pratikYanlisMod()">ğŸ” YanlÄ±ÅŸlarÄ±mdan Ã‡alÄ±ÅŸ</button></div>';
-  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:16px">âš¡ HÄ±zlÄ± aritmetik</h2></div>';
-  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#2ecc71" onclick="pratikModSec(\'aritmetik\')">ğŸ”¢ KarÄ±ÅŸÄ±k Ä°ÅŸlem</button> <button class="kucuk-buton" style="background:#16a085" onclick="pratikTumDers()">ğŸ”€ TÃ¼m Dersler</button></div>';
+  if (zsay > 0) h += '<div class="unit-butonlar" style="margin-top:6px"><button class="kucuk-buton" style="background:#e74c3c" onclick="pratikZayif()">🎯 Zayıf Konularım (' + zsay + ')</button></div>';
+  h += '<div class="unit-butonlar" style="margin-top:6px"><button class="kucuk-buton" style="background:#c0392b" onclick="pratikYanlisMod()">🔁 Yanlışlarımdan Çalış</button></div>';
+  h += '<div class="baslik" style="margin-top:10px"><h2 style="font-size:16px">⚡ Hızlı aritmetik</h2></div>';
+  h += '<div class="unit-butonlar"><button class="kucuk-buton" style="background:#2ecc71" onclick="pratikModSec(\'aritmetik\')">🔢 Karışık İşlem</button> <button class="kucuk-buton" style="background:#16a085" onclick="pratikTumDers()">🔀 Tüm Dersler</button></div>';
   ekran.innerHTML = h;
 }
 function pratikAyar(k, v) { if (!durum.pratikAy) durum.pratikAy = { adet: 10, seviye: 'orta' }; durum.pratikAy[k] = v; cizPratik(); }
 function pratikZayif() {
   var sinif = seciliSinif() || '6';
   var zk = zayifKonular().filter(function(z) { return String(z.s) === String(sinif); });
-  if (!zk.length) { alert('HenÃ¼z zayÄ±f konun yok. ğŸ‰'); return; }
+  if (!zk.length) { alert('Henüz zayıf konun yok. 🎉'); return; }
   var ay = durum.pratikAy || { adet: 10, seviye: 'orta' };
   var soru = [];
   zk.forEach(function(z) {
     var arr = SORULAR[z.d.id];
     if (arr && arr[z.i]) (arr[z.i] || []).forEach(function(item) { soru.push({ tip: 'sec', metin: item.s, o: item.o, d: item.d, dersId: z.d.id, bi: z.i }); });
   });
-  if (!soru.length) { alert('ZayÄ±f konularÄ±nda soru bulunamadÄ±.'); return; }
+  if (!soru.length) { alert('Zayıf konularında soru bulunamadı.'); return; }
   karistir(soru);
   soru = soru.slice(0, ay.adet);
   durum.pratik = { soru: soru, idx: 0, dogru: 0, yanlis: 0, seri: 0, enIyi: 0, dersId: null, puan: {}, yanlisList: [], hak: false, zamanli: !!ay.zamanli };
@@ -5399,7 +5399,7 @@ function pratikYanlisMod() {
     if (e.ders && !dersBul(sinif, e.ders)) return;
     liste.push({ tip: 'sec', metin: e.s, o: e.o, d: e.dogru, dersId: e.ders, bi: e.u, ana: e.ana });
   });
-  if (!liste.length) { alert('HenÃ¼z kayÄ±tlÄ± yanlÄ±ÅŸÄ±n yok. Soru Ã§Ã¶zÃ¼p yanlÄ±ÅŸ yaptÄ±ÄŸÄ±nda buraya eklenir. ğŸ“'); return; }
+  if (!liste.length) { alert('Henüz kayıtlı yanlışın yok. Soru çözüp yanlış yaptığında buraya eklenir. 📝'); return; }
   karistir(liste);
   var ay = durum.pratikAy || { adet: 10, seviye: 'orta' };
   var soru = liste.slice(0, Math.min(ay.adet, liste.length)).map(function(x) { return { tip: 'sec', metin: x.metin, o: x.o, d: x.d, dersId: x.dersId, bi: x.bi, ana: x.ana }; });
@@ -5415,7 +5415,7 @@ function pratikModSec(mod, dersId) {
   } else {
     var dId = dersId || mod;
     var q = SORULAR[dId];
-    if (!q) { alert('Bu ders iÃ§in soru bankasÄ± boÅŸ.'); return; }
+    if (!q) { alert('Bu ders için soru bankası boş.'); return; }
     var hepsi = [];
     for (var k in q) { (q[k] || []).forEach(function(item, bi) { hepsi.push({ item: item, bi: Number(k) }); }); }
     var pool = hepsi;
@@ -5430,7 +5430,7 @@ function pratikModSec(mod, dersId) {
 }
 function pratikTumDers() {
   var sinif = seciliSinif() || '6';
-  var info = MUFREDAT[sinif]; if (!info) { alert('Ã–nce sÄ±nÄ±fÄ±nÄ± seÃ§.'); return; }
+  var info = MUFREDAT[sinif]; if (!info) { alert('Önce sınıfını seç.'); return; }
   var ay = durum.pratikAy || { adet: 10, seviye: 'orta' };
   var hepsi = [];
   info.dersler.forEach(function(d) {
@@ -5439,7 +5439,7 @@ function pratikTumDers() {
   });
   if (ay.seviye === 'kolay') hepsi = hepsi.filter(function(x) { return x.z === 1; });
   else if (ay.seviye === 'orta') hepsi = hepsi.filter(function(x) { return x.z <= 2; });
-  if (!hepsi.length) { alert('Soru bankasÄ±nda soru bulunamadÄ±.'); return; }
+  if (!hepsi.length) { alert('Soru bankasında soru bulunamadı.'); return; }
   karistir(hepsi);
   var soru = hepsi.slice(0, ay.adet).map(function(x) { return { tip: 'sec', metin: x.metin, o: x.o, d: x.d, dersId: x.dersId, bi: x.bi }; });
   durum.pratik = { soru: soru, idx: 0, dogru: 0, yanlis: 0, seri: 0, enIyi: 0, dersId: null, puan: {}, yanlisList: [], hak: false, zamanli: !!ay.zamanli };
@@ -5447,9 +5447,9 @@ function pratikTumDers() {
 }
 function pratikDersSec(dersId) {
   var d = dersBul(seciliSinif(), dersId); if (!d) return;
-  var h = '<button class="geri" onclick="cizPratik()">â¬… Pratik</button>';
-  h += '<div class="baslik"><h1>ğŸ“š ' + esc(d.ad) + '</h1><p>Bir konu seÃ§, sadece o konudan soru Ã§Ã¶z.</p></div>';
-  h += '<div class="konu-listesi"><button class="kucuk-buton" style="background:#9b59b6" onclick="pratikModSec(\'' + dersId + '\')">ğŸ”€ TÃ¼m Konular (KarÄ±ÅŸÄ±k)</button> ';
+  var h = '<button class="geri" onclick="cizPratik()">⬅ Pratik</button>';
+  h += '<div class="baslik"><h1>📚 ' + esc(d.ad) + '</h1><p>Bir konu seç, sadece o konudan soru çöz.</p></div>';
+  h += '<div class="konu-listesi"><button class="kucuk-buton" style="background:#9b59b6" onclick="pratikModSec(\'' + dersId + '\')">🔀 Tüm Konular (Karışık)</button> ';
   d.birimler.forEach(function(b, i) {
     var n = (SORULAR[dersId] && SORULAR[dersId][i]) ? SORULAR[dersId][i].length : 0;
     if (n) h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="pratikKonuModSec(\'' + dersId + '\',' + i + ')">' + esc(b.ad) + ' (' + n + ')</button> ';
@@ -5467,7 +5467,7 @@ function pratikKonuModSec(dersId, bi) {
   pratikCiz();
 }
 function pratikSesOku() {
-  if (!window.speechSynthesis) { alert('TarayÄ±cÄ± sesli okumayÄ± desteklemiyor.'); return; }
+  if (!window.speechSynthesis) { alert('Tarayıcı sesli okumayı desteklemiyor.'); return; }
   var p = durum.pratik; if (!p) return;
   var s = p.soru[p.idx]; if (!s) return;
   window.speechSynthesis.cancel();
@@ -5489,10 +5489,10 @@ function pratikUret(tur, n, seviye) {
 function pratikSoru(t) {
   var a, b, cevap, metin;
   if (t === 'top') { a = 10 + Math.floor(Math.random() * 89); b = 10 + Math.floor(Math.random() * 89); cevap = a + b; metin = a + ' + ' + b + ' = ?'; }
-  else if (t === 'carp') { a = 2 + Math.floor(Math.random() * 11); b = 2 + Math.floor(Math.random() * 11); cevap = a * b; metin = a + ' Ã— ' + b + ' = ?'; }
-  else if (t === 'bol') { b = 2 + Math.floor(Math.random() * 11); cevap = 2 + Math.floor(Math.random() * 11); a = b * cevap; metin = a + ' Ã· ' + b + ' = ?'; }
-  else if (t === 'kesir') { a = 1 + Math.floor(Math.random() * 5); b = 1 + Math.floor(Math.random() * 5); cevap = +(a / b).toFixed(2); metin = a + '/' + b + ' = ? (ondalÄ±k)'; }
-  else if (t === 'yuzde') { a = 10 * (1 + Math.floor(Math.random() * 19)); b = 10 * (1 + Math.floor(Math.random() * 9)); cevap = a * b / 100; metin = a + ' sayÄ±sÄ±nÄ±n %' + b + '\'si = ?'; }
+  else if (t === 'carp') { a = 2 + Math.floor(Math.random() * 11); b = 2 + Math.floor(Math.random() * 11); cevap = a * b; metin = a + ' × ' + b + ' = ?'; }
+  else if (t === 'bol') { b = 2 + Math.floor(Math.random() * 11); cevap = 2 + Math.floor(Math.random() * 11); a = b * cevap; metin = a + ' ÷ ' + b + ' = ?'; }
+  else if (t === 'kesir') { a = 1 + Math.floor(Math.random() * 5); b = 1 + Math.floor(Math.random() * 5); cevap = +(a / b).toFixed(2); metin = a + '/' + b + ' = ? (ondalık)'; }
+  else if (t === 'yuzde') { a = 10 * (1 + Math.floor(Math.random() * 19)); b = 10 * (1 + Math.floor(Math.random() * 9)); cevap = a * b / 100; metin = a + ' sayısının %' + b + '\'si = ?'; }
   else { var km = 10 * (1 + Math.floor(Math.random() * 9)); cevap = km * 1000; metin = km + ' km = ? m'; }
   return { metin: metin, cevap: cevap };
 }
@@ -5500,23 +5500,23 @@ function pratikCiz() {
   if (durum.pratikTimer) { clearInterval(durum.pratikTimer); durum.pratikTimer = null; }
   var p = durum.pratik; if (!p) { cizPratik(); return; }
   if (p.idx >= p.soru.length) {
-    var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-    h += '<div class="baslik"><h1>âœ… Pratik Bitti</h1></div>';
-    h += '<div class="duel-skor">DoÄŸru: ' + p.dogru + ' / ' + p.soru.length + '</div>';
-    h += '<div class="duel-skor">BaÅŸarÄ±: %' + (p.soru.length ? Math.round(p.dogru / p.soru.length * 100) : 0) + '</div>';
+    var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+    h += '<div class="baslik"><h1>✅ Pratik Bitti</h1></div>';
+    h += '<div class="duel-skor">Doğru: ' + p.dogru + ' / ' + p.soru.length + '</div>';
+    h += '<div class="duel-skor">Başarı: %' + (p.soru.length ? Math.round(p.dogru / p.soru.length * 100) : 0) + '</div>';
     h += '<div class="duel-skor">En iyi seri: ' + p.enIyi + '</div>';
-    if (p.dersId && p.hak) { var dN = p.dersId; try { var dd = dersBul(seciliSinif(), p.dersId); if (dd) dN = dd.ad; } catch (e) {} h += '<div class="kucuk-not" style="text-align:center">SonuÃ§larÄ±n <b>' + esc(dN) + '</b> hakimiyetine iÅŸlendi. ğŸ“Š</div>'; }
+    if (p.dersId && p.hak) { var dN = p.dersId; try { var dd = dersBul(seciliSinif(), p.dersId); if (dd) dN = dd.ad; } catch (e) {} h += '<div class="kucuk-not" style="text-align:center">Sonuçların <b>' + esc(dN) + '</b> hakimiyetine işlendi. 📊</div>'; }
     h += '<div class="unit-butonlar">';
-    if (p.yanlisList.length) h += '<button class="kucuk-buton" style="background:#e67e22" onclick="pratikYanlisTekrar()">ğŸ” YanlÄ±ÅŸlarÄ± Tekrar (' + p.yanlisList.length + ')</button> ';
-    h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="cizPratik()">ğŸ”„ Yeni Tur</button> <button class="kucuk-buton" style="background:#6a5cff" onclick="git(\'menu\')">Bitir</button></div>';
+    if (p.yanlisList.length) h += '<button class="kucuk-buton" style="background:#e67e22" onclick="pratikYanlisTekrar()">🔁 Yanlışları Tekrar (' + p.yanlisList.length + ')</button> ';
+    h += '<button class="kucuk-buton" style="background:#2ecc71" onclick="cizPratik()">🔄 Yeni Tur</button> <button class="kucuk-buton" style="background:#6a5cff" onclick="git(\'menu\')">Bitir</button></div>';
     ekran.innerHTML = h; return;
   }
   var s = p.soru[p.idx];
-  var sureHtml = p.zamanli ? ' Â· â±ï¸ <span id="pratikSure"></span>' : '';
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ§® Pratik</h1><p>Soru ' + (p.idx + 1) + '/' + p.soru.length + ' Â· Seri: ' + p.seri + sureHtml + '</p></div>';
+  var sureHtml = p.zamanli ? ' · ⏱️ <span id="pratikSure"></span>' : '';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🧮 Pratik</h1><p>Soru ' + (p.idx + 1) + '/' + p.soru.length + ' · Seri: ' + p.seri + sureHtml + '</p></div>';
   h += '<div class="duel-soru"><div class="qs">' + esc(s.metin) + '</div>';
-  h += '<div class="duel-cek" style="grid-template-columns:1fr;margin-top:8px"><button class="kucuk-buton" style="background:#8e44ad" onclick="pratikSesOku()">ğŸ”Š Sesli Oku</button></div>';
+  h += '<div class="duel-cek" style="grid-template-columns:1fr;margin-top:8px"><button class="kucuk-buton" style="background:#8e44ad" onclick="pratikSesOku()">🔊 Sesli Oku</button></div>';
   if (s.tip === 'sayi') {
     h += '<div class="puzzle-giris"><input id="pratikCev" type="number" inputmode="decimal" placeholder="Cevap" onkeydown="if(event.key===\'Enter\')pratikKontrol()"></div>';
     h += '<div class="duel-cek" style="grid-template-columns:1fr"><button onclick="pratikKontrol()">Kontrol Et</button></div>';
@@ -5548,7 +5548,7 @@ function pratikKontrol() {
   var el = document.getElementById('pratikCev');
   if (!el) return;
   var val = parseFloat(String(el.value).replace(',', '.'));
-  if (isNaN(val)) { alert('Bir sayÄ± gir.'); return; }
+  if (isNaN(val)) { alert('Bir sayı gir.'); return; }
   pratikSonuc(Math.abs(val - s.cevap) < 0.01, s.cevap);
 }
 function pratikSec(oi) {
@@ -5586,7 +5586,7 @@ function pratikSonuc(dogruMu, dogruCevap) {
     if (!p.puan[bi]) p.puan[bi] = { d: 0, n: 0 };
     p.puan[bi].d += dogruMu ? 1 : 0; p.puan[bi].n += 1;
   }
-  alert(dogruMu ? 'DoÄŸru! ğŸ‰ (+2 XP)' : 'YanlÄ±ÅŸ. DoÄŸru cevap: ' + dogruCevap);
+  alert(dogruMu ? 'Doğru! 🎉 (+2 XP)' : 'Yanlış. Doğru cevap: ' + dogruCevap);
   p.idx++;
   if (p.idx >= p.soru.length && p.dersId && p.hak) {
     for (var bk in p.puan) { if (p.puan.hasOwnProperty(bk)) puanKaydet(p.dersId, p.puan[bk].d, p.puan[bk].n, bk); }
@@ -5606,9 +5606,9 @@ function pratikYanlisTekrar() {
 function cizHakimiyet() {
   var sinif = seciliSinif() || '6';
   var info = MUFREDAT[sinif];
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ“Š Hakimiyetim</h1><p>' + sinif + '. sÄ±nÄ±f genel hakimiyet durumun.</p></div>';
-  if (!info) { h += '<div class="skor-liste">Ã–nce <b>Profilim</b>â€™den sÄ±nÄ±fÄ±nÄ± seÃ§.</div>'; ekran.innerHTML = h; return; }
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>📊 Hakimiyetim</h1><p>' + sinif + '. sınıf genel hakimiyet durumun.</p></div>';
+  if (!info) { h += '<div class="skor-liste">Önce <b>Profilim</b>’den sınıfını seç.</div>'; ekran.innerHTML = h; return; }
   var toplam = 0, adet = 0, enIyiD = '', enKotuD = '', enIyiV = -1, enKotuV = 101;
   info.dersler.forEach(function(d) {
     var top = 0, n = 0;
@@ -5621,18 +5621,18 @@ function cizHakimiyet() {
   });
   var genel = adet ? Math.round(toplam / adet) : 0;
   h += '<div class="hak-ozet">Genel hakimiyet: <b>' + genel + '%</b></div>';
-  h += '<div class="hak-ozet">En gÃ¼Ã§lÃ¼ ders: <b>' + (enIyiD || '-') + ' (' + (enIyiV < 0 ? 0 : enIyiV) + '%)</b></div>';
-  h += '<div class="hak-ozet">GeliÅŸtirilmesi gereken: <b>' + (enKotuD || '-') + ' (' + (enKotuV > 100 ? 0 : enKotuV) + '%)</b></div>';
+  h += '<div class="hak-ozet">En güçlü ders: <b>' + (enIyiD || '-') + ' (' + (enIyiV < 0 ? 0 : enIyiV) + '%)</b></div>';
+  h += '<div class="hak-ozet">Geliştirilmesi gereken: <b>' + (enKotuD || '-') + ' (' + (enKotuV > 100 ? 0 : enKotuV) + '%)</b></div>';
   h += xpGrafikHTML();
   ekran.innerHTML = h;
 }
 
-/* ====== MEB GÃœNCELLEME KONTROL ====== */
+/* ====== MEB GÜNCELLEME KONTROL ====== */
 var mebDurumCache = null;
 var MEB_API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '/api/meb-kontrol' : './meb-guncelleme.json';
 var MEB_STATIK = (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1');
 function mebGuvenceJson(r) {
-  if (!r) return { durum: 'hata', hata: 'API yanÄ±tÄ± yok' };
+  if (!r) return { durum: 'hata', hata: 'API yanıtı yok' };
   var ct = (r.headers.get && r.headers.get('Content-Type')) || '';
   if (ct && ct.indexOf('application/json') === -1) {
     return { durum: 'yok', kontrolTarihi: new Date().toISOString(), yeniProgramlar: [], mebProgramSayisi: 0, kaynak: 'yok' };
@@ -5647,9 +5647,9 @@ function mebBannerHTML() {
   var isimler = mebDurumCache.yeniProgramlar.slice(0, 5).map(function(p) { return p.ad; }).join(', ');
   if (adet > 5) isimler += ' ve +' + (adet - 5) + ' tane daha';
   return '<div class="meb-banner" style="background:linear-gradient(135deg,#3498db,#2ecc71);color:#fff;border-radius:12px;padding:14px 18px;margin-bottom:16px;cursor:pointer" onclick="mebGuncelle()">'
-    + '<b>ğŸ”„ MEB Program GÃ¼ncellemesi!</b><br>'
-    + '<small>' + adet + ' yeni TYMM programÄ± bulundu: ' + esc(isimler) + '</small><br>'
-    + '<small style="opacity:.85">TÄ±kla ve gÃ¼ncelle â€¢ Kontrol: ' + (mebDurumCache.kontrolTarihi ? new Date(mebDurumCache.kontrolTarihi).toLocaleString('tr-TR') : '-') + '</small>'
+    + '<b>🔄 MEB Program Güncellemesi!</b><br>'
+    + '<small>' + adet + ' yeni TYMM programı bulundu: ' + esc(isimler) + '</small><br>'
+    + '<small style="opacity:.85">Tıkla ve güncelle • Kontrol: ' + (mebDurumCache.kontrolTarihi ? new Date(mebDurumCache.kontrolTarihi).toLocaleString('tr-TR') : '-') + '</small>'
     + '</div>';
 }
 function mebKontrolEt(cb) {
@@ -5660,9 +5660,9 @@ function mebKontrolEt(cb) {
   }).catch(function() { if (cb) cb(null); });
 }
 function mebGuncelle() {
-  if (!mebDurumCache || mebDurumCache.durum !== 'var') return alert('GÃ¼ncelleme bulunamadÄ±.');
+  if (!mebDurumCache || mebDurumCache.durum !== 'var') return alert('Güncelleme bulunamadı.');
   var liste = mebDurumCache.yeniProgramlar.map(function(p) { return p.pid + ' - ' + p.ad; }).join('\n');
-  alert('MEB\'de ' + mebDurumCache.yeniProgramlar.length + ' yeni program bulundu:\n\n' + liste + '\n\nYeniden kontrol etmek iÃ§in MenÃ¼den "MEB Program KontrolÃ¼" butonuna bas.');
+  alert('MEB\'de ' + mebDurumCache.yeniProgramlar.length + ' yeni program bulundu:\n\n' + liste + '\n\nYeniden kontrol etmek için Menüden "MEB Program Kontrolü" butonuna bas.');
   mebKontrolEtManuel();
 }
 function mebKontrolEtManuel() {
@@ -5671,24 +5671,24 @@ function mebKontrolEtManuel() {
   fetch(MEB_API_URL).then(mebGuvenceJson).then(function(d) {
     mebDurumCache = d; kaydet('mebDurum', d);
     if (d.durum === 'var') {
-      alert('MEB\'de ' + d.yeniProgramlar.length + ' yeni TYMM programÄ± bulundu!\n\n'
-        + d.yeniProgramlar.map(function(p) { return 'â€¢ PID=' + p.pid + ' ' + p.ad; }).join('\n')
-        + '\n\nTÃ¼m programlar mevcut: ' + d.mebProgramSayisi);
+      alert('MEB\'de ' + d.yeniProgramlar.length + ' yeni TYMM programı bulundu!\n\n'
+        + d.yeniProgramlar.map(function(p) { return '• PID=' + p.pid + ' ' + p.ad; }).join('\n')
+        + '\n\nTüm programlar mevcut: ' + d.mebProgramSayisi);
     } else if (d.durum === 'hata') {
-      alert('Kontrol sÄ±rasÄ±nda hata: ' + (d.hata || 'Bilinmiyor'));
+      alert('Kontrol sırasında hata: ' + (d.hata || 'Bilinmiyor'));
     } else if (d.kaynak === 'yok') {
       alert(MEB_STATIK
-        ? 'MEB kontrol verisi bulunamadÄ±. GitHub sayfasÄ± en son yayÄ±nda otomatik kontrol edildi; site yeniden yayÄ±nlanÄ±nca gÃ¼ncellenir.'
-        : 'MEB kontrolÃ¼ geÃ§ici olarak yapÄ±lamadÄ±. Yerel sunucu ile Ã§alÄ±ÅŸtÄ±rÄ±rsan yeniden denenebilir.');
+        ? 'MEB kontrol verisi bulunamadı. GitHub sayfası en son yayında otomatik kontrol edildi; site yeniden yayınlanınca güncellenir.'
+        : 'MEB kontrolü geçici olarak yapılamadı. Yerel sunucu ile çalıştırırsan yeniden denenebilir.');
     } else {
-      var _not = MEB_STATIK ? '\n(Bu GitHub sayfasÄ±; veri site yayÄ±nlanÄ±nca otomatik kontrol edilir)' : '';
-      alert('GÃ¼ncelleme yok! TÃ¼m TYMM programlarÄ± mevcut.\nToplam program: ' + d.mebProgramSayisi + _not);
+      var _not = MEB_STATIK ? '\n(Bu GitHub sayfası; veri site yayınlanınca otomatik kontrol edilir)' : '';
+      alert('Güncelleme yok! Tüm TYMM programları mevcut.\nToplam program: ' + d.mebProgramSayisi + _not);
     }
     render();
-  }).catch(function(e) { alert('Kontrol hatasÄ±: ' + e.message); });
+  }).catch(function(e) { alert('Kontrol hatası: ' + e.message); });
 }
 
-/* BAÅLANGIÃ‡ */
+/* BAŞLANGIÇ */
 veriEkUygula();
 profilUygula();
 bildirimKur();
@@ -5703,8 +5703,8 @@ if (window.matchMedia) {
 }
 
 /* ============================================================
-   SUPABASE â€” CANLI SINIF YÃ–NETÄ°MÄ° (Ã–ÄŸretmen) + Ã–ÄRENCÄ° BAÄLANTISI
-   BaÄŸÄ±mlÄ±lÄ±k: supa.js (kutuSUPA)
+   SUPABASE — CANLI SINIF YÖNETİMİ (Öğretmen) + ÖĞRENCİ BAĞLANTISI
+   Bağımlılık: supa.js (kutuSUPA)
    ============================================================ */
 function supaDeger(anahtarKey) {
   try { return localStorage.getItem('dersApp_' + anahtarKey) || ''; } catch (e) { return ''; }
@@ -5729,24 +5729,24 @@ function supaMesaj(metin, renk) {
   el.style.color = '#1c2541';
 }
 
-/* ---- Ã–ÄRETMEN: SÄ±nÄ±f YÃ¶netimi ekranÄ± ---- */
+/* ---- ÖĞRETMEN: Sınıf Yönetimi ekranı ---- */
 function sinifGiris() { git('sinifYonet'); }
 function cizSinifYonet() {
-  var h = '<button class="geri" onclick="git(\'ogr\')">â¬… Ã–ÄŸretmen Paneli</button>';
-  h += '<div class="baslik"><h1>ğŸŸ¢ CanlÄ± SÄ±nÄ±f YÃ¶netimi</h1><p>SÄ±nÄ±f kodunu gir; Ã¶ÄŸrencilerini listele, notlarÄ±nÄ± yaz, Ã¶ÄŸrenci verilerini gÃ¶r.</p></div>';
+  var h = '<button class="geri" onclick="git(\'ogr\')">⬅ Öğretmen Paneli</button>';
+  h += '<div class="baslik"><h1>🟢 Canlı Sınıf Yönetimi</h1><p>Sınıf kodunu gir; öğrencilerini listele, notlarını yaz, öğrenci verilerini gör.</p></div>';
   if (!supaHazir()) {
-    h += '<div class="ozet-karti" style="color:#e05656">âš ï¸ Supabase yapÄ±landÄ±rÄ±lmamÄ±ÅŸ.<br><small>supa-config.js iÃ§indeki SUPA_URL ve SUPA_KEY alanlarÄ±nÄ± doldurun.</small></div>';
+    h += '<div class="ozet-karti" style="color:#e05656">⚠️ Supabase yapılandırılmamış.<br><small>supa-config.js içindeki SUPA_URL ve SUPA_KEY alanlarını doldurun.</small></div>';
     ekran.innerHTML = h; return;
   }
   var kod = supaDeger('supaSinifKod');
   h += '<div class="ozet-karti" style="margin-bottom:12px">'
-    + '<label><b>ğŸ“‹ SÄ±nÄ±f Kodu</b></label><br>'
-    + '<input id="supaKod" type="text" value="' + esc(kod) + '" placeholder="Ã¶rn: 6A-KTGP" style="width:100%;padding:8px;margin:6px 0;border:1px solid #ccc;border-radius:8px">'
-    + '<button class="kucuk-buton" style="background:#6a5cff;margin-top:4px" onclick="supaYukleSinif()">ğŸ“¥ SÄ±nÄ±fÄ± YÃ¼kle</button> '
-    + '<button class="kucuk-buton" style="background:#e67e22;margin-top:4px" onclick="supaYeniSinif()">â• Yeni SÄ±nÄ±f AÃ§</button>'
+    + '<label><b>📋 Sınıf Kodu</b></label><br>'
+    + '<input id="supaKod" type="text" value="' + esc(kod) + '" placeholder="örn: 6A-KTGP" style="width:100%;padding:8px;margin:6px 0;border:1px solid #ccc;border-radius:8px">'
+    + '<button class="kucuk-buton" style="background:#6a5cff;margin-top:4px" onclick="supaYukleSinif()">📥 Sınıfı Yükle</button> '
+    + '<button class="kucuk-buton" style="background:#e67e22;margin-top:4px" onclick="supaYeniSinif()">➕ Yeni Sınıf Aç</button>'
     + '</div>';
   h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
-  h += '<div id="supaOgrenciler"><div class="kucuk-not">SÄ±nÄ±f kodunu girip "SÄ±nÄ±fÄ± YÃ¼kle"ye basÄ±n.</div></div>';
+  h += '<div id="supaOgrenciler"><div class="kucuk-not">Sınıf kodunu girip "Sınıfı Yükle"ye basın.</div></div>';
   ekran.innerHTML = h;
 }
 
@@ -5757,40 +5757,40 @@ function supaKodAl() {
 }
 function supaYeniSinif() {
   var kod = supaKodAl();
-  if (!kod) { supaMesaj('Ã–nce bir sÄ±nÄ±f kodu girin (Ã¶rn. 6A-KTGP).', 'kirmizi'); return; }
-  var ad = prompt('SÄ±nÄ±f adÄ± (Ã¶rn. 6-A):', '');
-  var okul = prompt('Okul adÄ±:', '');
-  var sinif = prompt('SÄ±nÄ±f dÃ¼zeyi (5/6/7/8):', '');
-  var ogr = prompt('Ã–ÄŸretmen adÄ±:', (profilOku().ad || ''));
+  if (!kod) { supaMesaj('Önce bir sınıf kodu girin (örn. 6A-KTGP).', 'kirmizi'); return; }
+  var ad = prompt('Sınıf adı (örn. 6-A):', '');
+  var okul = prompt('Okul adı:', '');
+  var sinif = prompt('Sınıf düzeyi (5/6/7/8):', '');
+  var ogr = prompt('Öğretmen adı:', (profilOku().ad || ''));
   kutuSUPA.sinifOlustur(kod, ad || kod, okul, sinif, ogr)
-    .then(function () { supaKaydet('supaSinifKod', kod); supaMesaj('âœ… SÄ±nÄ±f aÃ§Ä±ldÄ±: ' + kod, 'yesil'); supaYukleSinif(); })
+    .then(function () { supaKaydet('supaSinifKod', kod); supaMesaj('✅ Sınıf açıldı: ' + kod, 'yesil'); supaYukleSinif(); })
     .catch(function (e) { supaMesaj('Hata: ' + e.message, 'kirmizi'); });
 }
 function supaYukleSinif() {
   var kod = supaKodAl();
-  if (!kod) { supaMesaj('SÄ±nÄ±f kodu gir.', 'kirmizi'); return; }
+  if (!kod) { supaMesaj('Sınıf kodu gir.', 'kirmizi'); return; }
   supaKaydet('supaSinifKod', kod);
   kutuSUPA.sinifGetir(kod).then(function (snf) {
-    if (!snf) { supaMesaj('Bu kodla kayÄ±tlÄ± sÄ±nÄ±f yok. Bilgilerinizle yeni sÄ±nÄ±f aÃ§Ä±n.', 'kirmizi');
-      document.getElementById('supaOgrenciler').innerHTML = '<div class="kucuk-not">SÄ±nÄ±f bulunamadÄ±.</div>'; return; }
+    if (!snf) { supaMesaj('Bu kodla kayıtlı sınıf yok. Bilgilerinizle yeni sınıf açın.', 'kirmizi');
+      document.getElementById('supaOgrenciler').innerHTML = '<div class="kucuk-not">Sınıf bulunamadı.</div>'; return; }
     kutuSUPA.ogrenciListele(kod).then(function (ogrler) {
-      var h = '<div class="baslik" style="margin-top:4px"><h2>ğŸ‘¥ ' + esc(snf.ad || kod) + ' â€” ' + (ogrler ? ogrler.length : 0) + ' Ã¶ÄŸrenci</h2></div>';
+      var h = '<div class="baslik" style="margin-top:4px"><h2>👥 ' + esc(snf.ad || kod) + ' — ' + (ogrler ? ogrler.length : 0) + ' öğrenci</h2></div>';
       h += '<div class="unit-butonlar" style="margin-bottom:10px">'
-        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaOgrenciEkle()">â• Ã–ÄŸrenci Ekle</button>'
-        + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaOgrenciKoduYazdir()">ğŸ–¨ï¸ EtkinleÅŸtirme KodlarÄ±nÄ± GÃ¶ster</button>'
+        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaOgrenciEkle()">➕ Öğrenci Ekle</button>'
+        + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaOgrenciKoduYazdir()">🖨️ Etkinleştirme Kodlarını Göster</button>'
         + '</div>';
-      if (!ogrler || !ogrler.length) { h += '<div class="kucuk-not">HenÃ¼z Ã¶ÄŸrenci yok. "Ã–ÄŸrenci Ekle" ile ekleyin.</div>'; }
+      if (!ogrler || !ogrler.length) { h += '<div class="kucuk-not">Henüz öğrenci yok. "Öğrenci Ekle" ile ekleyin.</div>'; }
       else {
         ogrler.forEach(function(o) {
           h += '<div style="background:#fff;border:1px solid #dfe4f5;border-radius:10px;padding:10px;margin-bottom:8px">'
             + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
             + '<b style="flex:1">' + esc(o.adsoyad) + '</b>'
-            + '<small style="color:#888">No: ' + esc(o.no || 'â€”') + '</small>'
-            + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaNotGoster(' + o.id + ',\'' + encodeURIComponent(esc(o.adsoyad)) + '\')">ğŸ“ Notlar</button>'
-            + '<button class="kucuk-buton" style="background:#2ecc71" onclick="supaVeriGoster(' + o.id + ')">ğŸ“Š Veri</button>'
-            + '<button class="kucuk-buton" style="background:#e05656" onclick="supaOgrenciSil(' + o.id + ')">ğŸ—‘ï¸</button>'
+            + '<small style="color:#888">No: ' + esc(o.no || '—') + '</small>'
+            + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaNotGoster(' + o.id + ',\'' + encodeURIComponent(esc(o.adsoyad)) + '\')">📝 Notlar</button>'
+            + '<button class="kucuk-buton" style="background:#2ecc71" onclick="supaVeriGoster(' + o.id + ')">📊 Veri</button>'
+            + '<button class="kucuk-buton" style="background:#e05656" onclick="supaOgrenciSil(' + o.id + ')">🗑️</button>'
             + '</div>'
-            + '<div style="margin-top:6px;font-size:11px;color:#888">EtkinleÅŸtirme kodu: <code>' + esc(o.etkinlesme) + '</code></div>'
+            + '<div style="margin-top:6px;font-size:11px;color:#888">Etkinleştirme kodu: <code>' + esc(o.etkinlesme) + '</code></div>'
             + '</div>';
         });
       }
@@ -5801,17 +5801,17 @@ function supaYukleSinif() {
 }
 function supaOgrenciEkle() {
   var kod = supaDeger('supaSinifKod');
-  if (!kod) { supaMesaj('Ã–nce sÄ±nÄ±f kodu gir.', 'kirmizi'); return; }
-  var ad = prompt('Ã–ÄŸrenci adÄ± soyadÄ±:', '');
+  if (!kod) { supaMesaj('Önce sınıf kodu gir.', 'kirmizi'); return; }
+  var ad = prompt('Öğrenci adı soyadı:', '');
   if (!ad) return;
-  var no = prompt('Ã–ÄŸrenci numarasÄ±:', '');
-  var etkin = prompt('EtkinleÅŸtirme kodu (Ã¶ÄŸrenciye vereceksiniz, tekil):', sifreUret(8));
+  var no = prompt('Öğrenci numarası:', '');
+  var etkin = prompt('Etkinleştirme kodu (öğrenciye vereceksiniz, tekil):', sifreUret(8));
   kutuSUPA.ogrenciEkle(kod, no, ad, etkin)
-    .then(function () { supaMesaj('âœ… Ã–ÄŸrenci eklendi. EtkinleÅŸtirme kodu: ' + etkin, 'yesil'); supaYukleSinif(); })
+    .then(function () { supaMesaj('✅ Öğrenci eklendi. Etkinleştirme kodu: ' + etkin, 'yesil'); supaYukleSinif(); })
     .catch(function (e) { supaMesaj('Hata: ' + e.message, 'kirmizi'); });
 }
 function supaOgrenciSil(id) {
-  if (!confirm('Bu Ã¶ÄŸrenciyi ve tÃ¼m verilerini silsin mi?')) return;
+  if (!confirm('Bu öğrenciyi ve tüm verilerini silsin mi?')) return;
   kutuSUPA.ogrenciSil(id).then(function () { supaYukleSinif(); });
 }
 function sifreUret(uzunluk) {
@@ -5822,36 +5822,36 @@ function sifreUret(uzunluk) {
 }
 function supaOgrenciKoduYazdir() {
   var kod = supaDeger('supaSinifKod');
-  if (!kod) { supaMesaj('Ã–nce sÄ±nÄ±f yÃ¼kle.', 'kirmizi'); return; }
+  if (!kod) { supaMesaj('Önce sınıf yükle.', 'kirmizi'); return; }
   kutuSUPA.ogrenciListele(kod).then(function (ogrler) {
-    var h = '<button class="geri" onclick="git(\'sinifYonet\')">â¬… Geri</button>';
-    h += '<div class="baslik"><h1>ğŸ–¨ï¸ EtkinleÅŸtirme KodlarÄ±</h1><p>Her Ã¶ÄŸrenciye kendi kodunu iletin. Ã–ÄŸrenci, uygulamadan "SÄ±nÄ±fa BaÄŸlan" ile bu kodu girince sÄ±nÄ±fÄ±na baÄŸlanÄ±r.</p></div>';
+    var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Geri</button>';
+    h += '<div class="baslik"><h1>🖨️ Etkinleştirme Kodları</h1><p>Her öğrenciye kendi kodunu iletin. Öğrenci, uygulamadan "Sınıfa Bağlan" ile bu kodu girince sınıfına bağlanır.</p></div>';
     h += '<div class="ozet-karti" style="white-space:pre-wrap;font-size:14px">';
-    if (ogrler && ogrler.length) ogrler.forEach(function(o, i) { h += (i + 1) + '. ' + esc(o.adsoyad) + ' â†’ <b>' + esc(o.etkinlesme) + '</b>' + (o.no ? ' (No: ' + esc(o.no) + ')' : '') + '\n'; });
-    else h += 'Ã–ÄŸrenci yok.';
+    if (ogrler && ogrler.length) ogrler.forEach(function(o, i) { h += (i + 1) + '. ' + esc(o.adsoyad) + ' → <b>' + esc(o.etkinlesme) + '</b>' + (o.no ? ' (No: ' + esc(o.no) + ')' : '') + '\n'; });
+    else h += 'Öğrenci yok.';
     h += '</div>';
     var el = document.getElementById('supaOgrenciler');
     if (el) el.innerHTML = h; else { var ana = document.getElementById('supaMesaj'); if (ana) { ana.style.display = 'none'; } ekran.innerHTML = h; }
   });
 }
 
-/* ---- Ã–ÄRETMEN: Not yaz/gÃ¶r ---- */
+/* ---- ÖĞRETMEN: Not yaz/gör ---- */
 function supaNotGoster(id, adEnc) {
   var ad = decodeURIComponent(adEnc);
   kutuSUPA.notListele(id).then(function (notlar) {
-    var h = '<button class="geri" onclick="git(\'sinifYonet\')">â¬… SÄ±nÄ±f</button>';
-    h += '<div class="baslik"><h1>ğŸ“ Notlar â€” ' + esc(ad) + '</h1></div>';
+    var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Sınıf</button>';
+    h += '<div class="baslik"><h1>📝 Notlar — ' + esc(ad) + '</h1></div>';
     h += '<div id="supaNotYeni" class="ozet-karti">'
       + '<b>Not ekle:</b><br>'
-      + '<select id="supaDers"><option value="">Ders seÃ§in</option>';
+      + '<select id="supaDers"><option value="">Ders seçin</option>';
     var sk = seciliSinif();
     if (sk && MUFREDAT[sk]) MUFREDAT[sk].dersler.forEach(function(d) { h += '<option value="' + esc(d.ad) + '">' + esc(d.ad) + '</option>'; });
     h += '</select> '
-        + '<input id="supaNotMetni" type="text" placeholder="Not / deÄŸerlendirme" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
-        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaNotEkle(' + id + ')">ğŸ’¾ Kaydet</button>'
+        + '<input id="supaNotMetni" type="text" placeholder="Not / değerlendirme" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
+        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaNotEkle(' + id + ')">💾 Kaydet</button>'
         + '</div>';
-    h += '<div class="baslik"><h2>Karne NotlarÄ±</h2></div>';
-    if (!notlar || !notlar.length) h += '<div class="kucuk-not">HenÃ¼z not yok.</div>';
+    h += '<div class="baslik"><h2>Karne Notları</h2></div>';
+    if (!notlar || !notlar.length) h += '<div class="kucuk-not">Henüz not yok.</div>';
     else notlar.forEach(function(n) {
       h += '<div class="ozet-karti" style="margin-bottom:6px">'
         + '<b>' + esc(n.ders || 'Ders') + '</b>: ' + esc(n.not_) + '<br>'
@@ -5874,13 +5874,13 @@ function supaNotSil(notId, ogrenciId) {
   kutuSUPA.notSil(notId).then(function () { supaNotGoster(ogrenciId, ''); });
 }
 
-/* ---- Ã–ÄRETMEN: Ã–ÄŸrenci Ã§alÄ±ÅŸma verisi ---- */
+/* ---- ÖĞRETMEN: Öğrenci çalışma verisi ---- */
 function supaVeriGoster(ogrenciId) {
   var alanlar = ['profil', 'puan', 'istatistik', 'aktivite', 'xp', 'odul', 'yanlis', 'tekrar', 'pomo', 'notlar', 'gorevler'];
   Promise.all(alanlar.map(function (a) { return kutuSUPA.veriGetir(ogrenciId, a).then(function (v) { return { alan: a, veri: v }; }); }))
     .then(function (sonuc) {
-      var h = '<button class="geri" onclick="git(\'sinifYonet\')">â¬… SÄ±nÄ±f</button>';
-      h += '<div class="baslik"><h1>ğŸ“Š Ã–ÄŸrenci Ã‡alÄ±ÅŸma Verisi</h1><p>Ã–ÄŸrencinin cihazÄ±ndan senkron edilen veriler.</p></div>';
+      var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Sınıf</button>';
+      h += '<div class="baslik"><h1>📊 Öğrenci Çalışma Verisi</h1><p>Öğrencinin cihazından senkron edilen veriler.</p></div>';
       h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
       sonuc.forEach(function (s) {
         h += '<div class="baslik" style="margin-top:8px"><h2>' + esc(s.alan) + '</h2></div>';
@@ -5890,25 +5890,25 @@ function supaVeriGoster(ogrenciId) {
     }).catch(function (e) { alert('Hata: ' + e.message); });
 }
 
-/* ---- Ã–ÄRENCÄ°: SÄ±nÄ±fa baÄŸlanma ekranÄ± ---- */
+/* ---- ÖĞRENCİ: Sınıfa bağlanma ekranı ---- */
 function cizSbaglan() {
-  var h = '<button class="geri" onclick="git(\'menu\')">â¬… Anasayfa</button>';
-  h += '<div class="baslik"><h1>ğŸ”— SÄ±nÄ±fa BaÄŸlan</h1><p>Ã–ÄŸretmeninin verdiÄŸi <b>etkinleÅŸtirme kodunu</b> gir; sÄ±nÄ±fÄ±na baÄŸlan, Ã§alÄ±ÅŸma verini Ã¶ÄŸretmeninle paylaÅŸ ve notlarÄ±nÄ± gÃ¶r.</p></div>';
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="baslik"><h1>🔗 Sınıfa Bağlan</h1><p>Öğretmeninin verdiği <b>etkinleştirme kodunu</b> gir; sınıfına bağlan, çalışma verini öğretmeninle paylaş ve notlarını gör.</p></div>';
   if (!supaHazir()) {
-    h += '<div class="ozet-karti" style="color:#e05656">âš ï¸ CanlÄ± senkron iÃ§in Supabase yapÄ±landÄ±rmasÄ± gerekli.</div>';
+    h += '<div class="ozet-karti" style="color:#e05656">⚠️ Canlı senkron için Supabase yapılandırması gerekli.</div>';
     ekran.innerHTML = h; return;
   }
   var bagli = supaJsonOku('supaBagli');
   if (bagli && bagli.id) {
-    h += '<div class="ozet-karti" style="background:#e3ffe9;border-color:#1f8a70">âœ… Bu cihaz <b>' + esc(bagli.adsoyad) + '</b> olarak sÄ±nÄ±fa baÄŸlÄ±.<br>'
-      + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaSenkronGonder()">â¬†ï¸ Verilerimi Ã–ÄŸretmene GÃ¶nder</button> '
-      + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaNotlarimGoster()">ğŸ“ NotlarÄ±mÄ± GÃ¶r</button> '
-      + '<button class="kucuk-buton" style="background:#e05656" onclick="supaBaglantiKopar()">Ã‡Ä±k</button>'
+    h += '<div class="ozet-karti" style="background:#e3ffe9;border-color:#1f8a70">✅ Bu cihaz <b>' + esc(bagli.adsoyad) + '</b> olarak sınıfa bağlı.<br>'
+      + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaSenkronGonder()">⬆️ Verilerimi Öğretmene Gönder</button> '
+      + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaNotlarimGoster()">📝 Notlarımı Gör</button> '
+      + '<button class="kucuk-buton" style="background:#e05656" onclick="supaBaglantiKopar()">Çık</button>'
       + '</div>';
   }
   h += '<div class="ozet-karti">'
-    + '<input id="supaKod2" type="text" placeholder="EtkinleÅŸtirme kodu" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0">'
-    + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaBaglan()">ğŸ”— EtkinleÅŸtir ve BaÄŸlan</button>'
+    + '<input id="supaKod2" type="text" placeholder="Etkinleştirme kodu" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0">'
+    + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaBaglan()">🔗 Etkinleştir ve Bağlan</button>'
     + '</div>';
   h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
   ekran.innerHTML = h;
@@ -5916,12 +5916,12 @@ function cizSbaglan() {
 function supaBaglan() {
   var el = document.getElementById('supaKod2');
   var kod = el ? el.value.trim().toUpperCase() : '';
-  if (!kod) { supaMesaj('EtkinleÅŸtirme kodu gir.', 'kirmizi'); return; }
+  if (!kod) { supaMesaj('Etkinleştirme kodu gir.', 'kirmizi'); return; }
   kutuSUPA.ogrencietkinlesme(kod).then(function (ogr) {
-    if (!ogr) { supaMesaj('Bu kodla Ã¶ÄŸrenci bulunamadÄ±. Kodun doÄŸru olduÄŸundan emin ol.', 'kirmizi'); return; }
+    if (!ogr) { supaMesaj('Bu kodla öğrenci bulunamadı. Kodun doğru olduğundan emin ol.', 'kirmizi'); return; }
     kutuSUPA.sinifGetir(ogr.kod).then(function (snf) {
       supaJsonYaz('supaBagli', { id: ogr.id, no: ogr.no, adsoyad: ogr.adsoyad, kod: ogr.kod, sinifAd: (snf && snf.ad) || ogr.kod });
-      supaMesaj('âœ… SÄ±nÄ±fa baÄŸlandÄ±n: ' + (snf && snf.ad ? snf.ad : ogr.kod), 'yesil');
+      supaMesaj('✅ Sınıfa bağlandın: ' + (snf && snf.ad ? snf.ad : ogr.kod), 'yesil');
       cizSbaglan();
     });
   }).catch(function (e) { supaMesaj('Hata: ' + e.message, 'kirmizi'); });
@@ -5931,10 +5931,10 @@ function supaBaglantiKopar() {
   cizSbaglan();
 }
 
-/* ---- Ã–ÄRENCÄ°: Veriyi Ã¶ÄŸretmene gÃ¶nder ---- */
+/* ---- ÖĞRENCİ: Veriyi öğretmene gönder ---- */
 function supaSenkronGonder() {
   var bagli = supaJsonOku('supaBagli');
-  if (!bagli || !bagli.id) { alert('Ã–nce sÄ±nÄ±fa baÄŸlan.'); return; }
+  if (!bagli || !bagli.id) { alert('Önce sınıfa bağlan.'); return; }
   var alanlar = ['profil', 'puan', 'istatistik', 'aktivite', 'xp', 'odul', 'yanlis', 'tekrar', 'pomo', 'notlar', 'gorevler'];
   var oncekiSeri = Promise.resolve();
   var islenen = 0;
@@ -5945,16 +5945,16 @@ function supaSenkronGonder() {
     oncekiSeri = oncekiSeri.then(function () { return kutuSUPA.veriGonder(bagli.id, a, veri); });
     islenen++;
   });
-  oncekiSeri.then(function () { alert('âœ… ' + islenen + ' alan gÃ¶nderildi.'); })
+  oncekiSeri.then(function () { alert('✅ ' + islenen + ' alan gönderildi.'); })
     .catch(function (e) { alert('Hata: ' + e.message); });
 }
 function supaNotlarimGoster() {
   var bagli = supaJsonOku('supaBagli');
-  if (!bagli || !bagli.id) { alert('Ã–nce sÄ±nÄ±fa baÄŸlan.'); return; }
+  if (!bagli || !bagli.id) { alert('Önce sınıfa bağlan.'); return; }
   kutuSUPA.notListele(bagli.id).then(function (notlar) {
-    var h = '<button class="geri" onclick="git(\'sbaglan\')">â¬… Geri</button>';
-    h += '<div class="baslik"><h1>ğŸ“ NotlarÄ±m</h1><p>Ã–ÄŸretmeninin yazdÄ±ÄŸÄ± karne notlarÄ±.</p></div>';
-    if (!notlar || !notlar.length) h += '<div class="kucuk-not">HenÃ¼z not yok.</div>';
+    var h = '<button class="geri" onclick="git(\'sbaglan\')">⬅ Geri</button>';
+    h += '<div class="baslik"><h1>📝 Notlarım</h1><p>Öğretmeninin yazdığı karne notları.</p></div>';
+    if (!notlar || !notlar.length) h += '<div class="kucuk-not">Henüz not yok.</div>';
     else notlar.forEach(function (n) {
       h += '<div class="ozet-karti" style="margin-bottom:6px"><b>' + esc(n.ders || 'Ders') + '</b>: ' + esc(n.not_) + '<br><small style="color:#888">' + (n.tarih ? new Date(n.tarih).toLocaleString('tr-TR') : '') + '</small></div>';
     });
