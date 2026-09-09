@@ -351,7 +351,7 @@ function tabGuncelle() {
 /* ====== ANA SAYFA ====== */
 function cizMenu() {
   var pr = profilOku();
-  var h = '<div class="baslik"><h1>ğŸ“š Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v17</span></h1>';
+  var h = '<div class="baslik"><h1>ğŸ“š Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v18</span></h1>';
   h += '<p>' + (pr.ad ? 'Merhaba ' + esc(pr.ad) + (pr.soyad ? ' ' + esc(pr.soyad) : '') + '! ğŸ‘‹ ' : 'Merhaba! ')
      + (pr.okul ? 'Okul: ' + esc(pr.okul) : '') + (pr.sinif ? (pr.okul ? ' Â· ' : '') + 'SÄ±nÄ±f: ' + esc(pr.sinif) : '') + '</p>';
   h += '<p>SÄ±nÄ±fÄ±nÄ± seÃ§; konularÄ± Ã¶ÄŸren, test Ã§Ã¶z, geliÅŸimini takip et.</p></div>';
@@ -585,7 +585,7 @@ function cizDers() {
     h += '<button class="kucuk-buton" style="background:#e74c3c;margin-top:6px" onclick="fotoSil()">ğŸ—‘ï¸ FotoÄŸrafÄ± KaldÄ±r</button>';
     h += '</div></div>';
   }
-    if (b.ozet) h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="sesliOku(' + i + ')">ğŸ”Š Konuyu Dinle</button>';
+    if (b.ozet) h += '<button class="kucuk-buton" style="background:#1f8a70" onclick="sesliOkuKonu(' + i + ')">ğŸ”Š Konuyu Dinle</button>';
     h += '<button class="kucuk-buton" style="background:#f39c12" onclick="notEkle(\'' + d.id + '\',' + i + ')">ğŸ“ Not</button> ';
     if (b.detay) h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="konuCalis(\'' + d.id + '\',' + i + ')">ğŸ“– Konuyu Ã‡alÄ±ÅŸ</button>';
     h += '<button class="kucuk-buton" style="background:' + (tamam ? '#7f8c8d' : '#2ecc71') + '" onclick="toggleTik(\'' + d.id + '\',' + i + ')">' + (tamam ? 'â†©ï¸ Geri Al' : 'âœ“ TamamladÄ±m') + '</button>';
@@ -3103,7 +3103,7 @@ function cizHarita() {
    h += '<div class="kucuk-not">ğŸ’¡ BoÅŸ liste? Konu Raporuâ€™ndan bir konunun yanÄ±ndaki ğŸ“Œâ€™ye tÄ±kla.</div>';
    ekran.innerHTML = h;
  }
- function sesliOku(i) {
+ function sesliOkuKonu(i) {
   if (!window.speechSynthesis) { alert('TarayÄ±cÄ± sesli okumayÄ± desteklemiyor.'); return; }
   var d = dersBul(durum.sinif, durum.ders);
   var b = d && d.birimler[i];
