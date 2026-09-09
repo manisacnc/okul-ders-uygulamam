@@ -351,7 +351,7 @@ function tabGuncelle() {
 /* ====== ANA SAYFA ====== */
 function cizMenu() {
   var pr = profilOku();
-  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v20</span></h1>';
+  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v21</span></h1>';
   h += '<p>' + (pr.ad ? 'Merhaba ' + esc(pr.ad) + (pr.soyad ? ' ' + esc(pr.soyad) : '') + '! 👋 ' : 'Merhaba! ')
      + (pr.okul ? 'Okul: ' + esc(pr.okul) : '') + (pr.sinif ? (pr.okul ? ' · ' : '') + 'Sınıf: ' + esc(pr.sinif) : '') + '</p>';
   h += '<p>Sınıfını seç; konuları öğren, test çöz, gelişimini takip et.</p></div>';
@@ -1965,30 +1965,35 @@ function internetSesCal(parcalar) {
   ttsDurumGoster("🔊 Oynatılıyor… (internet sesiyle)");
   if (_sesAudio) { try { _sesAudio.pause(); } catch (e) {} _sesAudio = null; }
   _sesParcaIdx = 0;
-  function sonraki() {
-    if (_sesParcaIdx >= parcalar.length) { ttsDurumGoster('✅ Tamamlandı'); _sesAudio = null; return; }
-    var parca = parcalar[_sesParcaIdx];
-    try {
-      var url = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=tr&q=' +
-        encodeURIComponent(parca.slice(0, 180));
-      var a = document.createElement('audio');
-      a.referrerPolicy = 'no-referrer';
-      a.src = url;
-      _sesAudio = a;
-      var denendi = 0;
-      function cal() {
-        a.play().then(function () {}).catch(function () {
-          denendi++;
-          if (denendi < 2) { setTimeout(cal, 400); }
-          else { ttsDurumGoster('⚠️ Ses çalınamadı, cihaz sesine geçiliyor…'); _sesAudio = null; ttsYedekOku(parcalar); }
-        });
-      }
-      a.onended = function () { _sesParcaIdx++; sonraki(); };
-      a.onerror = function () { ttsDurumGoster('⚠️ Ses getirilemedi, cihaz sesine geçiliyor…'); _sesAudio = null; ttsYedekOku(parcalar); };
-      if (a.play) cal();
-    } catch (e) { ttsDurumGoster('⚠️ Ses hatası, cihaz sesine geçiliyor…'); _sesAudio = null; ttsYedekOku(parcalar); }
+  function parcaOynat(idx) {
+    if (idx >= parcalar.length) { ttsDurumGoster('✅ Tamamlandı'); _sesAudio = null; return; }
+    _sesParcaIdx = idx;
+    var parca = parcalar[idx];
+    var url = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=tr&q=' +
+      encodeURIComponent(parca.slice(0, 180));
+    var a = document.createElement('audio');
+    a.referrerPolicy = 'no-referrer';
+    a.playsInline = true;
+    a.preload = 'auto';
+    a.src = url;
+    _sesAudio = a;
+    var basladi = false, deneme = 0;
+    function basla() {
+      if (basladi) return;
+      var p = a.play();
+      if (p) p.then(function () { basladi = true; }).catch(function () {
+        deneme++;
+        if (!basladi && deneme < 10 && a.readyState < 4) { setTimeout(basla, 400); }
+        else if (!basladi) { ttsDurumGoster('⚠️ Ses çalınamadı, cihaz sesine geçiliyor…'); _sesAudio = null; ttsYedekOku(parcalar.slice(idx)); }
+      });
+    }
+    a.addEventListener('canplay', basla);
+    a.addEventListener('canplaythrough', basla);
+    a.onended = function () { parcaOynat(idx + 1); };
+    a.onerror = function () { ttsDurumGoster('⚠️ Ses getirilemedi, cihaz sesine geçiliyor…'); _sesAudio = null; ttsYedekOku(parcalar.slice(idx)); };
+    setTimeout(basla, 250);
   }
-  sonraki();
+  parcaOynat(0);
 }
 var _ttsParcalar = [];
 var _ttsParcaIdx = 0;
