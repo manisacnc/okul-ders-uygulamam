@@ -104,6 +104,77 @@ var kutuSUPA = (function () {
     return DELETE('ogrenci_detay', 'id=eq.' + id);
   }
 
+  /* ===== YOKLAMA ===== */
+  function yoklamaKaydet(ogrenciId, tarih, durum, not_) {
+    return POST('yoklama', { ogrenci_id: ogrenciId, tarih: tarih || null, durum: durum, not_: not_ || '' })
+      .then(function (a) { return a[0]; });
+  }
+  function yoklamaGuncelle(id, durum, not_) {
+    return PATCH('yoklama', 'id=eq.' + id, { durum: durum, not_: not_ || '' });
+  }
+  function yoklamaSil(id) {
+    return DELETE('yoklama', 'id=eq.' + id);
+  }
+  // Sınıf koduna göre belirli bir tarihteki yoklamaları getir (join ogrenciler)
+  function yoklamaTarihe(sorguTarih) {
+    return GET('yoklama', 'select=*')
+      .then(function (a) { return (a || []).filter(function (r) {
+        return r.tarih && String(r.tarih).slice(0, 10) === (sorguTarih || '');
+      }); });
+  }
+
+  /* ===== SINAV / ÖDEV NOT GİRİŞİ ===== */
+  function sinavListele(kod) {
+    return GET('sinav', 'kod=eq.' + encodeURIComponent(kod) + '&select=*&order=olusturma.desc');
+  }
+  function sinavOlustur(kod, ad, tur, tarih) {
+    return POST('sinav', { kod: kod, ad: ad, tur: tur, tarih: tarih || null })
+      .then(function (a) { return a[0]; });
+  }
+  function sinavSil(id) {
+    return DELETE('sinav', 'id=eq.' + id);
+  }
+  function sinavNotListele(sinavId) {
+    return GET('sinav_not', 'sinav_id=eq.' + sinavId + '&select=*')
+      .then(function (a) { return a || []; });
+  }
+  function sinavNotKaydet(sinavId, ogrenciId, not_) {
+    return POST('sinav_not', { sinav_id: sinavId, ogrenci_id: ogrenciId, not_: not_ })
+      .then(function (a) { return a[0]; });
+  }
+  function sinavNotGuncelle(id, not_) {
+    return PATCH('sinav_not', 'id=eq.' + id, { not_: not_ });
+  }
+
+  /* ===== DAVRANIŞ ===== */
+  function davranisKaydet(ogrenciId, tarih, puan, aciklama) {
+    return POST('davranis', { ogrenci_id: ogrenciId, tarih: tarih || null, puan: puan, aciklama: aciklama || '' })
+      .then(function (a) { return a[0]; });
+  }
+  function davranisSil(id) {
+    return DELETE('davranis', 'id=eq.' + id);
+  }
+
+  /* ===== Sınıf Duyurusu ===== */
+  function duyuruListele(kod) {
+    return GET('duyuru', 'kod=eq.' + encodeURIComponent(kod) + '&select=*&order=olusturma.desc');
+  }
+  function duyuruEkle(kod, baslik, metin) {
+    return POST('duyuru', { kod: kod, baslik: baslik, metin: metin })
+      .then(function (a) { return a[0]; });
+  }
+  function duyuruSil(id) {
+    return DELETE('duyuru', 'id=eq.' + id);
+  }
+
+  /* ===== GENEL SORGULAR (öğrenci dosyası + rapor) ===== */
+  function ogrenciAll(ogrenciId) {
+    return Promise.all([
+        GET('yoklama', 'ogrenci_id=eq.' + ogrenciId + '&select=*'),
+        GET('davranis', 'ogrenci_id=eq.' + ogrenciId + '&select=*')
+      ]).then(function (r) { return { yoklama: r[0] || [], davranis: r[1] || [] }; });
+  }
+
   /* ===== ÖĞRENCİ VERİ SENKRONU ===== */
   // Öğrencinin tüm çalışma verisini (bir alan) gönder. Upsert mantığı.
   function veriGonder(ogrenciId, alan, veri) {
@@ -137,6 +208,22 @@ var kutuSUPA = (function () {
     detayListele: detayListele,
     detayEkle: detayEkle,
     detaySil: detaySil,
+    yoklamaKaydet: yoklamaKaydet,
+    yoklamaGuncelle: yoklamaGuncelle,
+    yoklamaSil: yoklamaSil,
+    yoklamaTarihe: yoklamaTarihe,
+    sinavListele: sinavListele,
+    sinavOlustur: sinavOlustur,
+    sinavSil: sinavSil,
+    sinavNotListele: sinavNotListele,
+    sinavNotKaydet: sinavNotKaydet,
+    sinavNotGuncelle: sinavNotGuncelle,
+    davranisKaydet: davranisKaydet,
+    davranisSil: davranisSil,
+    duyuruListele: duyuruListele,
+    duyuruEkle: duyuruEkle,
+    duyuruSil: duyuruSil,
+    ogrenciAll: ogrenciAll,
     veriGonder: veriGonder,
     veriGetir: veriGetir
   };
