@@ -31,6 +31,16 @@ var kutuSUPA = (function () {
         return r.json();
       });
   }
+  /* Upsert: kayıt varsa günceller (409 çakışmasını önler) */
+  function UPSERT(tablo, sorgu, gövde) {
+    var h = header();
+    h.Prefer = 'return=representation,resolution=merge-duplicates';
+    return fetch(base() + '/' + tablo + (sorgu ? '?' + sorgu : ''), { method: 'POST', headers: h, body: JSON.stringify(gövde) })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
+  }
   function PATCH(tablo, sorgu, gövde) {
     return fetch(base() + '/' + tablo + '?' + sorgu, { method: 'PATCH', headers: header(), body: JSON.stringify(gövde) })
       .then(function (r) {
@@ -106,8 +116,8 @@ var kutuSUPA = (function () {
 
   /* ===== YOKLAMA ===== */
   function yoklamaKaydet(ogrenciId, tarih, durum, not_) {
-    return POST('yoklama', { ogrenci_id: ogrenciId, tarih: tarih || null, durum: durum, not_: not_ || '' })
-      .then(function (a) { return a[0]; });
+    return UPSERT('yoklama', 'on_conflict=ogrenci_id,tarih', { ogrenci_id: ogrenciId, tarih: tarih || null, durum: durum, not_: not_ || '' })
+      .then(function (a) { return a && a[0]; });
   }
   function yoklamaGuncelle(id, durum, not_) {
     return PATCH('yoklama', 'id=eq.' + id, { durum: durum, not_: not_ || '' });
@@ -139,8 +149,8 @@ var kutuSUPA = (function () {
       .then(function (a) { return a || []; });
   }
   function sinavNotKaydet(sinavId, ogrenciId, not_) {
-    return POST('sinav_not', { sinav_id: sinavId, ogrenci_id: ogrenciId, not_: not_ })
-      .then(function (a) { return a[0]; });
+    return UPSERT('sinav_not', 'on_conflict=sinav_id,ogrenci_id', { sinav_id: sinavId, ogrenci_id: ogrenciId, not_: not_ })
+      .then(function (a) { return a && a[0]; });
   }
   function sinavNotGuncelle(id, not_) {
     return PATCH('sinav_not', 'id=eq.' + id, { not_: not_ });
