@@ -90,6 +90,20 @@ var kutuSUPA = (function () {
     return DELETE('notlar', 'id=eq.' + id);
   }
 
+  /* ===== ÖĞRENCİ DOSYASI (öğretmen kayıtları: devamsızlık / çalışma / konu) ===== */
+  function detayListele(ogrenciId) {
+    return GET('ogrenci_detay', 'ogrenci_id=eq.' + ogrenciId + '&select=*&order=olusturma.desc')
+      .then(function (a) { return a || []; });
+  }
+  function detayEkle(ogrenciId, tip, tarih, alan, deger, aciklama) {
+    return POST('ogrenci_detay', {
+      ogrenci_id: ogrenciId, tip: tip, tarih: (tarih || null), alan: alan, deger: deger, aciklama: aciklama
+    }).then(function (a) { return a[0]; });
+  }
+  function detaySil(id) {
+    return DELETE('ogrenci_detay', 'id=eq.' + id);
+  }
+
   /* ===== ÖĞRENCİ VERİ SENKRONU ===== */
   // Öğrencinin tüm çalışma verisini (bir alan) gönder. Upsert mantığı.
   function veriGonder(ogrenciId, alan, veri) {
@@ -120,6 +134,9 @@ var kutuSUPA = (function () {
     notListele: notListele,
     notGuncelle: notGuncelle,
     notSil: notSil,
+    detayListele: detayListele,
+    detayEkle: detayEkle,
+    detaySil: detaySil,
     veriGonder: veriGonder,
     veriGetir: veriGetir
   };

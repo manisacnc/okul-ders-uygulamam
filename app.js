@@ -377,7 +377,7 @@ function menBolum(id, ad, ozet, icerik) {
 
 function cizMenu() {
   var pr = profilOku();
-  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v23</span></h1>';
+  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v24</span></h1>';
   h += '<p>' + (pr.ad ? 'Merhaba ' + esc(pr.ad) + (pr.soyad ? ' ' + esc(pr.soyad) : '') + '! 👋 ' : 'Merhaba! ')
      + (pr.okul ? 'Okul: ' + esc(pr.okul) : '') + (pr.sinif ? (pr.okul ? ' · ' : '') + 'Sınıf: ' + esc(pr.sinif) : '') + '</p>';
   h += '<p>Sınıfını seç; konuları öğren, test çöz, gelişimini takip et.</p></div>';
@@ -5819,6 +5819,7 @@ function supaYukleSinif() {
             + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
             + '<b style="flex:1">' + esc(o.adsoyad) + '</b>'
             + '<small style="color:#888">No: ' + esc(o.no || '—') + '</small>'
+            + '<button class="kucuk-buton" style="background:#e67e22" onclick="supaDosyaGoster(' + o.id + ',\'' + encodeURIComponent(esc(o.adsoyad)) + '\')">📂 Dosya</button>'
             + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaNotGoster(' + o.id + ',\'' + encodeURIComponent(esc(o.adsoyad)) + '\')">📝 Notlar</button>'
             + '<button class="kucuk-buton" style="background:#2ecc71" onclick="supaVeriGoster(' + o.id + ')">📊 Veri</button>'
             + '<button class="kucuk-buton" style="background:#e05656" onclick="supaOgrenciSil(' + o.id + ')">🗑️</button>'
@@ -5993,4 +5994,107 @@ function supaNotlarimGoster() {
     });
     ekran.innerHTML = h;
   }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+
+/* ---- ÖĞRETMEN: Öğrenci Dosyası (notlar + devamsızlık + çalışmalar + konular) ---- */
+var supaDosya = { id: 0, ad: '' };
+function supaDosyaGoster(ogrenciId, adEnc) {
+  if (ogrenciId && adEnc) { supaDosya.id = ogrenciId; supaDosya.ad = decodeURIComponent(adEnc); }
+  var p = supaDosya;
+  if (!p.id) { alert('Öğrenci seçilmedi.'); return; }
+  Promise.all([kutuSUPA.notListele(p.id), kutuSUPA.detayListele(p.id)])
+    .then(function (rz) {
+      var notlar = rz[0] || [], rd = rz[1] || [];
+      var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Sınıf</button>';
+      h += '<div class="baslik"><h1>📂 Öğrenci Dosyası — ' + esc(p.ad) + '</h1><p>Karne notları, devamsızlık, çalışmalar ve konu durumları tek yerden.</p></div>';
+      h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
+
+      h += '<div class="baslik" style="margin-top:10px"><h2>📝 Karne Notları</h2></div>';
+      h += '<div class="ozet-karti"><b>Not ekle:</b><br><select id="supaDers"><option value="">Ders seçin</option>';
+      var sk = seciliSinif();
+      if (sk && MUFREDAT[sk]) MUFREDAT[sk].dersler.forEach(function (d) { h += '<option value="' + esc(d.ad) + '">' + esc(d.ad) + '</option>'; });
+      h += '</select> '
+        + '<input id="supaNotMetni" type="text" placeholder="Not / değerlendirme" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
+        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaDosyaNotEkle()">💾 Not Kaydet</button></div>';
+      if (!notlar.length) h += '<div class="kucuk-not">Henüz not yok.</div>';
+      else notlar.forEach(function (n) {
+        h += '<div class="ozet-karti" style="margin-bottom:6px"><b>' + esc(n.ders || 'Ders') + '</b>: ' + esc(n.not_) + '<br>'
+          + '<small style="color:#888">' + (n.tarih ? new Date(n.tarih).toLocaleString('tr-TR') : '') + '</small> '
+          + '<button class="kucuk-buton" style="background:#e05656" onclick="supaDosyaNotSil(' + n.id + ')">Sil</button></div>';
+      });
+
+      h += '<div class="baslik" style="margin-top:10px"><h2>📅 Devamsızlıklar</h2></div>';
+      h += '<div class="ozet-karti">Tarih: <input type="date" id="dvDTarih" style="padding:6px"> Gün: <input type="number" id="dvDGun" min="1" max="366" placeholder="1" style="width:70px;padding:6px"> '
+        + '<input id="dvDAcik" type="text" placeholder="Sebep / açıklama" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
+        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaDosyaDetayEkle(\'devamsizlik\')">➕ Ekle</button></div>';
+      var devam = rd.filter(function (r) { return r.tip === 'devamsizlik'; });
+      if (!devam.length) h += '<div class="kucuk-not">Devamsızlık kaydı yok.</div>';
+      else devam.forEach(function (r) {
+        h += '<div class="ozet-karti" style="margin-bottom:6px">📅 <b>' + (r.tarih ? esc(r.tarih) : 'tarihsiz') + '</b>' + (r.deger ? ' · <b>' + esc(r.deger) + '</b> gün' : '') + ' ' + esc(r.aciklama || '') + ' '
+          + '<button class="kucuk-buton" style="background:#e05656" onclick="supaDosyaDetaySil(' + r.id + ')">Sil</button></div>';
+      });
+
+      h += '<div class="baslik" style="margin-top:10px"><h2>📚 Çalışmalar</h2></div>';
+      h += '<div class="ozet-karti">Tarih: <input type="date" id="dvCTarih" style="padding:6px"> '
+        + '<input id="dvCBaslik" type="text" placeholder="Çalışma başlığı" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
+        + '<input id="dvCSonuc" type="text" placeholder="Sonuç / puan (opsiyonel)" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
+        + '<input id="dvCAcik" type="text" placeholder="Açıklama" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
+        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaDosyaDetayEkle(\'calisma\')">➕ Ekle</button></div>';
+      var calis = rd.filter(function (r) { return r.tip === 'calisma'; });
+      if (!calis.length) h += '<div class="kucuk-not">Çalışma kaydı yok.</div>';
+      else calis.forEach(function (r) {
+        h += '<div class="ozet-karti" style="margin-bottom:6px">📚 <b>' + esc(r.alan || '') + '</b>' + (r.deger ? ' → ' + esc(r.deger) : '') + (r.tarih ? ' <small style="color:#888">(' + esc(r.tarih) + ')</small>' : '') + '<br>' + esc(r.aciklama || '') + ' '
+          + '<button class="kucuk-buton" style="background:#e05656" onclick="supaDosyaDetaySil(' + r.id + ')">Sil</button></div>';
+      });
+
+      h += '<div class="baslik" style="margin-top:10px"><h2>🎯 Konu Durumları</h2></div>';
+      h += '<div class="ozet-karti">Tarih: <input type="date" id="dvKTarih" style="padding:6px"> '
+        + '<input id="dvKAd" type="text" placeholder="Konu adı" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
+        + '<select id="dvKSeviye" style="padding:8px;border-radius:8px;border:2px solid #dfe5f0">'
+        + '<option value="Zayıf">Zayıf</option><option value="Gelişiyor">Gelişiyor</option><option value="Orta">Orta</option><option value="İyi">İyi</option><option value="Çok iyi">Çok iyi</option></select> '
+        + '<input id="dvKAcik" type="text" placeholder="Açıklama" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
+        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaDosyaDetayEkle(\'konu\')">➕ Ekle</button></div>';
+      var konu = rd.filter(function (r) { return r.tip === 'konu'; });
+      if (!konu.length) h += '<div class="kucuk-not">Konu kaydı yok.</div>';
+      else konu.forEach(function (r) {
+        h += '<div class="ozet-karti" style="margin-bottom:6px">🎯 <b>' + esc(r.alan || '') + '</b> · ' + esc(r.deger || '') + (r.tarih ? ' <small style="color:#888">(' + esc(r.tarih) + ')</small>' : '') + '<br>' + esc(r.aciklama || '') + ' '
+          + '<button class="kucuk-buton" style="background:#e05656" onclick="supaDosyaDetaySil(' + r.id + ')">Sil</button></div>';
+      });
+
+      ekran.innerHTML = h;
+    }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaDosyaYenile() { if (supaDosya.id) supaDosyaGoster(supaDosya.id, ''); }
+function supaDosyaNotEkle() {
+  var ders = document.getElementById('supaDers'), metin = document.getElementById('supaNotMetni');
+  if (!ders || !metin || !ders.value || !metin.value.trim()) { alert('Ders ve not girin.'); return; }
+  kutuSUPA.notEkle(supaDosya.id, ders.value, metin.value.trim())
+    .then(function () { supaDosyaYenile(); }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaDosyaNotSil(notId) {
+  kutuSUPA.notSil(notId).then(function () { supaDosyaYenile(); }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaDosyaDetayEkle(tip) {
+  var v = { tarih: '', alan: '', deger: '', aciklama: '' };
+  if (tip === 'devamsizlik') {
+    v.tarih = document.getElementById('dvDTarih').value;
+    v.deger = document.getElementById('dvDGun').value;
+    v.aciklama = document.getElementById('dvDAcik').value.trim();
+  } else if (tip === 'calisma') {
+    v.tarih = document.getElementById('dvCTarih').value;
+    v.alan = document.getElementById('dvCBaslik').value.trim();
+    v.deger = document.getElementById('dvCSonuc').value.trim();
+    v.aciklama = document.getElementById('dvCAcik').value.trim();
+  } else if (tip === 'konu') {
+    v.tarih = document.getElementById('dvKTarih').value;
+    v.alan = document.getElementById('dvKAd').value.trim();
+    v.deger = document.getElementById('dvKSeviye').value;
+    v.aciklama = document.getElementById('dvKAcik').value.trim();
+  }
+  if (!v.alan && !v.deger && !v.aciklama) { alert('Bir alan doldurun.'); return; }
+  kutuSUPA.detayEkle(supaDosya.id, tip, v.tarih || null, v.alan, v.deger, v.aciklama)
+    .then(function () { supaDosyaYenile(); }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaDosyaDetaySil(detayId) {
+  kutuSUPA.detaySil(detayId).then(function () { supaDosyaYenile(); }).catch(function (e) { alert('Hata: ' + e.message); });
 }
