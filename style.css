@@ -409,6 +409,26 @@ body.gece .pomo-gun { color: #9aa6c2; }
 .arac-ikon { display: block; font-size: 30px; margin-bottom: 6px; }
 .arac small { font-weight: 500; color: #8b97ad; font-size: 12px; }
 
+/* ====== ANA SAYFA BÖLÜMLERİ (accordeon) ====== */
+.menu-bolum { background: #fff; border: 1px solid #dfe5f0; border-radius: 16px; margin-bottom: 14px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,.04); }
+.menu-bolum-baslik { display: flex; align-items: center; gap: 10px; width: 100%; background: #fff; border: none; padding: 14px 16px; font-size: 15px; font-weight: 800; color: #243145; cursor: pointer; text-align: left; }
+.menu-bolum-baslik:hover { background: #f7f9fd; }
+.menu-bolum-ad { font-size: 16px; font-weight: 800; }
+.menu-bolum-ozet { flex: 1; font-size: 12px; font-weight: 600; color: #8b97ad; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.menu-bolum-ok { font-size: 12px; color: #9aa0b5; transition: transform .2s; }
+.menu-bolum-baslik.kapali .menu-bolum-ok { transform: rotate(-90deg); }
+.menu-bolum-ic { padding: 4px 14px 14px; }
+.menu-bolum-ic.kapali { display: none; }
+.menu-bolum-ic .ozet-karti { box-shadow: none; margin-top: 8px; }
+body.gece .menu-bolum, body.gece .menu-bolum-baslik { background: #232b3b; border-color: #39415a; }
+body.gece .menu-bolum-baslik:hover { background: #2a3347; }
+body.gece .menu-bolum-ad { color: #eef1f8; }
+body.gece .menu-bolum-ozet, body.gece .menu-bolum-ok { color: #6b7791; }
+[data-theme="dark"] .menu-bolum, [data-theme="dark"] .menu-bolum-baslik { background: #232b3b; border-color: #39415a; }
+[data-theme="dark"] .menu-bolum-baslik:hover { background: #2a3347; }
+[data-theme="dark"] .menu-bolum-ad { color: #eef1f8; }
+[data-theme="dark"] .menu-bolum-ozet, [data-theme="dark"] .menu-bolum-ok { color: #6b7791; }
+
 /* Seviye seçimi */
 .seviye-satir { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; font-size: 13px; font-weight: 700; color: #5c5f73; }
 .zbut { border: 2px solid #dfe5f0; background: #fbfcfe; border-radius: 20px; padding: 5px 12px; font-size: 13px; font-weight: 700; cursor: pointer; color: #243145; }

@@ -349,9 +349,35 @@ function tabGuncelle() {
 }
 
 /* ====== ANA SAYFA ====== */
+var accVarsay = { durum: true, araclar: true, meb: true, siniflar: false, oneriler: false };
+function accDurum(id) {
+  var k = oku('acc') || {};
+  return k[id] !== undefined ? k[id] : (accVarsay[id] !== undefined ? accVarsay[id] : true);
+}
+function accAcKapat(id) {
+  var k = oku('acc') || {};
+  k[id] = !accDurum(id);
+  kaydet('acc', k);
+  var ic = $('acc-' + id), bsl = $('baslik-' + id);
+  if (ic) ic.classList.toggle('kapali', k[id]);
+  if (bsl) bsl.classList.toggle('kapali', k[id]);
+}
+function menBolumBaslik(id, ad, ozet) {
+  var kapali = accDurum(id);
+  return '<div class="menu-bolum">' +
+    '<button id="baslik-' + id + '" class="menu-bolum-baslik' + (kapali ? ' kapali' : '') + '" onclick="accAcKapat(\'' + id + '\')">' +
+    '<span class="menu-bolum-ad">' + ad + '</span>' +
+    (ozet ? '<span class="menu-bolum-ozet">' + ozet + '</span>' : '') +
+    '<span class="menu-bolum-ok">▾</span></button>' +
+    '<div id="acc-' + id + '" class="menu-bolum-ic' + (kapali ? ' kapali' : '') + '">';
+}
+function menBolum(id, ad, ozet, icerik) {
+  return menBolumBaslik(id, ad, ozet) + icerik + '</div></div>';
+}
+
 function cizMenu() {
   var pr = profilOku();
-  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v21</span></h1>';
+  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v22</span></h1>';
   h += '<p>' + (pr.ad ? 'Merhaba ' + esc(pr.ad) + (pr.soyad ? ' ' + esc(pr.soyad) : '') + '! 👋 ' : 'Merhaba! ')
      + (pr.okul ? 'Okul: ' + esc(pr.okul) : '') + (pr.sinif ? (pr.okul ? ' · ' : '') + 'Sınıf: ' + esc(pr.sinif) : '') + '</p>';
   h += '<p>Sınıfını seç; konuları öğren, test çöz, gelişimini takip et.</p></div>';
@@ -375,17 +401,18 @@ function cizMenu() {
   }
   var xp = xpBilgi();
   var sev = seviyeHesapla(xp.p);
-  h += '<div class="durum-karti">';
-  h += '<div class="durum-huc"><b>⭐ XP</b><span>' + xp.p + '</span></div>';
-  h += '<div class="durum-huc"><b>🎖 Seviye</b><span>' + sev + '</span></div>';
-  h += '<div class="durum-huc"><b>🔥 Seri</b><span>' + xp.seri + ' gün</span></div>';
-  h += '<div class="durum-huc"><b>🏅 Rozet</b><span>' + ((oku('odul') || []).length) + '/' + ROZETLER.length + '</span></div>';
-  h += '<div class="durum-huc"><b>' + (typeof lisans_ !== 'undefined' ? '🔑 Lisans' : '') + '</b><span>' + (typeof lisans_ !== 'undefined' ? lisansBilgi() : '') + '</span></div>';
-    h += '</div>';
-    h += cizHedefBar();
-    h += '<div class="seviye-cubuk"><div class="cubuk"><div class="cubuk-dolgu" style="width:' + seviyeYuzde(xp.p) + '%"></div></div>' +
-         '<div class="kucuk-not">Sonraki seviye için ' + (300 - (xp.p % 300)) + ' XP daha 📈</div></div>';
-  h += '<div class="baslik" style="margin-top:0px;margin-bottom:14px"><h2>🧰 Araçlarım</h2></div>';
+  var ozetDurum = '⭐ ' + xp.p + ' XP · 🎖 Seviye ' + sev + (xp.seri ? ' · 🔥 ' + xp.seri + ' gün' : '');
+  h += menBolum('durum', '📊 Durumum', ozetDurum,
+    '<div class="durum-karti">' +
+    '<div class="durum-huc"><b>⭐ XP</b><span>' + xp.p + '</span></div>' +
+    '<div class="durum-huc"><b>🎖 Seviye</b><span>' + sev + '</span></div>' +
+    '<div class="durum-huc"><b>🔥 Seri</b><span>' + xp.seri + ' gün</span></div>' +
+    '<div class="durum-huc"><b>🏅 Rozet</b><span>' + ((oku('odul') || []).length) + '/' + ROZETLER.length + '</span></div>' +
+    (typeof lisans_ !== 'undefined' ? '<div class="durum-huc"><b>🔑 Lisans</b><span>' + lisansBilgi() + '</span></div>' : '') +
+    '</div>' + cizHedefBar() +
+    '<div class="seviye-cubuk"><div class="cubuk"><div class="cubuk-dolgu" style="width:' + seviyeYuzde(xp.p) + '%"></div></div>' +
+    '<div class="kucuk-not">Sonraki seviye için ' + (300 - (xp.p % 300)) + ' XP daha 📈</div></div>');
+  h += menBolumBaslik('araclar', '🧰 Araçlarım', t('Tüm araçlar'));
   h += '<div class="araclar">';
   h += '<button class="arac" onclick="git(\'pomodoro\')"><span class="arac-ikon">⏱️</span>' + t('Pomodoro') + '<br><small>' + t('Odaklanma zamanlayıcısı') + '</small></button>';
   h += '<button class="arac" onclick="git(\'saylar\')"><span class="arac-ikon">📅</span>' + t('Sınav Geri Sayımı') + '<br><small>' + t('Sınavına kaç gün kaldı?') + '</small></button>';
@@ -424,28 +451,29 @@ function cizMenu() {
    h += '<button class="arac" onclick="git(\'hakimiyet\')"><span class="arac-ikon">📊</span>' + t('Hakimiyetim') + '<br><small>' + t('Genel başarı durumun') + '</small></button>';
    if (typeof lisans_ !== 'undefined') h += '<button class="arac" style="border-color:#6a5cff" onclick="git(\'lisans\')"><span class="arac-ikon">🔑</span>' + t('Lisans') + '<br><small>' + esc(lisansBilgi()) + '</small></button>';
     h += '</div>';
+  h += '</div></div>';
+  h += menBolumBaslik('meb', '🔄 MEB Programı', (mebDurumCache && mebDurumCache.kontrolTarihi) ? 'Son kontrol: ' + new Date(mebDurumCache.kontrolTarihi).toLocaleString('tr-TR') : '');
   h += mebBannerHTML();
   h += '<div id="meb-kontrol-yukleniyor" style="text-align:center;margin-bottom:10px"></div>';
-  h += '<div style="text-align:center;margin-bottom:16px"><button class="kucuk-not" style="color:#2ecc71;cursor:pointer;border:1px solid #2ecc71;border-radius:8px;padding:6px 12px" onclick="mebKontrolEtManuel()">🔄 MEB Program Kontrolü</button>';
-  if (mebDurumCache && mebDurumCache.kontrolTarihi) h += ' <small style="color:#888">Son kontrol: ' + new Date(mebDurumCache.kontrolTarihi).toLocaleString('tr-TR') + '</small>';
-  h += '</div>';
-  h += '<div class="baslik" style="margin-top:20px;margin-bottom:14px"><h2>📚 Sınıflar</h2></div>';
-  h += '<div class="ozet-karti"><div class="grader">';
+  h += '<div style="text-align:center;margin-bottom:8px"><button class="kucuk-not" style="color:#2ecc71;cursor:pointer;border:1px solid #2ecc71;border-radius:8px;padding:6px 12px" onclick="mebKontrolEtManuel()">🔄 MEB Program Kontrolü</button></div>';
+  h += '</div></div>';
   var sk = seciliSinif();
-  for (var s in MUFREDAT) {
-    if (sk && String(s) !== sk) continue;
+  var ozetSinif = sk ? sk + '. Sınıf seçili' : 'Sınıf seç';
+  var graderIcerik = '<div class="grader">';
+  for (var sg in MUFREDAT) {
+    if (sk && String(sg) !== sk) continue;
     var topl = 0, bitti = 0;
-    MUFREDAT[s].dersler.forEach(function(d) {
+    MUFREDAT[sg].dersler.forEach(function(d) {
       d.birimler.forEach(function (_, i) { topl++; if (biten(d.id + '-' + i)) bitti++; });
     });
-    h += '<button class="grade-card renk' + s + '" onclick="secSin(' + s + ')">' +
-         '<span class="yildiz">' + s + '</span>' + s + '. Sınıf<br>' +
+    graderIcerik += '<button class="grade-card renk' + sg + '" onclick="secSin(' + sg + ')">' +
+         '<span class="yildiz">' + sg + '</span>' + sg + '. Sınıf<br>' +
          '<span style="font-size:13px;font-weight:600">' + bitti + '/' + topl + ' konu tamam</span></button>';
   }
-  h += '</div>';
-  if (sk) h += '<div style="text-align:center;padding-top:4px"><button class="kucuk-not" style="color:#9b59b6;cursor:pointer" onclick="git(\'sinifSec\')">🔄 Sınıfı Değiştir</button></div>';
-  h += '</div>';
-  ekran.innerHTML = h + cizOneri();
+  graderIcerik += '</div>';
+  if (sk) graderIcerik += '<div style="text-align:center;padding-top:4px"><button class="kucuk-not" style="color:#9b59b6;cursor:pointer" onclick="git(\'sinifSec\')">🔄 Sınıfı Değiştir</button></div>';
+  h += menBolum('siniflar', '📚 Sınıflar', ozetSinif, graderIcerik);
+  ekran.innerHTML = h + menBolum('oneriler', '🤖 Öneriler', 'Zayıf ve az çalışılan konular', cizOneri());
 }
 
 /* ====== ÖNERİ: ZAYIF KONULAR ====== */
@@ -492,18 +520,16 @@ function oneriKonular(limit) {
 
 function cizOneri() {
   var l = oneriKonular(4);
-  if (!l.length) return '';
+  if (!l.length) return '<p style="color:#8b97ad;font-size:13px;padding:6px 0 10px">Şimdilik çalışılmamış konu yok, harika gidiyorsun! 🎉</p>';
   var s = seciliSinif();
-  var h = '<div class="ozet-karti" style="margin-top:18px">';
-  h += '<div class="baslik"><h2 style="font-size:18px">🤖 Şu konulara çalış!</h2><p style="font-size:13px;color:#5c6b85">Zayıf veya az çalışılan birimler.</p></div>';
-  h += '<div class="unitler">';
+  var h = '<div class="unitler" style="margin-top:4px">';
   l.forEach(function(o) {
     var etiket = o.skor === null ? '⚡ Hiç çalışılmadı' : (o.skor < 70 ? '😅 Zayıf (' + o.skor + '%)' : (o.skor < 100 ? '🙂 ' + o.skor + '%' : '✅ ' + o.skor + '%'));
     h += '<div class="unit"><div class="unit-baslik" onclick="secDers(\'' + s + '\',\'' + o.dersId + '\')" style="justify-content:space-between">' +
          '<span style="flex:1"><span class="uad">' + o.dersAd + ' ▸ ' + (o.bi + 1) + '. ' + o.birimAd + '</span>' +
          '<div class="durum-ikon">' + etiket + '</div></span></div></div>';
   });
-  h += '</div></div>';
+  h += '</div>';
   return h;
 }
 
