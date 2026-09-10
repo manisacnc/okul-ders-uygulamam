@@ -377,7 +377,7 @@ function menBolum(id, ad, ozet, icerik) {
 
 function cizMenu() {
   var pr = profilOku();
-  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v22</span></h1>';
+  var h = '<div class="baslik"><h1>📚 Okul Ders Uygulamam <span style="font-size:11px;color:#999;background:#f0f0f0;padding:2px 6px;border-radius:6px">v23</span></h1>';
   h += '<p>' + (pr.ad ? 'Merhaba ' + esc(pr.ad) + (pr.soyad ? ' ' + esc(pr.soyad) : '') + '! 👋 ' : 'Merhaba! ')
      + (pr.okul ? 'Okul: ' + esc(pr.okul) : '') + (pr.sinif ? (pr.okul ? ' · ' : '') + 'Sınıf: ' + esc(pr.sinif) : '') + '</p>';
   h += '<p>Sınıfını seç; konuları öğren, test çöz, gelişimini takip et.</p></div>';
@@ -433,6 +433,7 @@ function cizMenu() {
     h += '<button class="arac" onclick="git(\'deneme\')"><span class="arac-ikon">🎯</span>' + t('Denematik') + '<br><small>' + t('Aylık deneme sınavı') + '</small></button>';
     h += '<button class="arac" onclick="git(\'fen3d\')"><span class="arac-ikon">🔬</span>' + t('3B Fen') + '<br><small>' + t('Animasyonlu konular') + '</small></button>';
     h += '<button class="arac" onclick="git(\'canli\')"><span class="arac-ikon">📅</span>' + t('Canlı Dersler') + '<br><small>' + t('Haftalık ders takvimi') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'sbaglan\')"><span class="arac-ikon">🔗</span>' + t('Sınıfa Bağlan') + '<br><small>' + t('Öğretmeninin kodunu gir') + '</small></button>';
     h += '<button class="arac" onclick="git(\'etkinlik\')"><span class="arac-ikon">🖨</span>' + t('Etkinlikler') + '<br><small>' + t('Yazdırılabilir çalışmalar') + '</small></button>';
     h += '<button class="arac" onclick="git(\'deney\')"><span class="arac-ikon">🧪</span>' + t('Fen Deneyleri') + '<br><small>' + t('Adım adım deneyler') + '</small></button>';
     h += '<button class="arac" onclick="git(\'cozumlu\')"><span class="arac-ikon">✏️</span>' + t('Çözümlü Sorular') + '<br><small>' + t('Adım adım çözümler') + '</small></button>';
