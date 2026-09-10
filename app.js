@@ -6185,7 +6185,7 @@ function supaSınavlar(kod) {
       else snv.forEach(function (s) {
         h += '<div class="ozet-karti" style="margin-bottom:6px"><b>' + esc(s.ad) + '</b> <span class="kucuk-not">' + esc(s.tur || '') + (s.tarih ? ' · ' + esc(s.tarih) : '') + '</span><br>'
           + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaSınavNotGir(' + s.id + ',\'' + encodeURIComponent(s.ad) + '\')">📝 Not Gir</button> '
-          + '<button class="kucuk-buton" style="background:#e05656" onclick="supaSınavSil(' + s.id + ',' + s.kod + ')">🗑️</button></div>';
+          + '<button class="kucuk-buton" style="background:#e05656" onclick="supaSınavSil(' + s.id + ',\'' + encodeURIComponent(s.kod) + '\')">🗑️</button></div>';
       });
       ekran.innerHTML = h;
     }).catch(function (e) { alert('Hata: ' + e.message); });
@@ -6198,12 +6198,14 @@ function supaSınavYeni(kod) {
   kutuSUPA.sinavOlustur(kod, ad.value.trim(), tur ? tur.value : 'Sınav', tar ? tar.value : null)
     .then(function () { supaSınavlar(kod); }).catch(function (e) { alert('Hata: ' + e.message); });
 }
-function supaSınavSil(sinavId, kodStr) {
-  var kod = (typeof kodStr === 'string') ? kodStr : String(kodStr);
+function supaSınavSil(sinavId, kodEnc) {
+  var kod = decodeURIComponent(kodEnc || '');
   kutuSUPA.sinavSil(sinavId).then(function () { supaSınavlar(kod); });
 }
+var supaSinifVR = '';
 function supaSınavNotGir(sinavId, adEnc) {
   var ad = decodeURIComponent(adEnc);
+  supaSinifVR = ad;
   kutuSUPA.ogrenciListele(supaDeger('supaSinifKod')).then(function (ogrler) {
     kutuSUPA.sinavNotListele(sinavId).then(function (notlar) {
       var nm = {}; notlar && notlar.forEach(function (n) { nm[n.ogrenci_id] = n; });
@@ -6232,7 +6234,7 @@ function supaSınavNotKaydet(sinavId, ogrenciId) {
   var deger = el ? el.value.trim() : '';
   if (!deger) { alert('Not girin.'); return; }
   kutuSUPA.sinavNotKaydet(sinavId, ogrenciId, deger)
-    .then(function () { supaSınavNotGir(sinavId, encodeURIComponent('')); })
+    .then(function () { supaSınavNotGir(sinavId, encodeURIComponent(supaSinifVR || '')); })
     .catch(function (e) { alert('Hata: ' + e.message); });
 }
 function alertsTopluKaydet(sinavId) {
@@ -6339,7 +6341,7 @@ function supaDuyuru(kod) {
     if (!list || !list.length) h += '<div class="kucuk-not">Henüz duyuru yok.</div>';
     else list.forEach(function (d) {
       h += '<div class="ozet-karti" style="margin-bottom:6px"><b>📢 ' + esc(d.baslik) + '</b><br>' + esc(d.metin || '') + '<br><small style="color:#888">' + (d.olusturma ? new Date(d.olusturma).toLocaleString('tr-TR') : '') + '</small> '
-        + '<button class="kucuk-buton" style="background:#e05656" onclick="supaDuyuruKaldir(' + d.id + ',' + d.kod + ')">Sil</button></div>';
+        + '<button class="kucuk-buton" style="background:#e05656" onclick="supaDuyuruKaldir(' + d.id + ',\'' + encodeURIComponent(d.kod) + '\')">Sil</button></div>';
     });
     ekran.innerHTML = h;
   }).catch(function (e) { alert('Hata: ' + e.message); });
@@ -6350,6 +6352,7 @@ function supaDuyuruYaz(kod) {
   kutuSUPA.duyuruEkle(kod, b.value.trim(), (m ? m.value.trim() : ''))
     .then(function () { supaDuyuru(kod); }).catch(function (e) { alert('Hata: ' + e.message); });
 }
-function supaDuyuruKaldir(id) {
-  kutuSUPA.duyuruSil(id).then(function () { supaDuyuru(supaDeger('supaSinifKod')); }).catch(function (e) { alert('Hata: ' + e.message); });
+function supaDuyuruKaldir(id, kodEnc) {
+  var kod = decodeURIComponent(kodEnc || '');
+  kutuSUPA.duyuruSil(id).then(function () { supaDuyuru(kod); }).catch(function (e) { alert('Hata: ' + e.message); });
 }
