@@ -1,5 +1,5 @@
 /* Okul Ders Uygulamam – network-first önbellek stratejisi */
-var SURUM = 'okul-v25';
+var SURUM = 'okul-v26';
 var DOSYALAR = [
   './index.html',
   './style.css',

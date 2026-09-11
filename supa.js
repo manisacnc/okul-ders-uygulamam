@@ -84,6 +84,20 @@ var kutuSUPA = (function () {
   function ogrenciSil(id) {
     return DELETE('ogrenciler', 'id=eq.' + id);
   }
+  // Veli erişim kodu ayarla (öğretmen)
+  function veliKodAyarla(id, veliKod) {
+    return PATCH('ogrenciler', 'id=eq.' + id, { veli_kod: veliKod });
+  }
+  // Veli erişim koduyla öğrenciyi bul (veli)
+  function veliKodAra(veliKod) {
+    return GET('ogrenciler', 'veli_kod=eq.' + encodeURIComponent(veliKod) + '&select=*')
+      .then(function (a) { return (a && a[0]) || null; });
+  }
+  // Öğrenciyi id ile getir (öğretmen dosya yükleme)
+  function ogrenciGetir(id) {
+    return GET('ogrenciler', 'id=eq.' + id + '&select=*')
+      .then(function (a) { return (a && a[0]) || null; });
+  }
 
   /* ===== NOTLAR (öğretmen) ===== */
   function notEkle(ogrenciId, ders, not) {
@@ -185,6 +199,20 @@ var kutuSUPA = (function () {
       ]).then(function (r) { return { yoklama: r[0] || [], davranis: r[1] || [] }; });
   }
 
+  /* ===== DUYURU OKUNMA (okundu takibi) ===== */
+  function okunmaIsaretle(duyuruId, ogrenciId) {
+    return UPSERT('duyuru_okunma', 'on_conflict=duyuru_id,ogrenci_id', { duyuru_id: duyuruId, ogrenci_id: ogrenciId })
+      .then(function (a) { return a && a[0]; });
+  }
+  function okunmaDurumu(ogrenciId) {
+    return GET('duyuru_okunma', 'ogrenci_id=eq.' + ogrenciId + '&select=duyuru_id')
+      .then(function (a) { return (a || []).map(function (r) { return r.duyuru_id; }); });
+  }
+  function duyuruOkunma(duyuruId) {
+    return GET('duyuru_okunma', 'duyuru_id=eq.' + duyuruId + '&select=ogrenci_id')
+      .then(function (a) { return (a || []).map(function (r) { return r.ogrenci_id; }); });
+  }
+
   /* ===== ÖĞRENCİ VERİ SENKRONU ===== */
   // Öğrencinin tüm çalışma verisini (bir alan) gönder. Upsert mantığı.
   function veriGonder(ogrenciId, alan, veri) {
@@ -211,6 +239,9 @@ var kutuSUPA = (function () {
     ogrenciListele: ogrenciListele,
     ogrencietkinlesme: ogrencietkinlesme,
     ogrenciSil: ogrenciSil,
+    veliKodAyarla: veliKodAyarla,
+    veliKodAra: veliKodAra,
+    ogrenciGetir: ogrenciGetir,
     notEkle: notEkle,
     notListele: notListele,
     notGuncelle: notGuncelle,
@@ -234,6 +265,9 @@ var kutuSUPA = (function () {
     duyuruEkle: duyuruEkle,
     duyuruSil: duyuruSil,
     ogrenciAll: ogrenciAll,
+    okunmaIsaretle: okunmaIsaretle,
+    okunmaDurumu: okunmaDurumu,
+    duyuruOkunma: duyuruOkunma,
     veriGonder: veriGonder,
     veriGetir: veriGetir
   };
