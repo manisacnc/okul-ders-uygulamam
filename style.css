@@ -799,3 +799,38 @@ body.yuksek-kontrast a, body.yuksek-kontrast .rozet-ad, body.yuksek-kontrast h1,
 .konu-listesi { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
 .konu-listesi .kucuk-buton { padding:8px 12px; font-size:13px; }
 .pratik-istat { background:#fff; border-radius:12px; padding:8px 14px; margin-top:6px; box-shadow:0 2px 8px rgba(0,0,0,.05); font-size:14px; color:#34495e; }
+
+/* ===== KULLANIM KILAVUZU (rehber) ===== */
+.rehber-kapak { text-align:center; padding:20px 10px 10px; }
+.rehber-kapak .buyuk { font-size:22px; font-weight:800; color:#34495e; margin:6px 0 4px; }
+.rehber-kart { background:#fff; border:1px solid #dfe4f5; border-radius:14px; padding:14px; margin-bottom:10px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.rehber-rol { display:flex; align-items:center; gap:12px; background:#fff; border:2px solid #dfe4f5; border-radius:14px; padding:14px; margin-bottom:10px; cursor:pointer; }
+.rehber-rol:hover { border-color:#6a5cff; }
+.rehber-rol .r-ikon { font-size:26px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; border-radius:12px; flex:0 0 46px; }
+.rehber-adim { display:flex; gap:10px; margin-bottom:12px; align-items:flex-start; }
+.rehber-adim-n { flex:0 0 26px; height:26px; border-radius:50%; background:#6a5cff; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; }
+.rehber-adim-ic { flex:1; }
+.rehber-adim-ic b { color:#34495e; }
+.rehber-not { background:#fff8e6; border-left:4px solid #e67e22; border-radius:8px; padding:8px 12px; margin:8px 0; font-size:13px; }
+.rehber-not.-yesil { background:#e8fbee; border-left-color:#1f8a70; }
+.rehber-not.-mavi { background:#eaf4ff; border-left-color:#0984e3; }
+.rehber-not.-kirmizi { background:#ffecec; border-left-color:#e05656; }
+.rehber-yeni { display:inline-block; background:#e84393; color:#fff; font-size:11px; font-weight:800; border-radius:20px; padding:2px 8px; margin-left:6px; vertical-align:middle; }
+.rehber-ayrac { text-align:center; color:#9aa5b8; font-size:12px; margin:16px 0 8px; letter-spacing:1px; text-transform:uppercase; }
+.rehber-mock { border:2px solid #dfe4f5; border-radius:18px; background:#f7f9ff; padding:10px; max-width:260px; margin:10px auto; box-shadow:0 4px 14px rgba(0,0,0,.08); }
+.rehber-mock-ust { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+.rehber-mock-nok { width:10px; height:10px; border-radius:50%; flex:0 0 10px; }
+.rehber-mock-baslik { font-size:11px; font-weight:800; color:#34495e; text-align:center; flex:1; }
+.rehber-mock-ic { background:#fff; border-radius:10px; padding:8px; font-size:11px; }
+.rehber-mock-ic .msatir { display:flex; align-items:center; gap:6px; padding:5px 6px; border-radius:8px; margin-bottom:4px; }
+.rehber-mock-ic .msatir:last-child { margin-bottom:0; }
+.rehber-mock-ic .mp { flex:1; color:#555; font-weight:600; }
+.rehber-mock-ic .mm { color:#2ecc71; font-weight:800; font-size:10px; }
+.rehber-mock-ic .mbut { flex:0 0 44px; text-align:center; background:#6a5cff; color:#fff; border-radius:6px; font-size:9px; font-weight:700; padding:3px; }
+.rehber-mock-ic .mbut.-yesil { background:#1f8a70; }
+.rehber-mock-ic .mbut.-turuncu { background:#e67e22; }
+.rehber-tuş { display:inline-block; background:#6a5cff; color:#fff; border-radius:6px; padding:1px 6px; font-size:12px; font-weight:700; }
+.rehber-tuş.-turuncu { background:#e67e22; }
+.rehber-tuş.-yeşil { background:#1f8a70; }
+.rehber-tuş.-gri { background:#7f8c8d; }
+.rehber-tuş.-kirmizi { background:#e05656; }

@@ -333,6 +333,10 @@ function render() {
     else if (durum.tur === 'sinifYonet') cizSinifYonet();
     else if (durum.tur === 'sbaglan') cizSbaglan();
     else if (durum.tur === 'lisans') cizLisans();
+    else if (durum.tur === 'rehber') cizRehber();
+    else if (durum.tur === 'rehberOgrenci') cizRehberOgrenci();
+    else if (durum.tur === 'rehberOgretmen') cizRehberOgretmen();
+    else if (durum.tur === 'rehberVeli') cizRehberVeli();
    window.scrollTo(0, 0);
 }
 
@@ -434,6 +438,7 @@ function cizMenu() {
     h += '<button class="arac" onclick="git(\'fen3d\')"><span class="arac-ikon">🔬</span>' + t('3B Fen') + '<br><small>' + t('Animasyonlu konular') + '</small></button>';
     h += '<button class="arac" onclick="git(\'canli\')"><span class="arac-ikon">📅</span>' + t('Canlı Dersler') + '<br><small>' + t('Haftalık ders takvimi') + '</small></button>';
     h += '<button class="arac" onclick="git(\'sbaglan\')"><span class="arac-ikon">🔗</span>' + t('Sınıfa Bağlan') + '<br><small>' + t('Öğretmeninin kodunu gir') + '</small></button>';
+    h += '<button class="arac" onclick="git(\'rehber\')"><span class="arac-ikon">📖</span>' + t('Kullanım Kılavuzu') + '<br><small>' + t('Adım adım öğren / öğret / veli') + '</small></button>';
     h += '<button class="arac" onclick="git(\'etkinlik\')"><span class="arac-ikon">🖨</span>' + t('Etkinlikler') + '<br><small>' + t('Yazdırılabilir çalışmalar') + '</small></button>';
     h += '<button class="arac" onclick="git(\'deney\')"><span class="arac-ikon">🧪</span>' + t('Fen Deneyleri') + '<br><small>' + t('Adım adım deneyler') + '</small></button>';
     h += '<button class="arac" onclick="git(\'cozumlu\')"><span class="arac-ikon">✏️</span>' + t('Çözümlü Sorular') + '<br><small>' + t('Adım adım çözümler') + '</small></button>';
@@ -7068,4 +7073,181 @@ function supaKarnemGoster() {
       h += '<div style="margin:12px auto;text-align:center"><button class="btn btn-mor" onclick="window.print()">🖨️ Yazdır / PDF</button></div>';
       ekran.innerHTML = h;
     }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+
+/* ===== KULLANIM KILAVUZU ===== */
+function rehberAdim(n, baslik, icerik) {
+  return '<div class="rehber-adim">'
+    + '<span class="rehber-adim-n">' + n + '</span>'
+    + '<div class="rehber-adim-ic"><b>' + baslik + '</b><div style="font-size:13px;color:#455;margin-top:2px">' + icerik + '</div></div>'
+    + '</div>';
+}
+function rehberMockUst(baslik, renk) {
+  return '<div class="rehber-mock"><div class="rehber-mock-ust">'
+    + '<span class="rehber-mock-nok" style="background:' + (renk || '#e05656') + '"></span>'
+    + '<span class="rehber-mock-nok" style="background:#f6c857"></span>'
+    + '<span class="rehber-mock-nok" style="background:#2ecc71"></span>'
+    + '<span class="rehber-mock-baslik">' + baslik + '</span></div>'
+    + '<div class="rehber-mock-ic">';
+}
+function rehberMockMsatir(metin, ek, renk) {
+  return '<div class="msatir"><span class="mp">' + metin + '</span>'
+    + (ek ? '<span class="mm" style="color:' + (renk || '#2ecc71') + '">' + ek + '</span>' : '')
+    + '</div>';
+}
+function rehberMockButon(metin, cls) {
+  var s = { buton: 'mbut', yesil: 'mbut -yesil', turuncu: 'mbut -turuncu' }[cls] || 'mbut';
+  return '<span class="' + s + '">' + metin + '</span>';
+}
+function rehberMockBitir() { return '</div></div>'; }
+
+/* Kılavuz ana sayfa */
+function cizRehber() {
+  var h = '<button class="geri" onclick="git(\'menu\')">⬅ Anasayfa</button>';
+  h += '<div class="rehber-kapak">'
+    + '<div style="font-size:38px">📖</div>'
+    + '<div class="buyuk">Kullanım Kılavuzu</div>'
+    + '<div style="color:#8b97ad;font-size:14px">Okul Ders Uygulamam v26 · Tam sürüm rehber</div>'
+    + '</div>';
+  h += '<div class="rehber-kart" style="background:#f0f4ff">'
+    + rehberAdim(1, 'Rolünü seç', 'Aşağıdan kim olduğunu seç: <span class="rehber-tuş">🎓 Öğrenci</span> isen ders çalışma modun, <span class="rehber-tuş -turuncu">👨‍👩‍👧 Veli</span> isen rapor modun, <span class="rehber-tuş -yeşil">👩‍🏫 Öğretmen</span> isen sınıf yönetimi modun anlatılır.')
+    + rehberAdim(2, 'Doğru rol tıklanır', 'Her rehber; ekran görüntüsü örnekleri, adım numaraları ve ipuçlarıyla anlatılır.')
+    + rehberAdim(3, 'Ayrıca: 🧭 Anasayfa → 🧰 Araçlarım listesindeki her butona gerekirse geri gel.', '')
+    + '</div>';
+  h += '<div class="rehber-rol" onclick="git(\'rehberOgrenci\')">'
+    + '<span class="r-ikon" style="background:#eaf4ff">🎓</span>'
+    + '<div style="flex:1"><b>Öğrenci Rehberi</b><br><small style="color:#8b97ad">Ders çalış, test çöz, plan yap, sınıfa bağlan</small></div><span style="color:#6a5cff">→</span></div>';
+  h += '<div class="rehber-rol" onclick="git(\'rehberOgretmen\')">'
+    + '<span class="r-ikon" style="background:#e8fbee">👩‍🏫</span>'
+    + '<div style="flex:1"><b>Öğretmen Rehberi</b><br><small style="color:#8b97ad">Sınıf aç, öğrenci ekle, ders/duyuru/test paylaş</small></div><span style="color:#6a5cff">→</span></div>';
+  h += '<div class="rehber-rol" onclick="git(\'rehberVeli\')">'
+    + '<span class="r-ikon" style="background:#fff3e0">👨‍👩‍👧</span>'
+    + '<div style="flex:1"><b>Veli Rehberi</b><br><small style="color:#8b97ad">Kod ile çocuğunun raporunu gör</small></div><span style="color:#6a5cff">→</span></div>';
+  h += '<div class="rehber-ayrac">Genel Bilgiler</div>';
+  h += '<div class="rehber-kart">'
+    + rehberAdim('', '🌐 İnternetsiz çalışma', 'Uygulama <b>çevrimdışı (offline)</b> da çalışır. İlk açılışta kaydedilir; sonra internet olmasa bile test çözebilir, XP kazanabilirsin. Bulut (Supabase) özellikleri — sınıf, not, duyuru, test, ders paylaşımı — <b>internet ister</b>.')
+    + rehberAdim('', '💾 Veri ve Yedek', '🧰 Araçlarım → <span class="rehber-tuş -gri">🗄️ Veri ve Yedek</span> sayfasından verini yedekleyebilir, geri yükleyebilir, südrebilirsin.')
+    + rehberAdim('', '🔔 Bildirim ve ses', 'Öğretmenin yeni ders/konu paylaştığında telefon/tablet/bilgisayarda <b>zil sesi</b> çalar. Ses için “Sınıfa Bağlan” ekranında <span class="rehber-tuş">🔔 Bildirimleri Aç</span> butonuna bas.')
+    + '</div>';
+  ekran.innerHTML = h;
+}
+
+/* Öğrenci rehberi */
+function cizRehberOgrenci() {
+  var h = '<button class="geri" onclick="git(\'rehber\')">⬅ Rehber</button>';
+  h += '<div class="baslik"><h1>🎓 Öğrenci Rehberi</h1><p>Ders çalışmaya nasıl başlarsın? Adım adım.</p></div>';
+  h += '<div class="rehber-kart" style="border:2px solid #0984e3">'
+    + rehberAdim(1, 'Adını ve sınıfını yaz', 'İlk açılışta seni karşılayan ekranda adını, soyadını, okulunu ve sınıfını gir. (Profil ekranına 🧰 Araçlarım → sağ üst 👤 Profil yolundan dönülür.)')
+    + rehberAdim(2, 'Ana sayfayı incele', 'Ana sayfada <b>📊 Durumum</b> (XP, seviye, seri), <b>🧰 Araçlarım</b> (onlarca buton) ve <b>📚 Sınıflar</b> bölümü var.')
+    + rehberAdim(3, 'Sınıfını seç', '<span class="rehber-tuş">5 / 6 / 7 / 8</span> butonlarından birine bas. Her sınıfın MEB müfredatındaki dersleri ve konuları gelir.')
+    + '</div>';
+  h += rehberMockUst('Ana sayfa');
+  h += rehberMockMsatir('📊 Durumumst', '⭐ 320 XP');
+  h += rehberMockMsatir('🧰 Araçlarım', '🔽 liste');
+  h += rehberMockMsatir('📚 Sınıflar', '', '#0984e3');
+  h += rehberMockButon('6. Sınıf', 'buton');
+  h += rehberMockBitir();
+  h += '<div class="rehber-kart">'
+    + rehberAdim(4, 'Dersine gir', 'Sınıfı seçince derslerin olduğu ekran açılır: 📐 Matematik, 🇹🇷 Türkçe, 🔬 Fen, 🇬🇧 İngilizce, 🌍 Sosyal… İstediğine dokun.')
+    + rehberAdim(5, 'Konuyu öğren', 'Ders ekranında konular ünite ünite sıralanır. Konunun altında: <span class="rehber-tuş">📄 Ders Notu</span> ile okursun, <span class="rehber-tuş">▶ Bul</span> ile YouTube’da aratır, <span class="rehber-tuş -yeşil">📖</span> ile sesli okur.')
+    + rehberAdim(6, 'Test çöz', '<span class="rehber-tuş">✏️ Test</span> butonuna bas. Başlangıçta <b>Çalışma Modu</b> (anında doğru/yanlış) ve <b>Sınav Modu</b> (süreli) seçenekleri gelir. Her doğru cevap XP kazandırır, hatalılar “Yanlışlarım”a düşer.')
+    + '</div>';
+  h += rehberMockUst('Test Çöz');
+  h += rehberMockMsatir('3. Soru: 6 × 7 = ?', '');
+  h += rehberMockMsatir('A) 42', '', '#1f8a70');
+  h += rehberMockMsatir('B) 40', '', '#e05656');
+  h += rehberMockMsatir('C) 36', '');
+  h += rehberMockButon('✓ Doğru! +10 XP', 'yesil');
+  h += rehberMockBitir();
+  h += '<div class="rehber-kart">'
+    + rehberAdim(7, 'Gelişimini takip', '🧰 Araçlarım’da: <b>📊 Hakimiyetim</b> (konu başarı yüzdeleri), <b>🗺️ Konu Hakimiyeti</b>, <b>📄 Karnem</b> (yazdırılabilir rapor), <b>🏅 Başarılarım</b> (rozetler), <b>📋 Günlük Görevler</b> ve <b>🔥 Çalışma Takvimi</b> var.')
+    + rehberAdim(8, 'Planlı çalış', '<b>📅 Ders Programım</b> ile saatlik program oluştur, <b>⏱️ Pomodoro</b> ile odaklan (25 dk çalış + 5 dk mola), <b>📅 Bugünün Planı</b> sana günlük akıllı öneri yapar.')
+    + rehberAdim(9, 'Sınıfına bağlan (öğretmenle buluş)', '<b>🔗 Sınıfa Bağlan</b> ekranına git. Öğretmeninin sana verdiği <b>etkinleştirme kodunu</b> ve <b>okul numaranı</b> gir → kod doğrulanınca “Bu sen misin?” ekranı çıkar → numaranı onayla. Artık bağlısın!')
+    + '</div>';
+  h += rehberMockUst('Sınıfa Bağlan');
+  h += rehberMockMsatir('Etkinleştirme kodu', 'ABC123');
+  h += rehberMockMsatir('Okul numaran', '1107');
+  h += rehberMockButon('Kontrol Et ve Bağlan', 'buton');
+  h += rehberMockBitir();
+  h += '<div class="rehber-kart">'
+    + rehberAdim(10, 'Bağlanınca neler yapabilirsin?', '🟢 Bildirim paneli: öğretmenin paylaştığı <b>yeni ders/konu</b>, <b>yeni not</b>, <b>yeni duyuru</b> ve <b>çözülmemiş test</b> sayılarını görür, gelenlerde zil sesi çalar. Tüm özellikler: <b>📝 Notlarımı Gör</b>, <b>📢 Sınıf Duyuruları</b>, <b>📝 Mini Test</b>, <b>📚 Derslerim</b>, <b>🎓 Karnem</b>, <b>⬆️ Verilerimi Öğretmene Gönder</b>.')
+    + rehberAdim(11, 'Çalışmanı öğretmene gönder', '“Bağlı cihaz” kartındaki <span class="rehber-tuş -yeşil">⬆️ Verilerimi Öğretmene Gönder</span> butonu, bu cihazda yaptığın çalışma sürelerini öğretmenine iletir.')
+    + '</div>';
+  h += '<div class="rehber-not -yesil">✅ İpucu: Her gün küçük de olsa test çöz; 🔥 serin kopsun, 🏅 rozetler biriksin.</div>';
+  h += '<div style="text-align:center;margin-bottom:20px"><button class="btn btn-mor" onclick="git(\'menu\')">🧭 Ana Sayfaya Dön</button></div>';
+  ekran.innerHTML = h;
+}
+
+/* Öğretmen rehberi */
+function cizRehberOgretmen() {
+  var h = '<button class="geri" onclick="git(\'rehber\')">⬅ Rehber</button>';
+  h += '<div class="baslik"><h1>👩‍🏫 Öğretmen Rehberi</h1><p>Sınıf aç → öğrenci ekle → ders paylaş → takip et.</p></div>';
+  h += '<div class="rehber-kart" style="border:2px solid #1f8a70">'
+    + rehberAdim(1, 'Rolünü Öğretmen yap', 'Ana sayfa → <span class="rehber-tuş -turuncu">👥 Rol Seçimi</span> → <b>👩‍🏫 Öğretmen</b>. İlk kez giriyorsan önce <b>👤 Profilim</b> sayfasından “Öğretmen şifresi” belirle (en az 4 karakter). Bu şifreyle öğretmen paneline giriş yaparsın.')
+    + rehberAdim(2, 'Öğretmen Panelini tanı', 'Panelde: <b>📌 Özet</b> (öğrenci bilgileri, XP, seri), <b>📈 Gelişim Analizi</b>, <b>🎯 Ders Bazlı Başarı</b> ve <b>🖨️ Raporlar</b> bölümleri vardır.')
+    + rehberAdim(3, 'Sınıfını aç', 'Panelde <span class="rehber-tuş -yeşil">➕ Sınıf Aç / Kullan</span> butonuna bas. Sınıf adı ve <b>sınıf kodu</b> gir (ör. <b>TEST6A</b>). Bu kod sınıfın kimliğidir — kaydet, unutma.')
+    + '</div>';
+  h += rehberMockUst('Sınıf Aç');
+  h += rehberMockMsatir('Sınıf adı', '6/A');
+  h += rehberMockMsatir('Sınıf kodu', 'TEST6A');
+  h += rehberMockButon('Sınıfı Oluştur', 'yesil');
+  h += rehberMockBitir();
+  h += '<div class="rehber-kart">'
+    + rehberAdim(4, 'Öğrenci ekle', '<span class="rehber-tuş -yeşil">🟢 Sınıfımı Yönet</span> ekranında öğrencinin <b>adı soyadı</b> ve <b>okul numarası</b>nı gir → <b>Öğrenci Ekle</b>. Her öğrenciye otomatik <b>etkinleştirme kodu</b> üretilir; kodu öğrenciye ilet, öğrenci “Sınıfa Bağlan” ile girer.')
+    + rehberAdim(5, 'Özel öğrenci notu/çalışma', 'Öğrenci listesinde 🎒 verdir. <b>Dosya</b> ekranında: <b>not yaz</b> (ders seç + not), <b>devamsızlık</b>, <b>davranış puanı</b>, <b>çalışma</b>, <b>konu</b> ve <b>görüşme</b> kaydı tutarsın. Süreli alanlar ürün çıktığında <b>Çalışma evi</b> görünümü gösterir. (Not: çalışma süreleri öğrenci bu cihazda “Verilerimi Gönder” derse gelir.)')
+    + '</div>';
+  h += rehberMockUst('Öğrenci Dosyası');
+  h += rehberMockMsatir('Ayşe Yılmaz · No: 1107', '✅');
+  h += rehberMockButon('➕ Not Ekle', 'yesil');
+  h += rehberMockMsatir('Türkçe ≥ 85', '86');
+  h += rehberMockMsatir('Matematik ≥ 70', '64');
+  h += rehberMockBitir();
+  h += '<div class="rehber-kart">'
+    + rehberAdim(6, '📢 Duyuru yayınla', 'Sınıf Yönetimi → <span class="rehber-tuş">📢 Duyuru</span>. Başlık + metin + <b>Tarih</b> gir → <b>Paylaş</b>. Yanında <b>okundu sayacı</b> görürsün (kaç öğrencinin okuduğu).')
+    + rehberAdim(7, '📚 Ders / Konu paylaş', 'Sınıf Yönetimi → <span class="rehber-tuş -turuncu">📚 Ders Paylaş</span>. <b>Hedef</b> olarak <b>Tüm sınıf</b> veya <b>tek öğrenci</b> seç. Tür: <b>Ders / Konu / Ödev / Video / Hatırlatma</b>. Başlık + açıklama yaz → <b>📤 Paylaş</b>. Öğrenciler <b>anında bildirim + zil sesi</b> alır. Listede <b>👀 kaç öğrenci gördü</b> sayacı vardır. Öğrenciye özel paylaşım sadece o öğrencinin “Derslerim”inde görünür.')
+    + rehberAdim(8, '📝 Mini Test', '<span class="rehber-tuş">📝 Mini Test</span> ile test adı yaz → <b>Oluştur</b> → <b>➕ Soru Ekle</b> (soru + 5 şıkkı + doğru cevap). Soru silme ve <b>Sonuçlar</b> ekranı hazır; öğrencinin çözümleri, doğru/yanlış oranı otomatik hesaplanır.')
+    + '</div>';
+  h += rehberMockUst('Mini Test → Sonuç');
+  h += rehberMockMsatir('6 Soruluk Test', '');
+  h += rehberMockMsatir('Ayşe → 5 doğru', '%83');
+  h += rehberMockMsatir('Mehmet → 4 doğru', '%67');
+  h += rehberMockBitir();
+  h += '<div class="rehber-kart">'
+    + rehberAdim(9, 'Yoklama ve sınav', 'Sınıf adı satırındaki <b>📋 Yoklama</b> butonuyla: öğrenci girmede <b>Hazır (H) / Geç (G) / İzinsiz (Y)</b> işaretle, bir tıkla toplu “H” ver, <b>CSV</b> ile Excel’e aktar. <b>📝 Sınavlar</b> butonu da sınav notlarını toplu girmen ve CSV dışa aktarman içindir.')
+    + rehberAdim(10, 'Rapor / Karne / CSV', 'Sınıf Yönetimi → <b>📊 Sınıf Raporu</b>: tüm öğrencilerin sınav ortalaması, not ortalaması, <b>sıralama</b>, Geçti/Kaldı (50+ geçer). <span class="rehber-tuş">⬇️ CSV</span> ile indir, <span class="rehber-tuş -turuncu">🖨️ Yazdır / Karne</span> ile yazdır.')
+    + rehberAdim(11, 'Veli erişimi', 'Öğrenci dosyasında <span class="rehber-tuş -yeşil">👨‍👩‍👧 Veli kodu üret</span> (6 harf). Bu kodu veliye ver; veli “Sınıfa Bağlan → Veli ile Gör” ekranında kodu girip çocuğunun raporunu görsün. İstersen <b>🔁 Kod Sıfırla</b> ile yeni kod üret — eski kod geçersiz olur.')
+    + rehberAdim(12, 'Yedekleme', '<span class="rehber-tuş -gri">📦 Yedekle</span> ile tüm sınıfın verilerini (öğrenciler, notlar, yoklama, duyurular, testler, dersler) <b>JSON</b> dosyası olarak indirirsin — güvenli sakla.')
+    + '</div>';
+  h += '<div class="rehber-not">⚠️ Dikkat: Sınıf/öğrenci/not/test işlemleri bulut üzerinde ve internet ister. Öğrenciler de kodlarıyla bağlanınca bilgiler canlı senkronize olur.</div>';
+  h += '<div style="text-align:center;margin-bottom:20px"><button class="btn btn-mor" onclick="git(\'sinifYonet\')">🟢 Sınıfımı Yönet</button></div>';
+  ekran.innerHTML = h;
+}
+
+/* Veli rehberi */
+function cizRehberVeli() {
+  var h = '<button class="geri" onclick="git(\'rehber\')">⬅ Rehber</button>';
+  h += '<div class="baslik"><h1>👨‍👩‍👧 Veli Rehberi</h1><p>Çocuğunun okul durumunu güvenle takip et.</p></div>';
+  h += '<div class="rehber-kart" style="border:2px solid #e67e22">'
+    + rehberAdim(1, 'Kodu öğretmenden al', 'Öğretmenin çocuğunun dosyasında <b>👨‍👩‍👧 Veli kodu</b> üretir (6 harf, ör. <b>VEKXYH</b>). Bu kodu senden başka kimse bilmemeli.')
+    + rehberAdim(2, 'Uygulamayı aç', 'Telefonunda / bilgisayarında uygulamaya git. İnternet gerekir.')
+    + rehberAdim(3, 'Veli ekranına git', 'Ana sayfa → <b>🧰 Araçlarım</b> → <span class="rehber-tuş -turuncu">🔗 Sınıfa Bağlan</span> → aşağıdaki <b>"Veli erişim kodu"</b> kutusuna kodu yaz → <span class="rehber-tuş -yeşil">👨‍👩‍👧 Veli ile Gör</span> butonuna bas.')
+    + '</div>';
+  h += rehberMockUst('Veli Girişi');
+  h += rehberMockMsatir('Veli erişim kodu', 'VEKXYH');
+  h += rehberMockButon('Veli ile Gör', 'turuncu');
+  h += rehberMockBitir();
+  h += '<div class="rehber-kart">'
+    + rehberAdim(4, 'Raporu incele', 'Açılan rapor sayfasında: <b>📅 Toplam yoklama</b> ve <b>izinsiz yoklama</b> sayısı, <b>🏅 davranış puanı</b>, <b>📝 tüm notlar</b> (ders bazlı) ve <b>📅 devamsızlık kayıtları</b> görürsün.')
+    + rehberAdim(5, 'Yazdır / PDF al', 'Raporun altındaki <span class="rehber-tuş -turuncu">🖨️ Yazdır</span> butonu ile raporu yazdırır veya PDF olarak kaydedersin.')
+    + rehberAdim(6, 'Sık kullanımlar', 'Aynı kodla istediğin zaman tekrar girebilirsin. Öğretmen öğrenci ekledikçe yeni bilgiler otomatik gelir. Veli kodu kaybolursa/tehlikeye girerse öğretmenden <b>🔁 sıfırlat</b> iste — eski kod hemen geçersiz olur.')
+    + '</div>';
+  h += rehberMockUst('Veli Raporu');
+  h += rehberMockMsatir('Ayşe Yılmaz · 6/A', '');
+  h += rehberMockMsatir('Toplam yoklama', '2 · İzinsiz 0');
+  h += rehberMockMsatir('Davranış puanı', '+15');
+  h += rehberMockMsatir('Matematik', '86 · Başarılı');
+  h += rehberMockBitir();
+  h += '<div class="rehber-not -mavi">ℹ️ Ayrıca uygulamanın öğrenci cihazındaysan: <b>👥 Rol Seçimi → 👨‍👩‍👧 Veli</b> ile aynı cihazda veli panosu açılır. Veli panosu kodu çocuğun profilinde <b>👤 Profilim → Veli Panosu Kodu</b> ile belirlenebilir.</div>';
+  h += '<div style="text-align:center;margin-bottom:20px"><button class="btn btn-mor" onclick="git(\'sbaglan\')">🔗 Veli ile Gör</button></div>';
+  ekran.innerHTML = h;
 }
