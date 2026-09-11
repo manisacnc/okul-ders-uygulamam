@@ -5949,13 +5949,16 @@ function cizSbaglan() {
       + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaNotlarimGoster()">📝 Notlarımı Gör</button> '
       + '<button class="kucuk-buton" style="background:#0984e3" onclick="supaDuyurularimGoster()">📢 Sınıf Duyuruları</button> '
       + '<button class="kucuk-buton" style="background:#00b894" onclick="supaTestlerimGoster()">📝 Mini Test</button> '
+      + '<button class="kucuk-buton" style="background:#ff9f43" onclick="supaKarnemGoster()">🎓 Karnem</button> '
       + '<button class="kucuk-buton" style="background:#e05656" onclick="supaBaglantiKopar()">Çık</button>'
       + '</div>';
     h += '<div id="uyariRozeti"></div>';
+    h += '<div id="supaPanel" style="margin-top:12px"></div>';
   }
   h += '<div class="ozet-karti">'
     + '<input id="supaKod2" type="text" placeholder="Etkinleştirme kodu" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0">'
-    + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaBaglan()">🔗 Etkinleştir ve Bağlan</button>'
+    + '<input id="supaNo2" type="text" placeholder="Okul numaran" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0">'
+    + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaBaglan()">🔗 Kontrol Et ve Bağlan</button>'
     + '</div>';
   h += '<div class="ozet-karti">'
     + '<input id="supaVeliKod" type="text" placeholder="Veli erişim kodu" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0">'
@@ -5979,11 +5982,53 @@ function supaDevamUyariGetir() {
   if (!bagli || !bagli.id) return;
   kutuSUPA.ogrenciAll(bagli.id).then(function (all) {
     var yoklar = (all.yoklama || []).filter(function (y) { return y.durum === 'Y'; });
-    if (yoklar.length >= 3) {
-      var el = document.getElementById('uyariRozeti');
-      if (el) el.innerHTML = '<div class="ozet-karti" style="background:#ffe3e3;border-color:#e05656;color:#bd2130">⚠️ Dikkat! <b>' + yoklar.length + '</b> izinsiz devamsızlığın var. Öğretmeninle konuşmayı unutma.</div>';
+    var el = document.getElementById('uyariRozeti');
+    if (yoklar.length >= 3 && el) {
+      el.innerHTML = '<div class="ozet-karti" style="background:#ffe3e3;border-color:#e05656;color:#bd2130">⚠️ Dikkat! <b>' + yoklar.length + '</b> izinsiz devamsızlığın var. Öğretmeninle konuşmayı unutma.</div>';
     }
-  }).catch(function () {});
+    if (typeof supaPanelDoldur === 'function') supaPanelDoldur();
+  }).catch(function () { if (typeof supaPanelDoldur === 'function') supaPanelDoldur(); });
+}
+function supaPanelDoldur() {
+  var bagli = supaJsonOku('supaBagli');
+  var el = document.getElementById('supaPanel');
+  if (!bagli || !bagli.id || !el) return;
+  Promise.all([
+      kutuSUPA.duyuruListele(bagli.kod),
+      kutuSUPA.notListele(bagli.id),
+      kutuSUPA.testListele(bagli.kod),
+      kutuSUPA.okunmaDurumu(bagli.id)
+    ]).then(function (rz) {
+      var duyurular = rz[0] || [];
+      var notlar = rz[1] || [];
+      var testler = rz[2] || [];
+      var okunan = rz[3] || [];
+      var okSet = {}; okunan.forEach(function (d) { okSet[d] = true; });
+      var yeniDuyuru = duyurular.filter(function (d) { return !okSet[d.id]; }).length;
+      var yeniNot = notlar.filter(function (n) { return !n.okundu; }).length;
+      var coculdu = { testler: [], bitti: 0 };
+      var beklenti = testler.map(function (t) { return kutuSUPA.testCevabim(t.id, bagli.id); });
+      Promise.all(beklenti).then(function (cevaplar) {
+        cevaplar.forEach(function (c, i) { if (!c) coculdu.testler.push(testler[i]); });
+        var ozet = '';
+        if (yeniNot || yeniDuyuru || coculdu.testler.length) {
+          ozet = '<div class="ozet-karti" style="background:#fff8e6;border-color:#e67e22"><b>🔔 Bildirimlerin</b><br>'
+            + (yeniNot ? '📝 ' + yeniNot + ' yeni not · ' : '')
+            + (yeniDuyuru ? '📢 ' + yeniDuyuru + ' okunmamış duyuru · ' : '')
+            + (coculdu.testler.length ? '📝 ' + coculdu.testler.length + ' çözülmemiş test' : '')
+            + '</div>';
+        }
+        var sonNot = notlar.length ? notlar[notlar.length - 1] : null;
+        el.innerHTML = ozet
+          + (sonNot ? '<div class="ozet-karti" style="font-size:13px">⭐ Son notun: <b>' + esc(sonNot.ders || '') + '</b> → ' + esc(sonNot.not_) + '</div>' : '')
+          + '<div class="ozet-karti" style="font-size:13px">🎯 Bekleyen test: <b>' + (coculdu.testler.length || 0) + '</b> · 🎓 Karnen hazır (<a href="javascript:supaKarnemGoster()" style="color:#1f8a70">gör</a>)</div>';
+      }).catch(function () {
+        el.innerHTML = '<div class="kucuk-not">Panel yüklenemedi.</div>';
+      });
+    }).catch(function () {
+      var el2 = document.getElementById('supaPanel');
+      if (el2) el2.innerHTML = '<div class="kucuk-not">Panel yüklenemedi.</div>';
+    });
 }
 function supayaVeliRaporu(ogr) {
   Promise.all([kutuSUPA.sinifGetir(ogr.kod), kutuSUPA.notListele(ogr.id), kutuSUPA.detayListele(ogr.id), kutuSUPA.ogrenciAll(ogr.id)])
@@ -6040,11 +6085,30 @@ function supaBaglan() {
   kutuSUPA.ogrencietkinlesme(kod).then(function (ogr) {
     if (!ogr) { supaMesaj('Bu kodla öğrenci bulunamadı. Kodun doğru olduğundan emin ol.', 'kirmizi'); return; }
     kutuSUPA.sinifGetir(ogr.kod).then(function (snf) {
-      supaJsonYaz('supaBagli', { id: ogr.id, no: ogr.no, adsoyad: ogr.adsoyad, kod: ogr.kod, sinifAd: (snf && snf.ad) || ogr.kod });
-      supaMesaj('✅ Sınıfa bağlandın: ' + (snf && snf.ad ? snf.ad : ogr.kod), 'yesil');
-      cizSbaglan();
+      var snfAd = (snf && snf.ad) || ogr.kod;
+      var h = '<button class="geri" onclick="git(\'sbaglan\')">⬅ Geri</button>';
+      h += '<div class="baslik"><h1>🔍 Bu sen misin?</h1><p>Kod doğrulandı. Bilgilerini kontrol et.</p></div>';
+      h += '<div class="ozet-karti" style="background:#f2f4fa">👤 <b>' + esc(ogr.adsoyad) + '</b><br>🏫 Sınıf: <b>' + esc(snfAd) + '</b><br>🔢 Okul no: <b>' + esc(ogr.no || '(belirtilmemiş)') + '</b></div>';
+      h += '<div class="ozet-karti">Okul numaranı doğrula:<br><input id="supaNoKontrol" type="text" placeholder="Okul numaran" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0">'
+        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaNoDogrula(' + ogr.id + ',\'' + encodeURIComponent(ogr.no || '') + '\',\'' + encodeURIComponent(ogr.kod) + '\',\'' + encodeURIComponent(ogr.adsoyad) + '\',\'' + encodeURIComponent(snfAd) + '\')">✅ Evet, benim</button>'
+        + ' <button class="kucuk-buton" style="background:#e05656" onclick="git(\'sbaglan\')">❌ Hayır</button></div>';
+      h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
+      ekran.innerHTML = h;
     });
   }).catch(function (e) { supaMesaj('Hata: ' + e.message, 'kirmizi'); });
+}
+function supaNoDogrula(ogrId, kayitNoEnc, kodEnc, adsoyadEnc, snfAdEnc) {
+  var kayitNo = kayitNoEnc ? decodeURIComponent(kayitNoEnc) : '';
+  var kod = decodeURIComponent(kodEnc || '');
+  var adsoyad = decodeURIComponent(adsoyadEnc || '');
+  var snfAd = decodeURIComponent(snfAdEnc || '');
+  var el = document.getElementById('supaNoKontrol');
+  var girilen = el ? el.value.trim() : '';
+  if (!girilen) { supaMesaj('Okul numaranı gir.', 'kirmizi'); return; }
+  if (kayitNo && String(kayitNo).trim() !== girilen) { supaMesaj('✖️ Girilen numara kayıtlı numarayla eşleşmiyor. Tekrar dene ya da öğretmenine sor.', 'kirmizi'); return; }
+  supaJsonYaz('supaBagli', { id: ogrId, no: girilen, adsoyad: adsoyad, kod: kod, sinifAd: snfAd });
+  supaMesaj('✅ Sınıfa bağlandın: ' + snfAd, 'yesil');
+  cizSbaglan();
 }
 function supaBaglantiKopar() {
   try { localStorage.removeItem('dersApp_supaBagli'); } catch (e) {}
@@ -6800,4 +6864,55 @@ function supaTestlerimGoster() {
     });
     ekran.innerHTML = h;
   }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+
+/* ---- ÖĞRENCİ: Kişisel karne ---- */
+function supaKarnemGoster() {
+  var bagli = supaJsonOku('supaBagli');
+  if (!bagli || !bagli.id) { alert('Önce sınıfa bağlan.'); return; }
+  Promise.all([kutuSUPA.sinifGetir(bagli.kod), kutuSUPA.notListele(bagli.id), kutuSUPA.detayListele(bagli.id), kutuSUPA.ogrenciAll(bagli.id), kutuSUPA.testListele(bagli.kod)])
+    .then(function (rz) {
+      var snf = rz[0] || {};
+      var notlar = rz[1] || [];
+      var rd = rz[2] || [];
+      var all = rz[3] || { yoklama: [], davranis: [] };
+      var testler = rz[4] || [];
+      var devamsizlik = rd.filter(function (r) { return r.tip === 'devamsizlik'; });
+      var toplamDevamGun = devamsizlik.reduce(function (t, r) { return t + (parseFloat(String(r.deger || '0').replace(',', '.')) || 0); }, 0);
+      var yoklar = all.yoklama.filter(function (y) { return y.durum === 'Y'; });
+      var hazir = all.yoklama.filter(function (y) { return y.durum === 'H' || y.durum === 'G'; });
+      var davTotal = (all.davranis || []).reduce(function (t, d) { return t + (d.puan || 0); }, 0);
+      var h = '<button class="geri" onclick="git(\'sbaglan\')">⬅ Sınıf</button>';
+      h += '<div class="baslik"><h1>🎓 Karnem</h1><p>Yazdırıp ailene gösterebilirsin.</p></div>';
+      h += '<div id="karnIcerik" class="ozet-karti" style="border:2px solid #dfe5f0;padding:16px">';
+      h += '<div style="text-align:center;margin-bottom:10px"><div style="font-size:18px;font-weight:800">KARNE</div>'
+        + '<div style="color:#666;font-size:12px">' + esc((snf && snf.okul) || '') + ' · ' + esc((snf && snf.sinif) || '') + '</div></div>';
+      h += '<table style="width:100%;font-size:13px;border-collapse:collapse"><tr><td style="padding:4px">Öğrenci:</td><td><b>' + esc(bagli.adsoyad) + '</b></td>'
+        + '<td style="padding:4px">Okul No:</td><td><b>' + esc(bagli.no || '') + '</b></td></tr></table>';
+      h += '<div class="baslik"><h2>📝 Karne Notları</h2></div>';
+      if (!notlar.length) h += '<div class="kucuk-not">Henüz not yok.</div>';
+      else {
+        var dersler = {};
+        notlar.forEach(function (n) { if (!dersler[n.ders]) dersler[n.ders] = []; dersler[n.ders].push(n); });
+        var satirlar = '';
+        Object.keys(dersler).forEach(function (ders) {
+          var kayitlar = dersler[ders];
+          var son = kayitlar[kayitlar.length - 1];
+          satirlar += '<tr><td style="padding:4px;border-top:1px solid #eee"><b>' + esc(ders) + '</b></td><td style="padding:4px;border-top:1px solid #eee">' + esc(son.not_) + '</td></tr>';
+        });
+        h += '<table style="width:100%;font-size:13px;border-collapse:collapse">' + satirlar + '</table>';
+      }
+      h += '<div class="baslik"><h2>📅 Devam</h2></div>';
+      h += '<div class="kucuk-not">Toplam devamsızlık: <b>' + (toplamDevamGun || 0) + '</b> gün · İzinsiz: <b>' + yoklar.length + '</b> · Hazır/Geç gün: <b>' + hazir.length + '</b></div>';
+      h += '<div class="baslik"><h2>🏅 Davranış</h2></div>';
+      h += '<div class="kucuk-not">Davranış puanı: <b>' + davTotal + '</b> (' + (all.davranis || []).length + ' kayıt)</div>';
+      if (testler.length) {
+        h += '<div class="baslik"><h2>📝 Testler</h2></div>';
+        h += '<div class="kucuk-not">Hazırlanan test sayısı: <b>' + testler.length + '</b></div>';
+      }
+      h += '<div style="text-align:right;margin-top:14px;font-size:12px;color:#666">İmza: __________________</div>';
+      h += '</div>';
+      h += '<div style="margin:12px auto;text-align:center"><button class="btn btn-mor" onclick="window.print()">🖨️ Yazdır / PDF</button></div>';
+      ekran.innerHTML = h;
+    }).catch(function (e) { alert('Hata: ' + e.message); });
 }
