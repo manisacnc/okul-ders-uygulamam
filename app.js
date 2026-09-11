@@ -5821,6 +5821,7 @@ function supaYukleSinif() {
         + '<button class="kucuk-buton" style="background:#0984e3" onclick="supaDuyuru(supaDeger(\'supaSinifKod\'))">📢 Duyuru</button>'
         + '<button class="kucuk-buton" style="background:#6c5ce7" onclick="supaYedekle(supaDeger(\'supaSinifKod\'))">📦 Yedekle</button>'
         + '<button class="kucuk-buton" style="background:#00b894" onclick="supaTestler(supaDeger(\'supaSinifKod\'))">📝 Mini Test</button>'
+        + '<button class="kucuk-buton" style="background:#e84393" onclick="supaOgretim(supaDeger(\'supaSinifKod\'))">📚 Ders Paylaş</button>'
         + '</div>';
       if (!ogrler || !ogrler.length) { h += '<div class="kucuk-not">Henüz öğrenci yok. "Öğrenci Ekle" ile ekleyin.</div>'; }
       else {
@@ -5950,10 +5951,13 @@ function cizSbaglan() {
       + '<button class="kucuk-buton" style="background:#0984e3" onclick="supaDuyurularimGoster()">📢 Sınıf Duyuruları</button> '
       + '<button class="kucuk-buton" style="background:#00b894" onclick="supaTestlerimGoster()">📝 Mini Test</button> '
       + '<button class="kucuk-buton" style="background:#ff9f43" onclick="supaKarnemGoster()">🎓 Karnem</button> '
+      + '<button class="kucuk-buton" style="background:#e84393" onclick="supaOgretimOgrenciGoster()">📚 Derslerim</button> '
       + '<button class="kucuk-buton" style="background:#e05656" onclick="supaBaglantiKopar()">Çık</button>'
+      + '<br><button class="kucuk-buton" style="background:#6a5cff" onclick="supaBildirimIzni()">🔔 Bildirimleri Aç (ses)</button>'
       + '</div>';
     h += '<div id="uyariRozeti"></div>';
     h += '<div id="supaPanel" style="margin-top:12px"></div>';
+    h += '<div id="supaDinleyici"></div>';
   }
   h += '<div class="ozet-karti">'
     + '<input id="supaKod2" type="text" placeholder="Etkinleştirme kodu" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0">'
@@ -5967,6 +5971,8 @@ function cizSbaglan() {
   h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
   ekran.innerHTML = h;
   supaDevamUyariGetir();
+  supaDinleDurdur();
+  if (bagli && bagli.id) supaDinleBaslat();
 }
 function supaVeliGiris() {
   var el = document.getElementById('supaVeliKod');
@@ -5997,31 +6003,51 @@ function supaPanelDoldur() {
       kutuSUPA.duyuruListele(bagli.kod),
       kutuSUPA.notListele(bagli.id),
       kutuSUPA.testListele(bagli.kod),
-      kutuSUPA.okunmaDurumu(bagli.id)
+      kutuSUPA.okunmaDurumu(bagli.id),
+      kutuSUPA.ogretimListeleOgrenci(bagli.kod, bagli.id),
+      kutuSUPA.ogretimOkunmaDurumu(bagli.id)
     ]).then(function (rz) {
       var duyurular = rz[0] || [];
       var notlar = rz[1] || [];
       var testler = rz[2] || [];
       var okunan = rz[3] || [];
+      var dersListesi = rz[4] || [];
+      var okunanDers = rz[5] || [];
       var okSet = {}; okunan.forEach(function (d) { okSet[d] = true; });
+      var okDers = {}; okunanDers.forEach(function (d) { okDers[d] = true; });
       var yeniDuyuru = duyurular.filter(function (d) { return !okSet[d.id]; }).length;
       var yeniNot = notlar.filter(function (n) { return !n.okundu; }).length;
+      var yeniDers = dersListesi.filter(function (d) { return !okDers[d.id]; }).length;
       var coculdu = { testler: [], bitti: 0 };
       var beklenti = testler.map(function (t) { return kutuSUPA.testCevabim(t.id, bagli.id); });
       Promise.all(beklenti).then(function (cevaplar) {
         cevaplar.forEach(function (c, i) { if (!c) coculdu.testler.push(testler[i]); });
+        var toplam = yeniNot + yeniDuyuru + yeniDers + coculdu.testler.length;
+        var onceki = 0;
+        try { onceki = parseInt(localStorage.getItem('supaBildirimToplam_' + bagli.id), 10) || 0; } catch (e) {}
+        if (toplam > 0 && toplam > onceki) {
+          supaBildirimSesi(yeniDers > 0);
+          if ('Notification' in window && Notification.permission === 'granted') {
+            try { new Notification('Yeni bildirim var!', { body: (yeniDers ? yeniDers + ' yeni ders ' : '') + (yeniNot ? yeniNot + ' yeni not ' : '') + (yeniDuyuru ? yeniDuyuru + ' duyuru ' : '') + (coculdu.testler.length ? coculdu.testler.length + ' test' : '') }); } catch (e) {}
+          }
+        }
+        try { localStorage.setItem('supaBildirimToplam_' + bagli.id, String(toplam)); } catch (e) {}
         var ozet = '';
-        if (yeniNot || yeniDuyuru || coculdu.testler.length) {
+        if (toplam > 0) {
           ozet = '<div class="ozet-karti" style="background:#fff8e6;border-color:#e67e22"><b>🔔 Bildirimlerin</b><br>'
+            + (yeniDers ? '📚 ' + yeniDers + ' yeni ders/konu · ' : '')
             + (yeniNot ? '📝 ' + yeniNot + ' yeni not · ' : '')
             + (yeniDuyuru ? '📢 ' + yeniDuyuru + ' okunmamış duyuru · ' : '')
             + (coculdu.testler.length ? '📝 ' + coculdu.testler.length + ' çözülmemiş test' : '')
             + '</div>';
         }
         var sonNot = notlar.length ? notlar[notlar.length - 1] : null;
+        var sonDers = dersListesi.length ? dersListesi[0] : null;
+        var sonDersTip = sonDers ? ({ 'Ders': '📘', 'Konu': '🎯', 'Ödev': '📝', 'Video': '🎬', 'Hatırlatma': '⏰' }[sonDers.tip] || '📚') : '';
         el.innerHTML = ozet
           + (sonNot ? '<div class="ozet-karti" style="font-size:13px">⭐ Son notun: <b>' + esc(sonNot.ders || '') + '</b> → ' + esc(sonNot.not_) + '</div>' : '')
-          + '<div class="ozet-karti" style="font-size:13px">🎯 Bekleyen test: <b>' + (coculdu.testler.length || 0) + '</b> · 🎓 Karnen hazır (<a href="javascript:supaKarnemGoster()" style="color:#1f8a70">gör</a>)</div>';
+          + (sonDers ? '<div class="ozet-karti" style="font-size:13px">📚 Son ders: <b>' + sonDersTip + ' ' + esc(sonDers.baslik) + '</b> <small>(' + esc(sonDers.tip || '') + ')</small></div>' : '')
+          + '<div class="ozet-karti" style="font-size:13px">🎯 Bekleyen test: <b>' + (coculdu.testler.length || 0) + '</b> · 📚 Dersler: <b>' + dersListesi.length + '</b> · 🎓 Karnen hazır (<a href="javascript:supaKarnemGoster()" style="color:#1f8a70">gör</a>)</div>';
       }).catch(function () {
         el.innerHTML = '<div class="kucuk-not">Panel yüklenemedi.</div>';
       });
@@ -6111,6 +6137,7 @@ function supaNoDogrula(ogrId, kayitNoEnc, kodEnc, adsoyadEnc, snfAdEnc) {
   cizSbaglan();
 }
 function supaBaglantiKopar() {
+  supaDinleDurdur();
   try { localStorage.removeItem('dersApp_supaBagli'); } catch (e) {}
   cizSbaglan();
 }
@@ -6864,6 +6891,132 @@ function supaTestlerimGoster() {
     });
     ekran.innerHTML = h;
   }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+
+/* ---- DERS / KONU PAYLAŞIMI (öğretmen) ---- */
+function supaOgretim(kod) {
+  if (!kod) return;
+  Promise.all([kutuSUPA.ogretimListele(kod), kutuSUPA.ogrenciListele(kod)])
+    .then(function (rz) {
+      var list = rz[0] || [];
+      var ogrler = rz[1] || [];
+      var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Sınıf</button>';
+      h += '<div class="baslik"><h1>📚 Ders / Konu Paylaş</h1><p>Tüm sınıfa veya bir öğrenciye özel ders, konu, ödev, video notu paylaş. Öğrenciler bildirim + ses alır.</p></div>';
+      h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
+      h += '<div class="ozet-karti">'
+        + '<select id="ogTip" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:2px 0">'
+        + '<option value="Ders">📘 Ders</option><option value="Konu">🎯 Konu</option><option value="Ödev">📝 Ödev</option><option value="Video">🎬 Video / Link</option><option value="Hatırlatma">⏰ Hatırlatma</option></select>'
+        + '<select id="ogHedef" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:2px 0">'
+        + '<option value="">👥 Tüm sınıf</option>'
+        + ogrler.map(function (o) { return '<option value="' + o.id + '">🎒 ' + esc(o.adsoyad) + '</option>'; }).join('')
+        + '</select>'
+        + '<input id="ogBaslik" type="text" placeholder="Başlık (ör. 6/A Matematik — Kesirler)" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:2px 0">'
+        + '<textarea id="ogKonu" rows="4" placeholder="Ders / konu / ödev açıklaması. Link, video veya metin koyabilirsin." style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;font-family:inherit"></textarea>'
+        + '<button class="kucuk-buton" style="background:#e84393" onclick="supaOgretimPaylas(\'' + encodeURIComponent(kod) + '\')">📤 Paylaş → Öğrencilere bildirim</button></div>';
+      if (!list || !list.length) h += '<div class="kucuk-not">Henüz paylaşım yok.</div>';
+      else {
+        var beklenti = list.map(function (d) { return kutuSUPA.ogretimOkunma(d.id); });
+        Promise.all(beklenti).then(function (okunmalar) {
+          list.forEach(function (d, i) {
+            var okundu = okunmalar[i] || [];
+            var hedef = d.ogrenci_id ? (ogrler.filter(function (o) { return o.id === d.ogrenci_id; })[0] || {}).adsoyad || 'öğrenci' : 'Tüm sınıf';
+            var tipIkon = { 'Ders': '📘', 'Konu': '🎯', 'Ödev': '📝', 'Video': '🎬', 'Hatırlatma': '⏰' }[d.tip] || '📌';
+            h += '<div class="ozet-karti" style="margin-bottom:6px"><b>' + tipIkon + ' ' + esc(d.baslik) + '</b> <small style="color:#888">(' + esc(d.tip || '') + ' → ' + esc(hedef) + ')</small><br>'
+              + esc(d.konu || '') + '<br><small style="color:#888">' + (d.olusturma ? new Date(d.olusturma).toLocaleString('tr-TR') : '') + ' · 👀 ' + okundu.length + ' öğrenci okudu</small> '
+              + '<button class="kucuk-buton" style="background:#e05656" onclick="supaOgretimSil(' + d.id + ',\'' + encodeURIComponent(d.kod) + '\')">🗑️</button></div>';
+          });
+          ekran.innerHTML = h;
+        }).catch(function () { ekran.innerHTML = h + '<div class="kucuk-not">Okunma durumu yüklenemedi.</div>'; });
+      }
+    }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaOgretimPaylas(kodEnc) {
+  var kod = decodeURIComponent(kodEnc || '');
+  var tip = document.getElementById('ogTip');
+  var hedef = document.getElementById('ogHedef');
+  var baslik = document.getElementById('ogBaslik');
+  var konu = document.getElementById('ogKonu');
+  if (!baslik || !baslik.value.trim()) { alert('Başlık gir.'); return; }
+  kutuSUPA.ogretimPaylas(kod, hedef && hedef.value ? parseInt(hedef.value, 10) : null, tip ? tip.value : 'Ders', baslik.value.trim(), konu ? konu.value.trim() : '')
+    .then(function () { supaMesaj('✅ Paylaşıldı — öğrencilere bildirim gitti.', 'yesil'); supaOgretim(kod); })
+    .catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaOgretimSil(id, kodEnc) {
+  var kod = decodeURIComponent(kodEnc || '');
+  if (!confirm('Bu paylaşımı sil?')) return;
+  kutuSUPA.ogretimSil(id).then(function () { supaOgretim(kod); }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+
+/* ---- DERS / KONU PAYLAŞIMI (öğrenci) ---- */
+function supaOgretimOgrenciGoster() {
+  var bagli = supaJsonOku('supaBagli');
+  if (!bagli || !bagli.id) { alert('Önce sınıfa bağlan.'); return; }
+  Promise.all([kutuSUPA.ogretimListeleOgrenci(bagli.kod, bagli.id), kutuSUPA.ogretimOkunmaDurumu(bagli.id)])
+    .then(function (rz) {
+      var list = rz[0] || [];
+      var okunan = rz[1] || [];
+      var okSet = {}; okunan.forEach(function (d) { okSet[d] = true; });
+      var h = '<button class="geri" onclick="git(\'sbaglan\')">⬅ Sınıf</button>';
+      h += '<div class="baslik"><h1>📚 Derslerim</h1><p>Öğretmeninin paylaştıkları.</p></div>';
+      if (!list || !list.length) h += '<div class="kucuk-not">Henüz paylaşım yok.</div>';
+      else list.forEach(function (d) {
+        var tipIkon = { 'Ders': '📘', 'Konu': '🎯', 'Ödev': '📝', 'Video': '🎬', 'Hatırlatma': '⏰' }[d.tip] || '📌';
+        if (!okSet[d.id]) kutuSUPA.ogretimOkunduIsaretle(d.id, bagli.id);
+        h += '<div class="ozet-karti" style="margin-bottom:6px"><b>' + tipIkon + ' ' + esc(d.baslik) + '</b> <small style="color:#888">(' + esc(d.tip || '') + ')</small><br>'
+          + '<div style="white-space:pre-wrap">' + esc(d.konu || '') + '</div><br>'
+          + '<small style="color:#888">' + (d.olusturma ? new Date(d.olusturma).toLocaleString('tr-TR') : '') + '</small> '
+          + (okSet[d.id] ? '<small style="color:#1f8a70">✅ Okundu</small>' : '<small style="color:#e67e22">🆕 Yeni</small>')
+          + '</div>';
+      });
+      ekran.innerHTML = h;
+    }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+
+/* ---- SESLİ BİLDİRİM ---- */
+var supaSesKilit = false;
+function supaBildirimSesi(dersmi) {
+  if (supaSesKilit || !window.AudioContext) return;
+  try {
+    supaSesKilit = true;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    var ctx = new AC();
+    var notalar = dersmi ? [880, 1108.73, 1318.51, 1760] : [1174.66, 1567.98];
+    notalar.forEach(function (f, i) {
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      o.connect(g); g.connect(ctx.destination);
+      var t = ctx.currentTime + i * 0.18;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.35, t + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+      o.start(t); o.stop(t + 0.55);
+    });
+    setTimeout(function () { supaSesKilit = false; }, 1500);
+  } catch (e) { supaSesKilit = false; }
+}
+function supaBildirimIzni() {
+  if (!('Notification' in window)) { supaMesaj('Bu tarayıcı masaüstü bildirimi desteklemiyor ama sesli uyarı çalışır.', 'kirmizi'); return; }
+  if (Notification.permission === 'granted') { supaBildirimSesi(true); supaMesaj('🔔 Bildirimler açık — size test zili çaldı.', 'yesil'); return; }
+  Notification.requestPermission().then(function (p) {
+    if (p === 'granted') { supaBildirimSesi(true); supaMesaj('🔔 Bildirimler açıldı — zil sesi geldi.', 'yesil'); }
+    else supaMesaj('Bildirim izni verilmedi; sesli uyarı yine çalışır.', 'kirmizi');
+  });
+}
+var supaDinleTmr = null;
+function supaDinleBaslat() {
+  supaDinleDurdur();
+  var bagli = supaJsonOku('supaBagli');
+  if (!bagli || !bagli.id) return;
+  supaDinleTmr = setInterval(function () {
+    var b2 = supaJsonOku('supaBagli');
+    if (!b2 || !b2.id) { supaDinleDurdur(); return; }
+    var g = document.getElementById('supaDinleyici');
+    if (!g || !document.getElementById('supaPanel')) { supaDinleDurdur(); return; }
+    supaPanelDoldur();
+  }, 15000);
+}
+function supaDinleDurdur() {
+  if (supaDinleTmr) { clearInterval(supaDinleTmr); supaDinleTmr = null; }
 }
 
 /* ---- ÖĞRENCİ: Kişisel karne ---- */

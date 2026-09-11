@@ -262,6 +262,33 @@ var kutuSUPA = (function () {
       .then(function (a) { return (a && a[0]) || null; });
   }
 
+  /* ===== DERS / KONU PAYLAŞIMI ===== */
+  function ogretimListele(kod) {
+    return GET('ogretim', 'kod=eq.' + encodeURIComponent(kod) + '&select=*&order=olusturma.desc');
+  }
+  function ogretimListeleOgrenci(kod, ogrenciId) {
+    return GET('ogretim', 'kod=eq.' + encodeURIComponent(kod) + '&or=(ogrenci_id.is.null,ogrenci_id.eq.' + ogrenciId + ')&select=*&order=olusturma.desc');
+  }
+  function ogretimPaylas(kod, ogrenciId, tip, baslik, konu) {
+    return POST('ogretim', { kod: kod, ogrenci_id: ogrenciId || null, tip: tip, baslik: baslik, konu: konu || '' })
+      .then(function (a) { return a && a[0]; });
+  }
+  function ogretimSil(id) {
+    return DELETE('ogretim', 'id=eq.' + id);
+  }
+  function ogretimOkunduIsaretle(ogretimId, ogrenciId) {
+    return UPSERT('ogretim_okunma', 'on_conflict=ogretim_id,ogrenci_id', { ogretim_id: ogretimId, ogrenci_id: ogrenciId })
+      .then(function (a) { return a && a[0]; });
+  }
+  function ogretimOkunmaDurumu(ogrenciId) {
+    return GET('ogretim_okunma', 'ogrenci_id=eq.' + ogrenciId + '&select=ogretim_id')
+      .then(function (a) { return (a || []).map(function (r) { return r.ogretim_id; }); });
+  }
+  function ogretimOkunma(ogretimId) {
+    return GET('ogretim_okunma', 'ogretim_id=eq.' + ogretimId + '&select=ogrenci_id')
+      .then(function (a) { return (a || []).map(function (r) { return r.ogrenci_id; }); });
+  }
+
   /* ===== GENEL SORGULAR (öğrenci dosyası + rapor) ===== */
   function ogrenciAll(ogrenciId) {
     return Promise.all([
@@ -351,6 +378,13 @@ var kutuSUPA = (function () {
     testCevapKaydet: testCevapKaydet,
     testCevapListele: testCevapListele,
     testCevabim: testCevabim,
+    ogretimListele: ogretimListele,
+    ogretimListeleOgrenci: ogretimListeleOgrenci,
+    ogretimPaylas: ogretimPaylas,
+    ogretimSil: ogretimSil,
+    ogretimOkunduIsaretle: ogretimOkunduIsaretle,
+    ogretimOkunmaDurumu: ogretimOkunmaDurumu,
+    ogretimOkunma: ogretimOkunma,
     veriGonder: veriGonder,
     veriGetir: veriGetir
   };
