@@ -5819,6 +5819,8 @@ function supaYukleSinif() {
         + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaRastgele(supaDeger(\'supaSinifKod\'))">🎲 Rastgele Öğrenci</button>'
         + '<button class="kucuk-buton" style="background:#f0932b" onclick="supaDavranış(supaDeger(\'supaSinifKod\'))">🏅 Davranış</button>'
         + '<button class="kucuk-buton" style="background:#0984e3" onclick="supaDuyuru(supaDeger(\'supaSinifKod\'))">📢 Duyuru</button>'
+        + '<button class="kucuk-buton" style="background:#6c5ce7" onclick="supaYedekle(supaDeger(\'supaSinifKod\'))">📦 Yedekle</button>'
+        + '<button class="kucuk-buton" style="background:#00b894" onclick="supaTestler(supaDeger(\'supaSinifKod\'))">📝 Mini Test</button>'
         + '</div>';
       if (!ogrler || !ogrler.length) { h += '<div class="kucuk-not">Henüz öğrenci yok. "Öğrenci Ekle" ile ekleyin.</div>'; }
       else {
@@ -5946,6 +5948,7 @@ function cizSbaglan() {
       + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaSenkronGonder()">⬆️ Verilerimi Öğretmene Gönder</button> '
       + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaNotlarimGoster()">📝 Notlarımı Gör</button> '
       + '<button class="kucuk-buton" style="background:#0984e3" onclick="supaDuyurularimGoster()">📢 Sınıf Duyuruları</button> '
+      + '<button class="kucuk-buton" style="background:#00b894" onclick="supaTestlerimGoster()">📝 Mini Test</button> '
       + '<button class="kucuk-buton" style="background:#e05656" onclick="supaBaglantiKopar()">Çık</button>'
       + '</div>';
     h += '<div id="uyariRozeti"></div>';
@@ -6017,6 +6020,17 @@ function supaVeliKodUret(ogrenciId) {
     var g = document.getElementById('veliKodGoster');
     if (g) g.textContent = kod;
     supaMesaj('✅ Veli kodu oluşturuldu: ' + kod + ' — veliye iletin.', 'yesil');
+  }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaKodSifirla(ogrenciId) {
+  var kod = '';
+  var alfabe = 'ABCDEFGHJKLMNPRSTUVYZ23456789';
+  while (kod.length < 6) kod += alfabe.charAt(Math.floor(Math.random() * alfabe.length));
+  if (!confirm('Yeni etkinleştirme kodu: ' + kod + '\nEski kod geçersiz olur. Devam?')) return;
+  kutuSUPA.kodSifirla(ogrenciId, kod).then(function () {
+    var g = document.getElementById('etkinlesmeGoster');
+    if (g) g.textContent = kod;
+    supaMesaj('✅ Yeni etkinleştirme kodu: ' + kod, 'yesil');
   }).catch(function (e) { alert('Hata: ' + e.message); });
 }
 function supaBaglan() {
@@ -6099,6 +6113,7 @@ function supaNotlarimGoster() {
       else {
         h += '<div class="baslik" style="margin-top:6px"><h2>📝 Karne Notları</h2></div>';
         notlar.forEach(function (n) {
+          if (!n.okundu) kutuSUPA.notOkunduKaydet(n.id);
           h += '<div class="ozet-karti" style="margin-bottom:6px"><b>' + esc(n.ders || 'Ders') + '</b>: ' + esc(n.not_) + '<br><small style="color:#888">' + (n.tarih ? new Date(n.tarih).toLocaleString('tr-TR') : '') + '</small></div>';
         });
       }
@@ -6156,6 +6171,11 @@ function supaDosyaGoster(ogrenciId, adEnc) {
         + '<br><b style="color:#1f8a70" id="veliKodGoster">' + esc(ogr.veli_kod || '(kod yok)') + '</b>'
         + ' <button class="kucuk-buton" style="background:#1f8a70" onclick="supaVeliKodUret(' + p.id + ')">🔑 Veli Kodu Oluştur</button></div>';
 
+      h += '<div class="baslik" style="margin-top:10px"><h2>🔑 Etkinleştirme Kodu</h2></div>';
+      h += '<div class="ozet-karti">Öğrenci bu kodla sınıfa bağlanır.'
+        + '<br><b style="color:#6a5cff" id="etkinlesmeGoster">' + esc(ogr.etkinlesme || '(yok)') + '</b>'
+        + ' <button class="kucuk-buton" style="background:#6a5cff" onclick="supaKodSifirla(' + p.id + ')">🔄 Yeni Kod Üret</button></div>';
+
       h += '<div class="baslik" style="margin-top:10px"><h2>📝 Karne Notları</h2></div>';
       h += '<div class="ozet-karti"><b>Not ekle:</b><br><select id="supaDers"><option value="">Ders seçin</option>';
       var sk = seciliSinif();
@@ -6167,6 +6187,7 @@ function supaDosyaGoster(ogrenciId, adEnc) {
       else notlar.forEach(function (n) {
         h += '<div class="ozet-karti" style="margin-bottom:6px"><b>' + esc(n.ders || 'Ders') + '</b>: ' + esc(n.not_) + '<br>'
           + '<small style="color:#888">' + (n.tarih ? new Date(n.tarih).toLocaleString('tr-TR') : '') + '</small> '
+          + (n.okundu ? '<small style="color:#1f8a70">✅ Öğrenci gördü</small>' : '<small style="color:#999">⏳ Henüz görmedi</small>') + ' '
           + '<button class="kucuk-buton" style="background:#e05656" onclick="supaDosyaNotSil(' + n.id + ')">Sil</button></div>';
       });
 
@@ -6483,25 +6504,20 @@ function supaSınıfRapor(kod) {
       });
       Promise.all(beklenti).then(function (diziler) {
         diziler.forEach(function (d) {
-          var nOrt = {}, nAdet = {}, toplam = 0, adet = 0;
+          var nOrt = {}, toplam = 0, adet = 0;
           (d.n).forEach(function (k) {
             var sayi = parseFloat(String(k.not_).replace(',', '.'));
             if (isNaN(sayi)) return;
-            if (nOrt[k.ogrenci_id] == null) { nOrt[k.ogrenci_id] = [0, 0]; }
+            if (nOrt[k.ogrenci_id] == null) nOrt[k.ogrenci_id] = [0, 0];
             nOrt[k.ogrenci_id][0] += sayi; nOrt[k.ogrenci_id][1]++;
             toplam += sayi; adet++;
           });
           d._ort = { perOgr: nOrt, sinifOrt: adet ? Math.round(toplam / adet * 10) / 10 : null };
         });
-        var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Sınıf</button>';
-        h += '<div class="baslik"><h1>📊 Sınıf Genel Raporu</h1><p>Sınıf kodu: <b>' + esc(kod) + '</b> · ' + (ogrler.length) + ' öğrenci</p></div>';
-        h += '<div class="ozet-karti" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">';
-        h += '<tr style="background:#f2f4fa"><th style="padding:6px;text-align:left">Öğrenci</th><th>Hazır</th><th>Geç</th><th>İzinli</th><th>Yok</th><th>Devam %</th><th>Not Ort.</th></tr>';
-        var gt = { H: 0, G: 0, I: 0, Y: 0 };
-        ogrler.forEach(function (o) {
+        var ogrBilgi = ogrler.map(function (o) {
           var ys = yoklar.filter(function (y) { return y.ogrenci_id === o.id; });
           var t = { H: 0, G: 0, I: 0, Y: 0 };
-          ys.forEach(function (y) { t[y.durum]++; gt[y.durum]++; });
+          ys.forEach(function (y) { t[y.durum]++; });
           var toplam = t.H + t.G + t.I + t.Y || 1;
           var yuzde = Math.round((t.H + t.G) / toplam * 100);
           var gs = 0, ns = 0;
@@ -6510,13 +6526,30 @@ function supaSınıfRapor(kod) {
             if (g) { gs += g[0]; ns += g[1]; }
           });
           var ort = ns ? Math.round(gs / ns * 10) / 10 : null;
-          h += '<tr><td style="padding:6px;border-top:1px solid #eee"><b>' + esc(o.adsoyad) + '</b></td>'
-            + '<td style="text-align:center;border-top:1px solid #eee">' + t.H + '</td>'
-            + '<td style="text-align:center;border-top:1px solid #eee">' + t.G + '</td>'
-            + '<td style="text-align:center;border-top:1px solid #eee">' + t.I + '</td>'
-            + '<td style="text-align:center;border-top:1px solid #eee">' + t.Y + '</td>'
-            + '<td style="text-align:center;border-top:1px solid #eee">' + yuzde + '%</td>'
-            + '<td style="text-align:center;border-top:1px solid #eee;font-weight:700;color:' + (ort == null ? '#999' : (ort >= 70 ? '#1f8a70' : (ort >= 50 ? '#e67e22' : '#e05656'))) + '">' + (ort == null ? '—' : ort) + '</td></tr>';
+          return { o: o, t: t, yuzde: yuzde, ort: ort };
+        });
+        ogrBilgi.sort(function (a, b) {
+          if (a.ort == null && b.ort == null) return b.yuzde - a.yuzde;
+          if (a.ort == null) return 1;
+          if (b.ort == null) return -1;
+          return b.ort - a.ort;
+        });
+        var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Sınıf</button>';
+        h += '<div class="baslik"><h1>📊 Sınıf Genel Raporu</h1><p>Sınıf kodu: <b>' + esc(kod) + '</b> · ' + (ogrler.length) + ' öğrenci</p></div>';
+        h += '<div class="ozet-karti" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">';
+        h += '<tr style="background:#f2f4fa"><th style="padding:6px;text-align:left">Sıra</th><th style="padding:6px;text-align:left">Öğrenci</th><th>Hazır</th><th>Geç</th><th>İzinli</th><th>Yok</th><th>Devam %</th><th>Ort.</th><th>Durum</th></tr>';
+        ogrBilgi.forEach(function (b, i) {
+          var durum = b.ort == null ? '—' : (b.ort >= 50 ? '✅ Geçti' : '❌ Kaldı');
+          var durumRenk = b.ort == null ? '#999' : (b.ort >= 50 ? '#1f8a70' : '#e05656');
+          h += '<tr style="' + (i % 2 === 1 ? 'background:#f9fafe' : '') + '"><td style="padding:6px;border-top:1px solid #eee;font-weight:700">' + (i + 1) + '</td>'
+            + '<td style="padding:6px;border-top:1px solid #eee"><b>' + esc(b.o.adsoyad) + '</b></td>'
+            + '<td style="text-align:center;border-top:1px solid #eee">' + b.t.H + '</td>'
+            + '<td style="text-align:center;border-top:1px solid #eee">' + b.t.G + '</td>'
+            + '<td style="text-align:center;border-top:1px solid #eee">' + b.t.I + '</td>'
+            + '<td style="text-align:center;border-top:1px solid #eee">' + b.t.Y + '</td>'
+            + '<td style="text-align:center;border-top:1px solid #eee">' + b.yuzde + '%</td>'
+            + '<td style="text-align:center;border-top:1px solid #eee;font-weight:700;color:' + durumRenk + '">' + (b.ort == null ? '—' : b.ort) + '</td>'
+            + '<td style="text-align:center;border-top:1px solid #eee;font-size:12px;color:' + durumRenk + '">' + durum + '</td></tr>';
         });
         h += '</table></div>';
         if (snv.length) {
@@ -6549,6 +6582,11 @@ function supaSınıfRaporCSV(kod) {
 }
 
 /* ---- SINIF DUYURUSU ---- */
+function supaYedekle(kod) {
+  if (!kod) { alert('Sınıf kodu gerekli.'); return; }
+  if (!confirm('📦 Tüm sınıf verisi (öğrenciler, notlar, yoklama, sınavlar, davranış, duyurular) bir JSON dosyası olarak indirilecek.\nDevam?') ) return;
+  kutuSUPA.sinifYedekIndir(decodeURIComponent(kod)).catch(function (e) { alert('Hata: ' + e.message); });
+}
 function supaDuyuru(kod) {
   if (!kod) return;
   Promise.all([kutuSUPA.duyuruListele(kod), kutuSUPA.ogrenciListele(kod)])
@@ -6589,4 +6627,177 @@ function supaDuyuruYaz(kod) {
 function supaDuyuruKaldir(id, kodEnc) {
   var kod = decodeURIComponent(kodEnc || '');
   kutuSUPA.duyuruSil(id).then(function () { supaDuyuru(kod); }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+
+/* ---- MINI TEST (öğretmen) ---- */
+function supaTestler(kod) {
+  if (!kod) return;
+  kutuSUPA.testListele(kod).then(function (list) {
+    var h = '<button class="geri" onclick="git(\'sinifYonet\')">⬅ Sınıf</button>';
+    h += '<div class="baslik"><h1>📝 Mini Testler</h1><p>Geçerli test oluştur; öğrenciler sınıf kodunla telefonda çözsün. Sonuçlar otomatik kaydedilir.</p></div>';
+    h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
+    h += '<div class="ozet-karti"><input id="tnAd" type="text" placeholder="Test adı (ör. 6-A Matematik 1. ünite)" style="padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0;width:100%">'
+      + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaTestYeni(\'' + encodeURIComponent(kod) + '\')">➕ Test Oluştur</button></div>';
+    if (!list || !list.length) h += '<div class="kucuk-not">Henüz test yok.</div>';
+    else list.forEach(function (t) {
+      h += '<div class="ozet-karti" style="margin-bottom:6px"><b>📝 ' + esc(t.ad) + '</b><br><small style="color:#888">' + new Date(t.olusturma).toLocaleString('tr-TR') + '</small> '
+        + '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaTestSorular(' + t.id + ',\'' + encodeURIComponent(t.ad) + '\')">🧩 Sorular</button> '
+        + '<button class="kucuk-buton" style="background:#0984e3" onclick="supaTestSonuc(' + t.id + ',\'' + encodeURIComponent(t.ad) + '\',\'' + encodeURIComponent(kod) + '\')">📊 Sonuçlar</button> '
+        + '<button class="kucuk-buton" style="background:#e05656" onclick="supaTestSil(' + t.id + ',\'' + encodeURIComponent(kod) + '\')">🗑️</button></div>';
+    });
+    ekran.innerHTML = h;
+  }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaTestYeni(kodEnc) {
+  var kod = decodeURIComponent(kodEnc || '');
+  var ad = document.getElementById('tnAd');
+  if (!ad || !ad.value.trim()) { alert('Test adı gir.'); return; }
+  kutuSUPA.testOlustur(kod, ad.value.trim())
+    .then(function (t) { supaMesaj('✅ Test oluşturuldu. Şimdi soru ekleyin.', 'yesil'); supaTestSorular(t.id, t.ad); })
+    .catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaTestSil(testId, kodEnc) {
+  var kod = decodeURIComponent(kodEnc || '');
+  if (!confirm('Bu test ve tüm soruları silinsin mi?')) return;
+  kutuSUPA.testSil(testId).then(function () { supaTestler(kod); });
+}
+var supaTestVR = null;
+function supaTestSorular(testId, ad) {
+  supaTestVR = { id: testId, ad: ad };
+  var bagli = supaJsonOku('supaBagli');
+  var must = bagli && bagli.id ? supaTestCozGoster(testId) : null;
+  kutuSUPA.testSoruListele(testId).then(function (sorular) {
+    var h = '<button class="geri" onclick="supaTestler(supaDeger(\'supaSinifKod\'))">⬅ Testler</button>';
+    h += '<div class="baslik"><h1>🧩 ' + esc(ad) + ' — Sorular</h1><p>' + (sorular ? sorular.length : 0) + ' soru</p></div>';
+    h += '<div id="supaMesaj" style="display:none;border-radius:8px;padding:10px;margin-bottom:12px"></div>';
+    h += '<div class="ozet-karti"><b>Yeni soru:</b><br>'
+      + '<input id="tqSoru" type="text" placeholder="Soru" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:4px 0">'
+      + '<input id="tqA" type="text" placeholder="A) Şık" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:2px 0">'
+      + '<input id="tqB" type="text" placeholder="B) Şık" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:2px 0">'
+      + '<input id="tqC" type="text" placeholder="C) Şık" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:2px 0">'
+      + '<input id="tqD" type="text" placeholder="D) Şık" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin:2px 0">'
+      + 'Doğru cevap: <select id="tqDogru" style="padding:6px;border-radius:8px;border:2px solid #dfe5f0"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select> '
+      + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaTestSoruEkle(' + testId + ')">➕ Soruyu Ekle</button></div>';
+    if (!sorular || !sorular.length) h += '<div class="kucuk-not">Henüz soru yok.</div>';
+    else sorular.forEach(function (s, i) {
+      var siklari = s.siklari || [];
+      var sikkarMetin = ['A', 'B', 'C', 'D'].map(function (h, ik) { return h + ') ' + (siklari[ik] || ''); }).join(' · ');
+      h += '<div class="ozet-karti" style="margin-bottom:6px"><b>' + (i + 1) + '. ' + esc(s.soru) + '</b><br><small>' + esc(sikkarMetin) + '</small><br><small style="color:#1f8a70">Doğru: ' + ['A','B','C','D'][s.dogru] + '</small> '
+        + '<button class="kucuk-buton" style="background:#e05656" onclick="supaTestSoruSil(' + s.id + ',' + testId + ',\'' + encodeURIComponent(ad) + '\')">🗑️</button></div>';
+    });
+    ekran.innerHTML = h;
+  }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaTestSoruEkle(testId) {
+  var soru = document.getElementById('tqSoru');
+  var a = document.getElementById('tqA'), b = document.getElementById('tqB'), c = document.getElementById('tqC'), d = document.getElementById('tqD');
+  var dogru = document.getElementById('tqDogru');
+  if (!soru || !soru.value.trim() || !a.value.trim() || !b.value.trim() || !c.value.trim() || !d.value.trim()) { alert('Soru ve 4 şıkkı doldur.'); return; }
+  var siklari = [a.value.trim(), b.value.trim(), c.value.trim(), d.value.trim()];
+  kutuSUPA.testSoruEkle(testId, 0, soru.value.trim(), siklari, parseInt(dogru.value, 10))
+    .then(function () { supaTestSorular(testId, supaTestVR ? supaTestVR.ad : ''); })
+    .catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaTestSoruSil(soruId, testId, adEnc) {
+  var ad = decodeURIComponent(adEnc || '');
+  kutuSUPA.testSoruSil(soruId).then(function () { supaTestSorular(testId, ad); });
+}
+function supaTestSonuc(testId, ad, kodEnc) {
+  var kod = decodeURIComponent(kodEnc || '');
+  Promise.all([kutuSUPA.ogrenciListele(kod), kutuSUPA.testSoruListele(testId), kutuSUPA.testCevapListele(testId)])
+    .then(function (rz) {
+      var ogrler = rz[0] || [], sorular = rz[1] || [], cevap = rz[2] || [];
+      var cv = {};
+      cevap.forEach(function (c) { cv[c.ogrenci_id] = c; });
+      var h = '<button class="geri" onclick="supaTestler(\'' + encodeURIComponent(kod) + '\')">⬅ Testler</button>';
+      h += '<div class="baslik"><h1>📊 ' + esc(ad) + ' — Sonuçlar</h1><p>' + (sorular ? sorular.length : 0) + ' soru · ' + (ogrler.length) + ' öğrenci</p></div>';
+      h += '<div class="ozet-karti" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">';
+      h += '<tr style="background:#f2f4fa"><th style="padding:6px;text-align:left">Öğrenci</th><th>Doğru</th><th>Puan</th><th>Durum</th></tr>';
+      var sirali = ogrler.slice();
+      sirali.sort(function (a, b) {
+        var pa = (cv[a.id] && cv[a.id].puan) || 0, pb = (cv[b.id] && cv[b.id].puan) || 0;
+        return pb - pa;
+      });
+      sirali.forEach(function (o, i) {
+        var c = cv[o.id];
+        var puan = c ? c.puan : null;
+        var dogru = c ? c.dogru : null;
+        var durum = puan == null ? 'katılmadı' : (puan >= 50 ? '✅ Geçti' : '❌ Kaldı');
+        h += '<tr><td style="padding:6px;border-top:1px solid #eee"><b>' + (i + 1) + '. ' + esc(o.adsoyad) + '</b></td>'
+          + '<td style="text-align:center;border-top:1px solid #eee">' + (dogru == null ? '—' : dogru) + '/' + (sorular ? sorular.length : 0) + '</td>'
+          + '<td style="text-align:center;border-top:1px solid #eee;font-weight:700">' + (puan == null ? '—' : puan) + '</td>'
+          + '<td style="text-align:center;border-top:1px solid #eee;color:' + (puan == null ? '#999' : (puan >= 50 ? '#1f8a70' : '#e05656')) + '">' + durum + '</td></tr>';
+      });
+      h += '</table></div>';
+      h += '<div class="kucuk-not" style="margin-top:6px">50 puan ve üstü geçer. Puan = (doğru/toplam)×100.</div>';
+      ekran.innerHTML = h;
+    }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+
+/* ---- MINI TEST (öğrenci) ---- */
+function supaTestCozGoster(testId) {
+  var bagli = supaJsonOku('supaBagli');
+  if (!bagli || !bagli.id) { alert('Önce sınıfa bağlan.'); return; }
+  Promise.all([kutuSUPA.testSoruListele(testId), kutuSUPA.testCevabim(testId, bagli.id)])
+    .then(function (rz) {
+      var sorular = rz[0] || [];
+      var gecmis = rz[1] || null;
+      var h = '<button class="geri" onclick="git(\'sbaglan\')">⬅ Sınıf</button>';
+      h += '<div class="baslik"><h1>📝 Mini Test</h1><p>' + esc(supaTestVR ? supaTestVR.ad : '') + '</p></div>';
+      if (!sorular.length) { h += '<div class="kucuk-not">Bu testte henüz soru yok.</div>'; ekran.innerHTML = h; return; }
+      if (gecmis) {
+        h += '<div class="ozet-karti" style="background:#e3ffe9;border-color:#1f8a70">✅ Bu testi zaten çözdün. Sonuç: <b>' + gecmis.puan + ' puan</b> (' + gecmis.dogru + '/' + gecmis.toplam + ' doğru)</div>';
+        h += '<button class="kucuk-buton" style="background:#6a5cff" onclick="supaTestTekrar(' + testId + ')">🔁 Tekrar çöz</button>';
+        ekran.innerHTML = h; return;
+      }
+      sorular.forEach(function (s, i) {
+        var siklari = s.siklari || [];
+        h += '<div class="ozet-karti" style="margin-bottom:6px"><b>' + (i + 1) + '. ' + esc(s.soru) + '</b><br>';
+        ['A', 'B', 'C', 'D'].forEach(function (harf, ik) {
+          if (siklari[ik] == null) return;
+          h += '<label style="display:block;padding:4px 0"><input type="radio" name="tq_' + s.id + '" value="' + ik + '"> ' + harf + ') ' + esc(siklari[ik]) + '</label>';
+        });
+        h += '</div>';
+      });
+      h += '<div style="text-align:center;margin-top:10px"><button class="btn btn-test" onclick="supaTestGonder(' + testId + ')">📤 Testi Gönder</button></div>';
+      ekran.innerHTML = h;
+    }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaTestGonder(testId) {
+  var bagli = supaJsonOku('supaBagli');
+  if (!bagli || !bagli.id) { alert('Sınıfa bağlanmalısın.'); return; }
+  kutuSUPA.testSoruListele(testId).then(function (sorular) {
+    var cevaplar = {}, dogru = 0;
+    sorular.forEach(function (s) {
+      var secim = null;
+      var input = document.querySelector('input[name="tq_' + s.id + '"]:checked');
+      if (input) secim = parseInt(input.value, 10);
+      if (secim !== null) cevaplar[s.id] = secim;
+      if (secim !== null && secim === s.dogru) dogru++;
+    });
+    var toplam = sorular.length;
+    var puan = toplam ? Math.round(dogru / toplam * 100) : 0;
+    kutuSUPA.testCevapKaydet(testId, bagli.id, cevaplar, dogru, toplam, puan)
+      .then(function () {
+        alert('✅ Testin kaydedildi. Sonuç: ' + puan + ' puan (' + dogru + '/' + toplam + ' doğru).');
+        supaTestCozGoster(testId);
+      }).catch(function (e) { alert('Hata: ' + e.message); });
+  }).catch(function (e) { alert('Hata: ' + e.message); });
+}
+function supaTestTekrar(testId) {
+  supaTestCozGoster(testId);
+}
+function supaTestlerimGoster() {
+  var bagli = supaJsonOku('supaBagli');
+  if (!bagli || !bagli.id) { alert('Önce sınıfa bağlan.'); return; }
+  kutuSUPA.testListele(bagli.kod).then(function (list) {
+    var h = '<button class="geri" onclick="git(\'sbaglan\')">⬅ Sınıf</button>';
+    h += '<div class="baslik"><h1>📝 Mini Testler</h1><p>Öğretmeninin hazırladığı testleri çöz, sonucunu anında gör.</p></div>';
+    if (!list || !list.length) h += '<div class="kucuk-not">Öğretmenin henüz test hazırlamadı.</div>';
+    else list.forEach(function (t) {
+      h += '<div class="ozet-karti" style="margin-bottom:6px"><b>📝 ' + esc(t.ad) + '</b><br><small style="color:#888">' + new Date(t.olusturma).toLocaleString('tr-TR') + '</small> '
+        + '<button class="kucuk-buton" style="background:#1f8a70" onclick="supaTestCozGoster(' + t.id + ')">▶️ Çöz / Sonuç</button></div>';
+    });
+    ekran.innerHTML = h;
+  }).catch(function (e) { alert('Hata: ' + e.message); });
 }

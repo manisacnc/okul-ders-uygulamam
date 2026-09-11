@@ -93,6 +93,44 @@ var kutuSUPA = (function () {
     return GET('ogrenciler', 'veli_kod=eq.' + encodeURIComponent(veliKod) + '&select=*')
       .then(function (a) { return (a && a[0]) || null; });
   }
+  // Öğrencinin etkinleştirme kodunu sıfırla
+  function kodSifirla(id, yeniKod) {
+    return PATCH('ogrenciler', 'id=eq.' + id, { etkinlesme: yeniKod });
+  }
+  // Sınıf için tüm verileri çek (yedekleme)
+  function sinifYedekle(kod) {
+    return Promise.all([
+        sinifGetir(kod),
+        ogrenciListele(kod),
+        GET('notlar', 'ogrenci_id=in.(select id from ogrenciler where kod=\'' + encodeURIComponent(kod) + '\')&select=*'),
+        GET('yoklama', 'ogrenci_id=in.(select id from ogrenciler where kod=\'' + encodeURIComponent(kod) + '\')&select=*'),
+        sinavListele(kod),
+        GET('sinav_not', 'sinav_id=in.(select id from sinav where kod=\'' + encodeURIComponent(kod) + '\')&select=*'),
+        GET('davranis', 'ogrenci_id=in.(select id from ogrenciler where kod=\'' + encodeURIComponent(kod) + '\')&select=*'),
+        GET('duyuru', 'kod=eq.' + encodeURIComponent(kod) + '&select=*'),
+        GET('ogrenci_detay', 'ogrenci_id=in.(select id from ogrenciler where kod=\'' + encodeURIComponent(kod) + '\')&select=*')
+      ]).then(function (rz) {
+        return { sinif: rz[0], ogrenciler: rz[1], notlar: rz[2], yoklama: rz[3], sinav: rz[4], sinav_not: rz[5], davranis: rz[6], duyuru: rz[7], ogrenci_detay: rz[8] };
+      });
+  }
+  // Sınıf verisini JSON olarak indir
+  function sinifYedekIndir(kod) {
+    return sinifYedekle(kod).then(function (veri) {
+      veri.yedekleme_tarihi = new Date().toISOString();
+      veri.surum = 'v26';
+      var json = JSON.stringify(veri, null, 2);
+      var blob = new Blob([json], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'yedek-' + kod + '-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+    });
+  }
+  // Notlar için okundu takibi (notlar.okundu kolonu) — öğrenci görünce işaretler
+  function notOkunduKaydet(notId) {
+    return PATCH('notlar', 'id=eq.' + notId, { okundu: true }).then(function () { return true; });
+  }
   // Öğrenciyi id ile getir (öğretmen dosya yükleme)
   function ogrenciGetir(id) {
     return GET('ogrenciler', 'id=eq.' + id + '&select=*')
@@ -191,6 +229,39 @@ var kutuSUPA = (function () {
     return DELETE('duyuru', 'id=eq.' + id);
   }
 
+  /* ===== MINI TEST (çoktan seçmeli) ===== */
+  function testListele(kod) {
+    return GET('test', 'kod=eq.' + encodeURIComponent(kod) + '&select=*&order=olusturma.desc');
+  }
+  function testOlustur(kod, ad) {
+    return POST('test', { kod: kod, ad: ad }).then(function (a) { return a[0]; });
+  }
+  function testSil(id) {
+    return DELETE('test', 'id=eq.' + id);
+  }
+  function testSoruListele(testId) {
+    return GET('test_soru', 'test_id=eq.' + testId + '&select=*&order=sira');
+  }
+  function testSoruEkle(testId, sira, soru, siklari, dogru) {
+    return POST('test_soru', { test_id: testId, sira: sira, soru: soru, siklari: siklari, dogru: dogru })
+      .then(function (a) { return a[0]; });
+  }
+  function testSoruSil(id) {
+    return DELETE('test_soru', 'id=eq.' + id);
+  }
+  function testCevapKaydet(testId, ogrenciId, cevaplar, dogru, toplam, puan) {
+    return UPSERT('test_cevap', 'on_conflict=test_id,ogrenci_id', {
+      test_id: testId, ogrenci_id: ogrenciId, cevaplar: cevaplar, dogru: dogru, toplam: toplam, puan: puan
+    }).then(function (a) { return a && a[0]; });
+  }
+  function testCevapListele(testId) {
+    return GET('test_cevap', 'test_id=eq.' + testId + '&select=*');
+  }
+  function testCevabim(testId, ogrenciId) {
+    return GET('test_cevap', 'test_id=eq.' + testId + '&ogrenci_id=eq.' + ogrenciId + '&select=*')
+      .then(function (a) { return (a && a[0]) || null; });
+  }
+
   /* ===== GENEL SORGULAR (öğrenci dosyası + rapor) ===== */
   function ogrenciAll(ogrenciId) {
     return Promise.all([
@@ -242,6 +313,9 @@ var kutuSUPA = (function () {
     veliKodAyarla: veliKodAyarla,
     veliKodAra: veliKodAra,
     ogrenciGetir: ogrenciGetir,
+    kodSifirla: kodSifirla,
+    notOkunduKaydet: notOkunduKaydet,
+    sinifYedekIndir: sinifYedekIndir,
     notEkle: notEkle,
     notListele: notListele,
     notGuncelle: notGuncelle,
@@ -268,6 +342,15 @@ var kutuSUPA = (function () {
     okunmaIsaretle: okunmaIsaretle,
     okunmaDurumu: okunmaDurumu,
     duyuruOkunma: duyuruOkunma,
+    testListele: testListele,
+    testOlustur: testOlustur,
+    testSil: testSil,
+    testSoruListele: testSoruListele,
+    testSoruEkle: testSoruEkle,
+    testSoruSil: testSoruSil,
+    testCevapKaydet: testCevapKaydet,
+    testCevapListele: testCevapListele,
+    testCevabim: testCevabim,
     veriGonder: veriGonder,
     veriGetir: veriGetir
   };
